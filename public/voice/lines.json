@@ -1,0 +1,1612 @@
+[
+ {
+  "id": "villager_278fba4e",
+  "speaker": "villager",
+  "text": "Good morning, swami. The bell rang sweet today.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "villager_5546ed34",
+  "speaker": "villager",
+  "text": "Riders on the ridge again... I do not like it.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "villager_9a98ad34",
+  "speaker": "villager",
+  "text": "The Kurinji buds are fat this year. Twelve years, soon.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "villager_bdb51460",
+  "speaker": "villager",
+  "text": "Ilan carved me a sparrow. It sits on my window now.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "villager_9a97e090",
+  "speaker": "villager",
+  "text": "Kaali has been hammering since before the bell.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "villagerF_4c039ecd",
+  "speaker": "villagerF",
+  "text": "Vanakkam, Aruvan. Stay for tea?",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "villagerF_f49780bc",
+  "speaker": "villagerF",
+  "text": "Mind the chickens. They think they own the square.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "villagerF_89c48abe",
+  "speaker": "villagerF",
+  "text": "My grandmother saw the last bloom. She said the whole mountain sang.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "villagerF_d5908255",
+  "speaker": "villagerF",
+  "text": "The well water is cold and sweet today.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "villagerF_c48bf795",
+  "speaker": "villagerF",
+  "text": "Thamarai is looking for you. She has that look again.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "kid_c54ca879",
+  "speaker": "kid",
+  "text": "Swami! Watch me spin like you!",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "kid_1739e26a",
+  "speaker": "kid",
+  "text": "Is it true you can catch a falling leaf with your eyes closed?",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "soldier_68eb5267",
+  "speaker": "soldier",
+  "text": "For the Iron King!",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "soldier_b6188761",
+  "speaker": "soldier",
+  "text": "Take the monk!",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "soldier_7ddbd376",
+  "speaker": "soldier",
+  "text": "He is only one man! Surround him!",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "soldier_0271882d",
+  "speaker": "soldier",
+  "text": "Burn it! Burn all of it!",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "soldier_984a5d14",
+  "speaker": "soldier",
+  "text": "Hold the line!",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "narrator_ef536e6f",
+  "speaker": "narrator",
+  "text": "Before the monk, there was a soldier.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_a329b263",
+  "speaker": "narrator",
+  "text": "They called him Veeran. The Ash-Hound of King Dunkan.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_b5171db5",
+  "speaker": "narrator",
+  "text": "Twenty-four years before the bloom.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_f8a12ace",
+  "speaker": "narrator",
+  "text": "The village of Thennur.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "dunkan_41e87441",
+  "speaker": "dunkan",
+  "text": "Every roof, Veeran. A village that feeds rebels is a village of rebels.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "veeran_6329cf35",
+  "speaker": "veeran",
+  "text": "There are children in those houses, my king.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "dunkan_6ba0007e",
+  "speaker": "dunkan",
+  "text": "Then they will learn early what defiance costs. That is a gift, Hound. I learned it late.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_ce8ad4e8",
+  "speaker": "rudhra",
+  "text": "Come on, brother. Fire doesn't ask questions. Neither should we.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_583cdf41",
+  "speaker": "narrator",
+  "text": "...a child is crying somewhere in the smoke.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "malli_115494bd",
+  "speaker": "malli",
+  "text": "Are you... the soldier who lit the fire?",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "veeran_6eda8f29",
+  "speaker": "veeran",
+  "text": "...Yes.",
+  "chapter": "prologue",
+  "kind": "choice"
+ },
+ {
+  "id": "veeran_8d0725f4",
+  "speaker": "veeran",
+  "text": "Don't speak. I'll carry you out.",
+  "chapter": "prologue",
+  "kind": "choice"
+ },
+ {
+  "id": "malli_db285d59",
+  "speaker": "malli",
+  "text": "You're crying. Soldiers don't cry. Amma said so.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "malli_ba1e6226",
+  "speaker": "malli",
+  "text": "My legs don't hurt anymore. That's bad... isn't it?",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "malli_8a470fd6",
+  "speaker": "malli",
+  "text": "Amma says... on the mountain, there's a flower. The Kurinji. It blooms only once in twelve years.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "malli_95b14fc3",
+  "speaker": "malli",
+  "text": "She says if you wait for it... you become a little gentler, every winter.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "malli_ca81815b",
+  "speaker": "malli",
+  "text": "Here. Will you wait for it? For me? I don't think I can wait anymore.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "veeran_53c14061",
+  "speaker": "veeran",
+  "text": "I will wait. I promise you, I will wait.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_fec5713c",
+  "speaker": "narrator",
+  "text": "Malli of Thennur. Seven years old.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_385f0d67",
+  "speaker": "narrator",
+  "text": "That night, the Ash-Hound of King Dunkan laid down his sword...",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_e46de55f",
+  "speaker": "narrator",
+  "text": "...and walked up the mountain until the clouds were below him.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_3af63bc7",
+  "speaker": "narrator",
+  "text": "He climbed for nine days. He did not know what he was climbing toward.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "guru_8772641c",
+  "speaker": "guru",
+  "text": "Drink. Slowly. The mountain is not going anywhere.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "veeran_8be239bd",
+  "speaker": "veeran",
+  "text": "Do you know who I am?",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "guru_9985d11b",
+  "speaker": "guru",
+  "text": "I am blind, child. I know only that you are thirsty.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "veeran_5b6e60a8",
+  "speaker": "veeran",
+  "text": "I burned a village.",
+  "chapter": "prologue",
+  "kind": "choice"
+ },
+ {
+  "id": "veeran_67ec52bc",
+  "speaker": "veeran",
+  "text": "I am no one.",
+  "chapter": "prologue",
+  "kind": "choice"
+ },
+ {
+  "id": "guru_fecbde41",
+  "speaker": "guru",
+  "text": "Then rest here tonight. Tomorrow you can begin to be someone smaller.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_ca584f86",
+  "speaker": "narrator",
+  "text": "The first winter, he could not sit still for the length of one breath.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "guru_33e637dc",
+  "speaker": "guru",
+  "text": "Breathe in. Hold nothing. Breathe out, and let the fire leave with it.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_5017247f",
+  "speaker": "narrator",
+  "text": "The second year, he swept the same hundred steps every morning.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "guru_4e9fd050",
+  "speaker": "guru",
+  "text": "You sweep like a soldier, attacking the leaves. Sweep as if each one matters.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "veeran_d30e41a4",
+  "speaker": "veeran",
+  "text": "They are only leaves.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "guru_9c67b2b9",
+  "speaker": "guru",
+  "text": "So were the roofs of Thennur, to someone.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_4af0caf9",
+  "speaker": "narrator",
+  "text": "In the fifth year, the old man gave him a new name.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "guru_8522a671",
+  "speaker": "guru",
+  "text": "A man cannot carry two names up a mountain. From today, you are Aruvan.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "guru_d3a73b49",
+  "speaker": "guru",
+  "text": "In the old tongue, a river. It wears its stones smooth, and sets them down.",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "veeran_fde8075b",
+  "speaker": "veeran",
+  "text": "Aruvan...",
+  "chapter": "prologue",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_769e8ed4",
+  "speaker": "narrator",
+  "text": "Twelve years. Every dawn, he waited for the flower.",
+  "chapter": "prologue",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_3b6012bb",
+  "speaker": "narrator",
+  "text": "Kurinji Mountain. The temple above the clouds.",
+  "chapter": "ch1",
+  "kind": "caption"
+ },
+ {
+  "id": "guru_df00672b",
+  "speaker": "guru",
+  "text": "You breathe like a man holding a door shut, Aruvan.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_001892f9",
+  "speaker": "aruvan",
+  "text": "Twelve winters, Guru. Every dawn I still smell the smoke.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "guru_552634e8",
+  "speaker": "guru",
+  "text": "Then let the smoke be your teacher. It rises. It does not cling to the fire that made it.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "guru_f6429aab",
+  "speaker": "guru",
+  "text": "Come. The bell. The village will not start its day without it — and Ilan will blame me, again.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "guru_fd2834ce",
+  "speaker": "guru",
+  "text": "Go down to Kurinji. Thamarai has been asking for you. Something about her herbs and your \"lazy monk knees.\"",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_07aad690",
+  "speaker": "thamarai",
+  "text": "There you are. Hold this basket. No — with both hands, you're not ringing a bell.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_db45f324",
+  "speaker": "aruvan",
+  "text": "Good morning to you too, Thamarai.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_46aa9699",
+  "speaker": "thamarai",
+  "text": "Neem, tulsi, a little ashwagandha for old Murugan's cough. He'll say it's bitter. Everything good is bitter first.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_f15590d1",
+  "speaker": "thamarai",
+  "text": "Aruvan... the shepherds saw riders on the eastern ridge. Banners. Black and red.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_fa02c4f6",
+  "speaker": "thamarai",
+  "text": "You were somewhere, once, before the mountain. Do you ever miss who you were?",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_8e21bf48",
+  "speaker": "aruvan",
+  "text": "Every day, I am grateful he is gone.",
+  "chapter": "ch1",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_d290db6a",
+  "speaker": "aruvan",
+  "text": "Sometimes he still wakes up angry.",
+  "chapter": "ch1",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_6fa0b8f5",
+  "speaker": "aruvan",
+  "text": "Who I was doesn't make a good morning story.",
+  "chapter": "ch1",
+  "kind": "choice"
+ },
+ {
+  "id": "thamarai_44232d46",
+  "speaker": "thamarai",
+  "text": "Then let him sleep. Some people should stay asleep.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_73e07029",
+  "speaker": "thamarai",
+  "text": "Hm. You always do that. Answer a question with a closed door.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "ilan_deaf419d",
+  "speaker": "ilan",
+  "text": "Aruvan! Look — a kingfisher. I carved the beak three times.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_b30cc960",
+  "speaker": "aruvan",
+  "text": "It looks ready to fly away.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "ilan_a39fad4c",
+  "speaker": "ilan",
+  "text": "Can monks fly? Guru says if you meditate long enough you get light as a feather.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_7796e5ce",
+  "speaker": "aruvan",
+  "text": "Guru also says the moon is a lamp he forgot to blow out.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "ilan_258d7c53",
+  "speaker": "ilan",
+  "text": "Kaali wants you at the forge. She says it's \"important\" in her scary voice. Can I watch? Please?",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "kaali_db0b3612",
+  "speaker": "kaali",
+  "text": "Monk. Those riders the shepherds saw — they're Dunkan's. Iron-eaters. They burned three villages in the south valley this spring.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "kaali_87564f9d",
+  "speaker": "kaali",
+  "text": "If they come here, I want the young ones to know how to hold a staff. You'll show them.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_0e19ebe8",
+  "speaker": "aruvan",
+  "text": "The staff is for balance, Kaali. Not for blood.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "kaali_0c22f7ad",
+  "speaker": "kaali",
+  "text": "Then teach them balance. Hard. Use my practice dummies — they've survived worse than a monk.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "ilan_b5e97721",
+  "speaker": "ilan",
+  "text": "Whoa! You hit like a falling tree!",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "kaali_22fabae2",
+  "speaker": "kaali",
+  "text": "You move like someone who has done this before, monk.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_c843e15a",
+  "speaker": "aruvan",
+  "text": "Everyone has done something before.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "ilan_ce0cec00",
+  "speaker": "ilan",
+  "text": "...What was that?",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "kaali_7c0ba7ac",
+  "speaker": "kaali",
+  "text": "War horn. From the gate.",
+  "chapter": "ch1",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_2b54f480",
+  "speaker": "rudhra",
+  "text": "People of Kurinji! By decree of Dunkan, King of the Nine Valleys, this mountain belongs to the crown.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_6020aa3e",
+  "speaker": "rudhra",
+  "text": "There is iron beneath your flowers. In three days, the slopes will burn and the mines will open. Be grateful. You will have work.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_fece346e",
+  "speaker": "thamarai",
+  "text": "Those slopes bloomed before your king's grandfather learned to lie! You'll burn a thousand years for a cartload of nails?",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_fba82c53",
+  "speaker": "rudhra",
+  "text": "A healer with teeth. Hold her.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_065f662b",
+  "speaker": "aruvan",
+  "text": "She is not yours to hold.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_5f27160d",
+  "speaker": "rudhra",
+  "text": "Out of the way, holy man, or I'll — ...",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_0fafc825",
+  "speaker": "rudhra",
+  "text": "...Veeran? The Ash-Hound — in a beggar's orange rags?",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "ilan_124e7ed8",
+  "speaker": "ilan",
+  "text": "His name is Aruvan!",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_3f0054a6",
+  "speaker": "rudhra",
+  "text": "Do they know, monk? Did you tell them about Thennur? About the houses we lit, side by side?",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_ab5e814d",
+  "speaker": "aruvan",
+  "text": "They know who I am now. That is enough.",
+  "chapter": "ch2",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_61599b46",
+  "speaker": "aruvan",
+  "text": "Leave, Rudhra. Before I remember who I was.",
+  "chapter": "ch2",
+  "kind": "choice"
+ },
+ {
+  "id": "rudhra_23a366ef",
+  "speaker": "rudhra",
+  "text": "Who you are now. Ha. Water poured into a bloodstained cup is still red, brother.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_539251b3",
+  "speaker": "rudhra",
+  "text": "There he is. There's the Hound. I knew he was under there.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_e00ad140",
+  "speaker": "rudhra",
+  "text": "Still the same silence. You used to go quiet like that right before the screaming started.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_879a47af",
+  "speaker": "rudhra",
+  "text": "The king would weep to see his finest blade dulled to a walking stick. Men — remind him what he is.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_53ca498f",
+  "speaker": "aruvan",
+  "text": "I will not kill you. But I will not move.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_c0e992b2",
+  "speaker": "rudhra",
+  "text": "You still fight like him. You just stop at the end. That will get you killed, brother.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_7f5f94bb",
+  "speaker": "rudhra",
+  "text": "Dawn after next, the king comes himself. Kurinji will burn, Hound — and this time you'll watch.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "kaali_ea915098",
+  "speaker": "kaali",
+  "text": "Thennur. The Ash-Hound. That was you.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_a9bc99fa",
+  "speaker": "thamarai",
+  "text": "Twelve years you taught us patience. Twelve years! And you never thought to tell us you burned a village?",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_2a72461b",
+  "speaker": "aruvan",
+  "text": "I thought if I said it aloud, the mountain would stop forgiving me.",
+  "chapter": "ch2",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_e2113d15",
+  "speaker": "aruvan",
+  "text": "What would it have changed?",
+  "chapter": "ch2",
+  "kind": "choice"
+ },
+ {
+  "id": "thamarai_1d2e6bb7",
+  "speaker": "thamarai",
+  "text": "The mountain isn't the one you need forgiveness from, Aruvan. ...Go to the Guru. I can't look at you right now.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_dd2e9f55",
+  "speaker": "thamarai",
+  "text": "Everything! It would have changed — no. Go to your Guru. I can't look at you right now.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "ilan_60d257cf",
+  "speaker": "ilan",
+  "text": "I don't care what you were. You're still Aruvan.",
+  "chapter": "ch2",
+  "kind": "say"
+ },
+ {
+  "id": "guru_e3c890d1",
+  "speaker": "guru",
+  "text": "So. The past has come up the mountain on horseback.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_57ff50f9",
+  "speaker": "aruvan",
+  "text": "Tell me what to do, Guru. Fight, and become the Hound again — or stand still and watch them burn everything you taught me to love.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "guru_5b952e4d",
+  "speaker": "guru",
+  "text": "Today, when you lifted the staff. Was it anger that lifted it?",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_7124b98c",
+  "speaker": "aruvan",
+  "text": "No. It was them. Ilan. Thamarai. All of them.",
+  "chapter": "ch3",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_4a9a1d43",
+  "speaker": "aruvan",
+  "text": "Yes. And it felt like coming home.",
+  "chapter": "ch3",
+  "kind": "choice"
+ },
+ {
+  "id": "guru_45848768",
+  "speaker": "guru",
+  "text": "Honest. Good. Anger is a guest, Aruvan. Let it in, give it tea — but do not give it the keys.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "guru_9ee25e5f",
+  "speaker": "guru",
+  "text": "Then you already know the answer, and you climbed all this way to hear an old man say it.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "guru_5f20dec4",
+  "speaker": "guru",
+  "text": "A blade is only a question. Who holds it is the answer.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "guru_7cd475a0",
+  "speaker": "guru",
+  "text": "Twelve years ago you held it for a king. Hold it now for a flower that blooms once in twelve years — and you will not be the Hound. You will be a gardener with a sharp tool.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "guru_11aaa7db",
+  "speaker": "guru",
+  "text": "...The crickets have stopped singing.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_f13da5bc",
+  "speaker": "aruvan",
+  "text": "Fire arrows. Guru — inside!",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_47df1f9b",
+  "speaker": "rudhra",
+  "text": "A message from the king, Hound.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_92f81bf6",
+  "speaker": "aruvan",
+  "text": "GURU!",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_ad4bfe58",
+  "speaker": "rudhra",
+  "text": "\"Nothing you love stays.\" He wanted me to say it exactly like that.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "guru_2e9f773a",
+  "speaker": "guru",
+  "text": "Don't... chase him with that face, child.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "guru_c03cc935",
+  "speaker": "guru",
+  "text": "The Kurinji does not hurry, Aruvan. And it does not hate the winter. It only waits... and then it blooms anyway.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "guru_b15cfe8a",
+  "speaker": "guru",
+  "text": "I never asked your name, that first day on the steps. I didn't need to. I could hear it in how you drank the water.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "guru_564680f9",
+  "speaker": "guru",
+  "text": "Protect what blooms.",
+  "chapter": "ch3",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_9a92f907",
+  "speaker": "narrator",
+  "text": "Guru Nilakantha, the blind abbot of Kurinji, who saw everything.",
+  "chapter": "ch3",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_304cb8b0",
+  "speaker": "narrator",
+  "text": "He ran until his lungs burned, and found only hoofprints. Then he came back, and sat with his teacher until dawn.",
+  "chapter": "ch3",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_813a3c81",
+  "speaker": "narrator",
+  "text": "He stayed until the temple lamps burned out, and the stars went pale.",
+  "chapter": "ch3",
+  "kind": "caption"
+ },
+ {
+  "id": "kaali_6c4fe785",
+  "speaker": "kaali",
+  "text": "Here. I capped your staff in iron. Melted my father's old sword to do it.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "kaali_bf71e104",
+  "speaker": "kaali",
+  "text": "Seemed right. A sword becoming something that doesn't want to kill.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_3f54ba56",
+  "speaker": "thamarai",
+  "text": "I was angry at you. I still am. But the Guru would have stood at this gate, so I'm standing here too.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_daf3ea03",
+  "speaker": "thamarai",
+  "text": "And these — the bitter ones. Chew them if you bleed. Don't make a face.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_1e095757",
+  "speaker": "narrator",
+  "text": "The village looks to Aruvan.",
+  "chapter": "ch4",
+  "kind": "caption"
+ },
+ {
+  "id": "aruvan_a4964b8f",
+  "speaker": "aruvan",
+  "text": "We do not fight to win. We fight so the flowers outlive the fire.",
+  "chapter": "ch4",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_a6c4a891",
+  "speaker": "aruvan",
+  "text": "Today Dunkan learns what his Hound learned on the mountain.",
+  "chapter": "ch4",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_ab17466a",
+  "speaker": "aruvan",
+  "text": "Make them bleed for every step.",
+  "chapter": "ch4",
+  "kind": "choice"
+ },
+ {
+  "id": "villager_a6858fd6",
+  "speaker": "villager",
+  "text": "For the flowers!",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "villager_2bb6fedf",
+  "speaker": "villager",
+  "text": "For Kurinji!",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "villager_db56787b",
+  "speaker": "villager",
+  "text": "For the Guru!",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "ilan_ea2ef47f",
+  "speaker": "ilan",
+  "text": "I can fight too! I've been practising on the dummies!",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_bef8ecec",
+  "speaker": "aruvan",
+  "text": "Ilan. I need you somewhere more important. Run to the temple. If the gate falls — ring the bell, and keep ringing it until everyone is up the mountain.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "ilan_be04d31d",
+  "speaker": "ilan",
+  "text": "...Promise you'll come up the mountain too.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_b5d01a2a",
+  "speaker": "aruvan",
+  "text": "I promise.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "kaali_e13b37c1",
+  "speaker": "kaali",
+  "text": "The ram! The gate's broken!",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "senthil_40c1866f",
+  "speaker": "senthil",
+  "text": "Please! Please — I'm from the river villages. They took me for grain, I never wanted —",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_8961578d",
+  "speaker": "aruvan",
+  "text": "(Grain for sons. Like me.)",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_0fcd56b2",
+  "speaker": "aruvan",
+  "text": "Go home. Tell them Kurinji let you go.",
+  "chapter": "ch4",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_db4147bb",
+  "speaker": "aruvan",
+  "text": "Your king made you a weapon. Weapons get broken.",
+  "chapter": "ch4",
+  "kind": "choice"
+ },
+ {
+  "id": "senthil_e9445773",
+  "speaker": "senthil",
+  "text": "...My name is Senthil. I won't forget this. I swear on my mother's name.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "kaali_57ed8b9d",
+  "speaker": "kaali",
+  "text": "...He was just a boy, Aruvan.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_ed03e74c",
+  "speaker": "thamarai",
+  "text": "They'll come back with more. They always come back with more.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_96dbae6c",
+  "speaker": "aruvan",
+  "text": "No. This ends where it began. In Thennur — and then on his throne.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_a0a47c9b",
+  "speaker": "thamarai",
+  "text": "Then come back. You promised Ilan. And I'll be very annoyed if you make me dig a grave in this rain.",
+  "chapter": "ch4",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_e0a556ee",
+  "speaker": "narrator",
+  "text": "One Kurinji bush. Blooming, out of season, where she lay.",
+  "chapter": "ch5",
+  "kind": "caption"
+ },
+ {
+  "id": "aruvan_5715b802",
+  "speaker": "aruvan",
+  "text": "You waited here too, didn't you, little one.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "malli_bb2183ff",
+  "speaker": "malli",
+  "text": "Are you still waiting?",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_46f52070",
+  "speaker": "aruvan",
+  "text": "Almost, Malli. I am almost the man who could deserve that flower.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_2b29cbaa",
+  "speaker": "rudhra",
+  "text": "Sentimental. I burned the east side that night, you know. You took the west. We split it like bread.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_4ec2f30f",
+  "speaker": "aruvan",
+  "text": "We were boys who did what we were told.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_52008ff7",
+  "speaker": "rudhra",
+  "text": "I still am. That's the only difference between us, brother. I never stopped.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_c9d8d5a7",
+  "speaker": "rudhra",
+  "text": "He wants your head on the fortress gate before the bloom. Let's give him a good story.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_b1b1b9b1",
+  "speaker": "rudhra",
+  "text": "There! Show me the Hound!",
+  "chapter": "ch5",
+  "kind": "bark"
+ },
+ {
+  "id": "rudhra_3a3bed2d",
+  "speaker": "rudhra",
+  "text": "Go on. Finish it. That's how this ends. That's how it always ends, for dogs like us.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_ce6ec216",
+  "speaker": "aruvan",
+  "text": "Go and plant something, Rudhra.",
+  "chapter": "ch5",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_5dbbc137",
+  "speaker": "aruvan",
+  "text": "For the Guru.",
+  "chapter": "ch5",
+  "kind": "choice"
+ },
+ {
+  "id": "rudhra_5c0924a0",
+  "speaker": "rudhra",
+  "text": "...Why?",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_53ecee80",
+  "speaker": "aruvan",
+  "text": "Because once, someone waited for me.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_37fd47c1",
+  "speaker": "rudhra",
+  "text": "He's on the throne, in the fortress. He will not kneel like I did, Veeran.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_146e2d81",
+  "speaker": "aruvan",
+  "text": "Forgive me, Guru. I could not wait.",
+  "chapter": "ch5",
+  "kind": "say"
+ },
+ {
+  "id": "dunkan_a72a6cc4",
+  "speaker": "dunkan",
+  "text": "My Hound comes home. Look at you. Thinner. Quieter. Did the mountain pull your teeth?",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_5106204d",
+  "speaker": "aruvan",
+  "text": "It took my anger. I came to see if it left anything for you.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "dunkan_3832fd82",
+  "speaker": "dunkan",
+  "text": "You were my finest weapon, Veeran.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_63c55e8f",
+  "speaker": "aruvan",
+  "text": "I was your saddest.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_f578dbe6",
+  "speaker": "aruvan",
+  "text": "Leave the mountain, Dunkan. There is still time to be someone else.",
+  "chapter": "ch6",
+  "kind": "choice"
+ },
+ {
+  "id": "aruvan_683f738c",
+  "speaker": "aruvan",
+  "text": "You made me a weapon. Now you will feel the edge.",
+  "chapter": "ch6",
+  "kind": "choice"
+ },
+ {
+  "id": "dunkan_78be2a88",
+  "speaker": "dunkan",
+  "text": "Someone else? I was someone else, once. My father left that boy in the snow. Warmth is something you take.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "dunkan_76a56896",
+  "speaker": "dunkan",
+  "text": "Good. Finally, an honest word from that mouth.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "dunkan_618aafd7",
+  "speaker": "dunkan",
+  "text": "Sad weapons still cut. Come, then. Let us see which of us the mountain loves.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "dunkan_e40682bf",
+  "speaker": "dunkan",
+  "text": "I am the iron in the mountain! I am the winter your flowers fear!",
+  "chapter": "ch6",
+  "kind": "bark"
+ },
+ {
+  "id": "dunkan_a5d8d11a",
+  "speaker": "dunkan",
+  "text": "Then finish it. You know how. I taught you.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_bec0bfd4",
+  "speaker": "aruvan",
+  "text": "You taught me how. A child in Thennur taught me why not. And a blind man taught me when.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_0ffe6e40",
+  "speaker": "aruvan",
+  "text": "I don't do this for your throne. I do it so no child ever again has to wait for a soldier to become a person.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_b4c0f594",
+  "speaker": "narrator",
+  "text": "Dunkan, the Iron King, who was once a boy left in the snow.",
+  "chapter": "ch6",
+  "kind": "caption"
+ },
+ {
+  "id": "aruvan_6552ef3d",
+  "speaker": "aruvan",
+  "text": "This throne was carved out of fear. From today, it is only a chair.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_2b15ea5c",
+  "speaker": "aruvan",
+  "text": "Anyone may sit in it to be heard. Anyone. The crown stays on the floor, where it can't look down on anyone.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_7487b7e3",
+  "speaker": "aruvan",
+  "text": "Go home. Plant something. And if you have nothing to plant — come to Kurinji. We have more flowers than hands.",
+  "chapter": "ch6",
+  "kind": "say"
+ },
+ {
+  "id": "narrator_47eb95eb",
+  "speaker": "narrator",
+  "text": "Year One. The mines were sealed. The iron stayed in the mountain, where it belonged.",
+  "chapter": "ch7",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_2995d292",
+  "speaker": "narrator",
+  "text": "Year Three. Thennur was rebuilt — by soldiers who once burned it. A boy named Senthil laid the first stone.",
+  "chapter": "ch7",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_5751a87d",
+  "speaker": "narrator",
+  "text": "Year Three. Thennur was rebuilt — by soldiers who once burned it.",
+  "chapter": "ch7",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_d609183e",
+  "speaker": "narrator",
+  "text": "Year Five. Kaali hammered Dunkan's swords into ploughs. She complained the entire time.",
+  "chapter": "ch7",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_0515f15d",
+  "speaker": "narrator",
+  "text": "Year Eight. Thamarai opened a house of healing inside the old fortress. Its doors had no locks.",
+  "chapter": "ch7",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_84d95a47",
+  "speaker": "narrator",
+  "text": "Year Ten. Ilan, grown tall, taught the children to read — and to carve birds, and to set them free.",
+  "chapter": "ch7",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_32603240",
+  "speaker": "narrator",
+  "text": "Rudhra came to the temple steps in the rain. He swept them for nine years, and never asked to be forgiven.",
+  "chapter": "ch7",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_a744ffa7",
+  "speaker": "narrator",
+  "text": "On the tenth, Aruvan forgave him anyway.",
+  "chapter": "ch7",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_e7c45043",
+  "speaker": "narrator",
+  "text": "And King Aruvan, who never once wore the crown, climbed the mountain every dawn — to ring the bell.",
+  "chapter": "ch7",
+  "kind": "caption"
+ },
+ {
+  "id": "thamarai_bf7025e3",
+  "speaker": "thamarai",
+  "text": "You shouldn't climb alone anymore. Your knees sound like Kaali's bellows.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_d4b82aec",
+  "speaker": "aruvan",
+  "text": "I have climbed alone every morning for twelve years. Today I would like company. But only at the end.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "ilanAdult_7d864dbf",
+  "speaker": "ilanAdult",
+  "text": "The end of what?",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_a53c612d",
+  "speaker": "aruvan",
+  "text": "Of the climb, Ilan. Only the climb.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "ilanAdult_51414161",
+  "speaker": "ilanAdult",
+  "text": "The whole mountain is turning blue, Aruvan. Like the sky came down to listen.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_5ed0f6b8",
+  "speaker": "aruvan",
+  "text": "Twenty-four years ago, a little girl asked me to wait for this. I thought she meant the flower.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_715bd5e5",
+  "speaker": "thamarai",
+  "text": "What did she mean?",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_cd798579",
+  "speaker": "aruvan",
+  "text": "Herself. She wanted someone gentle enough to be worth the waiting. I think... I am almost him.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "ilanAdult_bd000923",
+  "speaker": "ilanAdult",
+  "text": "Don't talk like that. Please.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_6ee9a2ab",
+  "speaker": "aruvan",
+  "text": "Ilan. Ring the bell tomorrow. And the day after. A kingdom is only a habit of kindness, repeated until no one remembers it was ever a choice.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_0e1a9c9c",
+  "speaker": "thamarai",
+  "text": "And the throne? Who will sit on it?",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_c09e9e3b",
+  "speaker": "aruvan",
+  "text": "No one. Put it in the square and let the children climb it. It is the only thing a throne is good for.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "rudhra_e45408d4",
+  "speaker": "rudhra",
+  "text": "I swept your steps, brother. Every one.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_d2144449",
+  "speaker": "aruvan",
+  "text": "I know. They have never been so clean.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_a419fee1",
+  "speaker": "aruvan",
+  "text": "Thamarai. Thank you for staying angry at me. It meant you hadn't given up.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_b3dd6303",
+  "speaker": "aruvan",
+  "text": "I was not always gentle. Forgive the old Hound for the days he got loose.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "thamarai_5dc0749f",
+  "speaker": "thamarai",
+  "text": "...Breathe, you stubborn old man. Just breathe. We're here.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_a9ed1517",
+  "speaker": "aruvan",
+  "text": "Yes. Let me breathe now. I have been holding this door shut a very long time.",
+  "chapter": "epilogue",
+  "kind": "say"
+ },
+ {
+  "id": "aruvan_86b3c1d4",
+  "speaker": "aruvan",
+  "text": "The smoke rises. It does not cling.",
+  "chapter": "epilogue",
+  "kind": "whisper"
+ },
+ {
+  "id": "aruvan_b8dc1b4d",
+  "speaker": "aruvan",
+  "text": "Guru... I set the stones down.",
+  "chapter": "epilogue",
+  "kind": "whisper"
+ },
+ {
+  "id": "aruvan_9ddfda4b",
+  "speaker": "aruvan",
+  "text": "Malli...",
+  "chapter": "epilogue",
+  "kind": "whisper"
+ },
+ {
+  "id": "aruvan_3d8ea853",
+  "speaker": "aruvan",
+  "text": "...it bloomed.",
+  "chapter": "epilogue",
+  "kind": "whisper"
+ },
+ {
+  "id": "narrator_11689a0e",
+  "speaker": "narrator",
+  "text": "Aruvan of Kurinji.",
+  "chapter": "epilogue",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_672d1bc8",
+  "speaker": "narrator",
+  "text": "Once a soldier. Then a monk. Then a king.",
+  "chapter": "epilogue",
+  "kind": "caption"
+ },
+ {
+  "id": "narrator_e4e1e0e0",
+  "speaker": "narrator",
+  "text": "At last — a gardener.",
+  "chapter": "epilogue",
+  "kind": "caption"
+ },
+ {
+  "id": "thamarai_47d318f1",
+  "speaker": "thamarai",
+  "text": "The children ask for the story of the throne again. Tell it better this time.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "thamarai_ac72d485",
+  "speaker": "thamarai",
+  "text": "Sit for a while, Aruvan. Even kings are allowed to rest.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "ilanAdult_f240b68f",
+  "speaker": "ilanAdult",
+  "text": "I carved a whole flock this winter. The square is full of wooden birds.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "ilanAdult_fd13130c",
+  "speaker": "ilanAdult",
+  "text": "Guru would have liked this. Everybody sweeping their own steps.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "kaali_19b2f208",
+  "speaker": "kaali",
+  "text": "No more swords. Only ploughs and bells. My father would laugh.",
+  "chapter": "shared",
+  "kind": "bark"
+ },
+ {
+  "id": "kaali_a1673b10",
+  "speaker": "kaali",
+  "text": "Bring me your staff. The iron cap needs a new edge, for walking.",
+  "chapter": "shared",
+  "kind": "bark"
+ }
+]

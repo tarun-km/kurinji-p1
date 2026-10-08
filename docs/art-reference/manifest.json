@@ -1,0 +1,3315 @@
+{
+  "plannedTotal": 121,
+  "status": "partially_generated_daily_limit",
+  "pending": [
+    {
+      "id": "char_rudhra_old",
+      "title": "OLD RUDHRA — EPILOGUE",
+      "category": "characters",
+      "sections": [
+        "4.7"
+      ],
+      "covers": [
+        "Old Rudhra in the epilogue",
+        "Gray hair and beard; plain robes"
+      ],
+      "notes": [
+        "The source leaves his exact old age unspecified."
+      ]
+    },
+    {
+      "id": "char_dunkan_boy",
+      "title": "DUNKAN — CHILDHOOD IN THE SNOW",
+      "category": "characters",
+      "sections": [
+        "4.8"
+      ],
+      "covers": [
+        "Dunkan's childhood abandonment in the snow",
+        "Proposed childhood clothing"
+      ],
+      "notes": [
+        "Childhood age and outfit are unspecified; this is a labeled design interpretation."
+      ]
+    },
+    {
+      "id": "char_dunkan_prologue",
+      "title": "DUNKAN — PROLOGUE IRON KING",
+      "category": "characters",
+      "sections": [
+        "4.8"
+      ],
+      "covers": [
+        "Dunkan, about 40",
+        "Black armor and crimson cape",
+        "Seven-spike gold crown; greatsword"
+      ],
+      "notes": [
+        "Younger form of the same Iron King."
+      ]
+    },
+    {
+      "id": "char_army_soldier",
+      "title": "DUNKAN'S ARMY — SOLDIER",
+      "category": "characters",
+      "sections": [
+        "4.10"
+      ],
+      "covers": [
+        "Standard army soldier",
+        "Gray armor and dark tunic",
+        "Conical helmet with red plume; sword"
+      ],
+      "notes": [
+        "The shared iron-anvil insignia is a design interpretation."
+      ]
+    },
+    {
+      "id": "char_army_captain",
+      "title": "DUNKAN'S ARMY — CAPTAIN",
+      "category": "characters",
+      "sections": [
+        "4.10"
+      ],
+      "covers": [
+        "Army captain in the soldier armor family",
+        "Gold plume and short red cape",
+        "Sword"
+      ],
+      "notes": [
+        "The gold plume distinguishes this rank from Veeran and ordinary soldiers."
+      ]
+    },
+    {
+      "id": "char_army_brute",
+      "title": "DUNKAN'S ARMY — BRUTE",
+      "category": "characters",
+      "sections": [
+        "4.10"
+      ],
+      "covers": [
+        "Massive brute, 1.2 times adult height",
+        "Dark armor and helmet",
+        "Heavy war hammer"
+      ],
+      "notes": [
+        "Adult base 1.9 meters gives a 2.28-meter height target."
+      ]
+    },
+    {
+      "id": "char_villager_olive",
+      "title": "OLIVE VILLAGER — SHEPHERD",
+      "category": "characters",
+      "sections": [
+        "4.11",
+        "3.5"
+      ],
+      "covers": [
+        "Olive clothing variant: shepherd",
+        "Distinct older female villager design"
+      ],
+      "notes": [
+        "Gender, occupation and age treatment are proposed variety."
+      ]
+    },
+    {
+      "id": "char_villager_sienna",
+      "title": "SIENNA VILLAGER — CARPENTER",
+      "category": "characters",
+      "sections": [
+        "4.11",
+        "3.5"
+      ],
+      "covers": [
+        "Sienna clothing variant: carpenter",
+        "Distinct male villager design"
+      ],
+      "notes": [
+        "Occupation links to the suggested workshop where Ilan learns carving."
+      ]
+    },
+    {
+      "id": "char_child_red",
+      "title": "EPILOGUE CHILD — RED SHIRT",
+      "category": "characters",
+      "sections": [
+        "4.11"
+      ],
+      "covers": [
+        "Red-shirt epilogue child",
+        "Distinct face; cross-legged seated pose; carved wooden bird"
+      ],
+      "notes": [
+        "One of the source's five children. Exact age and shirt hex value are unspecified."
+      ]
+    },
+    {
+      "id": "char_child_blue",
+      "title": "EPILOGUE CHILD — BLUE SHIRT",
+      "category": "characters",
+      "sections": [
+        "4.11"
+      ],
+      "covers": [
+        "Blue-shirt epilogue child",
+        "Distinct face; cross-legged seated pose; carved wooden bird"
+      ],
+      "notes": [
+        "One of the source's five children. Exact age and shirt hex value are unspecified."
+      ]
+    },
+    {
+      "id": "char_child_green",
+      "title": "EPILOGUE CHILD — GREEN SHIRT",
+      "category": "characters",
+      "sections": [
+        "4.11"
+      ],
+      "covers": [
+        "Green-shirt epilogue child",
+        "Distinct face; cross-legged seated pose; carved wooden bird"
+      ],
+      "notes": [
+        "One of the source's five children. Exact age and shirt hex value are unspecified."
+      ]
+    },
+    {
+      "id": "char_child_yellow",
+      "title": "EPILOGUE CHILD — YELLOW SHIRT",
+      "category": "characters",
+      "sections": [
+        "4.11"
+      ],
+      "covers": [
+        "Yellow-shirt epilogue child",
+        "Distinct face; cross-legged seated pose; carved wooden bird"
+      ],
+      "notes": [
+        "One of the source's five children. Exact age and shirt hex value are unspecified."
+      ]
+    },
+    {
+      "id": "char_child_purple",
+      "title": "EPILOGUE CHILD — PURPLE SHIRT",
+      "category": "characters",
+      "sections": [
+        "4.11"
+      ],
+      "covers": [
+        "Purple-shirt epilogue child",
+        "Distinct face; cross-legged seated pose; carved wooden bird"
+      ],
+      "notes": [
+        "The purple cloth is non-emissive; magical violet remains tied to Kurinji."
+      ]
+    },
+    {
+      "id": "env_thennur_ashen",
+      "title": "Thennur — Ash and One Bloom",
+      "category": "places",
+      "sections": [
+        "3.10"
+      ],
+      "covers": [
+        "Thennur ashen/dusk/overgrown",
+        "sevenruins"
+      ],
+      "notes": [
+        "SAME Thennur(-8,98)18 m elevation 32 m plateau sevenhousefootprints, charredblack#2A 2420 brokenwalls/collapsedorslidroofs, weeds/regrown grass overash. Dusk quiet mutedearth/violetorange sky. ONE glowingviolet Kurinjibush at Malli(-12,104) nextto 3.6 m charredbeam. No otherbrightflowerglow. Sevennumberedruins in proposedplan. No corpses/gore."
+      ]
+    },
+    {
+      "id": "env_thennur_rebuilt",
+      "title": "Thennur — Rebuilding Hope",
+      "category": "places",
+      "sections": [
+        "3.10"
+      ],
+      "covers": [
+        "Thennur rebuilt/rebuilding",
+        "footprint"
+      ],
+      "notes": [
+        "SAME Thennur(-8,98)18 m 32 mplateau SAME 7 footprints beingrebuilt as creamplaster claytile South Indianhouses. Some completedroofs, othersactivefoundations; villagersandformer soldierslayingstones. Daywarmlight, constructiontools/materials. Mallimemorialcoordinate(-12,104)retained. Plan 7 houses PROPOSEDplacements. No snow."
+      ]
+    },
+    {
+      "id": "env_fortress_night_quake",
+      "title": "Dunkan’s Fortress — Night Quake",
+      "category": "places",
+      "sections": [
+        "3.11"
+      ],
+      "covers": [
+        "Fortress night/boulderquake",
+        "same footprint"
+      ],
+      "notes": [
+        "SAME fortress(0,158)14 m 44x 30 courtyard 7 m walls SIXroundtowers 11 mredcone roofs 8 mfrontgate 4 braziers Eastmine Rear 3 stepdais at(0,170). Nightphase 2: moonlight#9FB 4FF sky#050818,firebraziers/dust/fallingangulargrayboulder hazard/groundimpact marks. No totalfortresscollapse. Main courtyard wideview plusbefore/impactgrounddetail and plan samefootprint. Anvilsigiloncrimsonbanners. No unrelatedvioletmagic."
+      ]
+    },
+    {
+      "id": "env_throne_room",
+      "title": "The Iron Throne — Occupied and Empty",
+      "category": "places",
+      "sections": [
+        "3.11"
+      ],
+      "covers": [
+        "Throne/dais",
+        "occupied/empty",
+        "fivevseven spikes"
+      ],
+      "notes": [
+        "Rearfortressdais throneat(0,170). EXACTTHREE darkstone steps. Blackiron#1A 1A 1E tallslabthroneback 3.4 m, crownedwith EXACTFIVE GOLD SPIKES. Mainthroneintimidatingstormlit framedrearwall. Inset occupied Dunkan 52 hugegrayhairbeard blackarmorcrimsoncape GOLDcrownwith SEVENspikes, plus samecamera EMPTYthrone and refusedcrown laidbelow unoccupied. Distinguish throne 5 vspersonal crown 7. Roomroof/walldimensions UNSPECIFIED any plan PROPOSED, sourcebackcourtyarddais. Scale 1.9 m."
+      ]
+    },
+    {
+      "id": "env_fortress_healing",
+      "title": "The Fortress — House of Healing",
+      "category": "places",
+      "sections": [
+        "3.11"
+      ],
+      "covers": [
+        "Fortress healing/open/emptythrone/bannersremoved"
+      ],
+      "notes": [
+        "SAME fortress(0,158)14 m 44x 30 m courtyard 7 m walls SIXround 11 m towersdarkredconeroofs 8 m gate. Chapter VIIopen gates banners REMOVED, herbsdryingonwalls sickpeoplequietlycaredforincourtyard, practicalbeds/cloth/screensandwater jars. FOUR ironbraziersretained subdued,functionallight. EASTmineexistingpit safelybarriered (barrier DESIGNPROPOSAL notcanonicalfill); rear 3 stepsand EMPTYthrone retained 5 goldspikes. No gore,no magicalhealingglow. Warmdaylight."
+      ]
+    },
+    {
+      "id": "world_map",
+      "title": "Kurinji — Complete World Plan",
+      "category": "world",
+      "sections": [
+        "1",
+        "2"
+      ],
+      "covers": [
+        "World coordinates",
+        "allplaces/houses",
+        "altitude"
+      ],
+      "notes": [
+        "Illustrativecoordinate-groundedworldplan NORTHUPnegativez. Longvalley z-90to 170. Exactmarkers: rock(20,-90)y 51;temple(0,-72)y 42;bell(9,-66);village(0,0)y 30;forge(-13,8);training(14,10);gate(0,46)y 25;Thennur(-8,98)y 18;Mallibeam(-12,104);fortress(0,158)y 14;throne(0,170). Elevenhousecoordinates labeled H 1(-14,-10),H 2(-17,2),H 3(-6,-16),H 4(8,-15),H 5(16,-6),H 6(18,22),H 7(-18,18),H 8(-6,20),H 9(7,19),H 10(-24,-18),H 11(24,-16). Village 24 m clearing widerhousefootprint.45 m valleyfloor/68 m wall. Templegopuram/South Indianhouses/fortress 6 roundtowers. Road 3 m Sshape~7 m. Optionalbridgedashedlegend only OPTIONALCONCEPT—UNASSIGNED. Caption ILLUSTRATIVE PLAN — COORDINATE TABLE AUTHORITATIVE; unspecifiedbuildingcenters/roadspline PROPOSED. Small altitudeprofile~37 mdescent/260 mlength; northarrow/metergrid."
+      ]
+    },
+    {
+      "id": "world_valley_panorama",
+      "title": "Kurinji Valley — Waiting and Bloom",
+      "category": "world",
+      "sections": [
+        "1",
+        "2"
+      ],
+      "covers": [
+        "Valley allterrain",
+        "waiting/bloom",
+        "elevation/forest"
+      ],
+      "notes": [
+        "FULLLONGVALLEYpanorama highnorth sacredrock(20,-90)51 mtemple(0,-72)42 m;village(0,0)30 m;gatez 46y 25;Thennur(-8,98)18 m;fortress(0,158)14 m/thronez 170. ~260 mlength~37 mdescent,45 mfloor,Spath 3 mwidth~7 mwander,slopesriseup 70 m abovefloor. EXACT 26 distanthorizonpeaks 90–210 m bluegray#5A 6680, snow ONLYhighridges~62–76 m andabove, nevervillage. Mixturepine/shola/eucalyptus 3–6 mforest,grassgreens#5F 8A 3A/#3F 6A 2A waitingwaisthigh Kurinjishrubs#3A 5A 30 closedbuds. Mainwaitingpanorama pluslarge SAMECAMERA bloomcomparison lowerpanel blueviolet#8A 7CF 0 carpet fromrockoutward. Scale/profilelabels. 18 m tree-freeclearancerock."
+      ]
+    }
+  ],
+  "title": "Kurinji — The Last Bloom",
+  "style": "Advanced faceted polygon 3D concept art",
+  "delivery": [
+    3840,
+    2160
+  ],
+  "upscaled": true,
+  "sourceDocument": "ART_REFERENCE_SOURCE.md",
+  "counts": {
+    "world": 1,
+    "characters": 22,
+    "places": 30,
+    "assets": 14,
+    "nature": 4,
+    "lighting": 7,
+    "effects": 10,
+    "story": 12,
+    "interface": 1
+  },
+  "total": 101,
+  "boards": [
+    {
+      "id": "char_veeran",
+      "title": "VEERAN — THE ASH-HOUND",
+      "category": "characters",
+      "sections": [
+        "4.1"
+      ],
+      "covers": [
+        "Veeran, age 32: Aruvan's younger identity",
+        "Dark steel armor, blood-dark cloth and red cape",
+        "Pointed helmet with red plume; sword"
+      ],
+      "notes": [
+        "Prologue form of the same man who becomes Aruvan."
+      ],
+      "image": "characters/char_veeran.png",
+      "preview": "characters/char_veeran-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9836956
+    },
+    {
+      "id": "char_aruvan_monk",
+      "title": "ARUVAN — THE MONK",
+      "category": "characters",
+      "sections": [
+        "4.1"
+      ],
+      "covers": [
+        "Aruvan, age 44: lean, wiry monk",
+        "Saffron knee-length robe and short full black beard",
+        "Two-meter wooden staff: brass and Chapter IV iron caps",
+        "Wrist prayer beads and healed blade scar on the left hand"
+      ],
+      "notes": [
+        "Preserves the user's scar and bead preferences within the source's monk design."
+      ],
+      "image": "characters/char_aruvan_monk.png",
+      "preview": "characters/char_aruvan_monk-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 8740537
+    },
+    {
+      "id": "char_aruvan_king",
+      "title": "KING ARUVAN — CHAPTER VII",
+      "category": "characters",
+      "sections": [
+        "4.1"
+      ],
+      "covers": [
+        "Chapter VII Aruvan in the same saffron robe",
+        "Simple white shawl proposal",
+        "Uncrowned king"
+      ],
+      "notes": [
+        "He never wears the crown. Chapter VII's exact age is unspecified."
+      ],
+      "image": "characters/char_aruvan_king.png",
+      "preview": "characters/char_aruvan_king-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9263847
+    },
+    {
+      "id": "char_aruvan_old",
+      "title": "OLD ARUVAN — EPILOGUE",
+      "category": "characters",
+      "sections": [
+        "4.1"
+      ],
+      "covers": [
+        "Aruvan, age 56",
+        "Thin, slightly stooped posture; faded saffron robe",
+        "Long white beard; no staff",
+        "Wrist beads and healed left-hand scar"
+      ],
+      "notes": [
+        "The epilogue keeps his identity while changing posture, beard and cloth."
+      ],
+      "image": "characters/char_aruvan_old.png",
+      "preview": "characters/char_aruvan_old-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9809878
+    },
+    {
+      "id": "char_malli",
+      "title": "MALLI — CHILD OF THENNUR",
+      "category": "characters",
+      "sections": [
+        "4.2"
+      ],
+      "covers": [
+        "Malli, age 7",
+        "Messy long black hair; undyed beige dress; bare feet",
+        "Single glowing violet flower"
+      ],
+      "notes": [
+        "Neutral living reference; her farewell is visualized separately without graphic injury."
+      ],
+      "image": "characters/char_malli.png",
+      "preview": "characters/char_malli-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 8966079
+    },
+    {
+      "id": "char_malli_spirit",
+      "title": "MALLI — OPTIONAL SPIRIT ECHO",
+      "category": "characters",
+      "sections": [
+        "4.2"
+      ],
+      "covers": [
+        "Optional translucent echo of Malli",
+        "Same child's face, dress and single flower"
+      ],
+      "notes": [
+        "Optional spirit concept permitted by the source."
+      ],
+      "image": "characters/char_malli_spirit.png",
+      "preview": "characters/char_malli_spirit-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 8674204
+    },
+    {
+      "id": "char_guru_nilakantha",
+      "title": "GURU NILAKANTHA — THE BLIND ABBOT",
+      "category": "characters",
+      "sections": [
+        "4.3"
+      ],
+      "covers": [
+        "Blind abbot, about 78",
+        "Frail build, clouded pale eyes and long white beard",
+        "Cream layered robe",
+        "Folded listening pose and seated meditation"
+      ],
+      "notes": [
+        "Walking stick and prayer beads are optional accessories."
+      ],
+      "image": "characters/char_guru_nilakantha.png",
+      "preview": "characters/char_guru_nilakantha-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9968920
+    },
+    {
+      "id": "char_thamarai_child",
+      "title": "THAMARAI — RIVER-RESCUE CHILD",
+      "category": "characters",
+      "sections": [
+        "4.4"
+      ],
+      "covers": [
+        "Nine-year-old Thamarai from the river-rescue backstory",
+        "Proposed green top and plum skirt"
+      ],
+      "notes": [
+        "The source specifies her age and story, but leaves childhood clothing open."
+      ],
+      "image": "characters/char_thamarai_child.png",
+      "preview": "characters/char_thamarai_child-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 8367336
+    },
+    {
+      "id": "char_thamarai_healer",
+      "title": "THAMARAI — THE HEALER",
+      "category": "characters",
+      "sections": [
+        "4.4"
+      ],
+      "covers": [
+        "Thamarai, about 21",
+        "Long braid; green top; plum wrap skirt or half-sari",
+        "Herb basket, pouches and satchel"
+      ],
+      "notes": [
+        "Her practical clothing and quick, expressive face define the healer."
+      ],
+      "image": "characters/char_thamarai_healer.png",
+      "preview": "characters/char_thamarai_healer-preview.webp",
+      "nativeResolution": [
+        1672,
+        940
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9869493
+    },
+    {
+      "id": "char_thamarai_epilogue",
+      "title": "THAMARAI — EPILOGUE HEALER",
+      "category": "characters",
+      "sections": [
+        "4.4"
+      ],
+      "covers": [
+        "Thamarai, about 33",
+        "First gray streaks in the braid",
+        "Healer's shawl, basket and herbs"
+      ],
+      "notes": [
+        "Same identity as the main healer, with subtle aging."
+      ],
+      "image": "characters/char_thamarai_epilogue.png",
+      "preview": "characters/char_thamarai_epilogue-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 10818723
+    },
+    {
+      "id": "char_ilan_child",
+      "title": "ILAN — THE ORPHAN BOY",
+      "category": "characters",
+      "sections": [
+        "4.5"
+      ],
+      "covers": [
+        "Ilan, age 9",
+        "Yellow shirt; brown shorts; bare feet; scraped knees",
+        "Hand-carved wooden kingfisher"
+      ],
+      "notes": [
+        "Energetic child proportions and a cheerful expression."
+      ],
+      "image": "characters/char_ilan_child.png",
+      "preview": "characters/char_ilan_child-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 8284700
+    },
+    {
+      "id": "char_ilan_teacher",
+      "title": "ILAN — THE YOUNG TEACHER",
+      "category": "characters",
+      "sections": [
+        "4.5"
+      ],
+      "covers": [
+        "Adult Ilan, about 19–21",
+        "Short black hair and beard; yellow teacher's shawl",
+        "Carved kingfisher, sparrow and mynah",
+        "Seated teaching pose"
+      ],
+      "notes": [
+        "The source supplies an adult age range rather than an exact Chapter VII age."
+      ],
+      "image": "characters/char_ilan_teacher.png",
+      "preview": "characters/char_ilan_teacher-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9914461
+    },
+    {
+      "id": "char_kaali",
+      "title": "KAALI — THE BLACKSMITH",
+      "category": "characters",
+      "sections": [
+        "4.6"
+      ],
+      "covers": [
+        "Kaali, about 38",
+        "Broad muscular build; tied long black hair",
+        "Healed forearm burns; rust top; charcoal trousers; leather apron",
+        "War hammer with a 1.7-meter handle"
+      ],
+      "notes": [
+        "Her father's melted sword supplies Aruvan's iron staff caps from Chapter IV."
+      ],
+      "image": "characters/char_kaali.png",
+      "preview": "characters/char_kaali-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9021577
+    },
+    {
+      "id": "char_rudhra_young",
+      "title": "YOUNG RUDHRA — PROLOGUE",
+      "category": "characters",
+      "sections": [
+        "4.7"
+      ],
+      "covers": [
+        "Rudhra, age 32",
+        "Short black hair and clean-shaven face",
+        "Black-blue armor and sword"
+      ],
+      "notes": [
+        "Younger version of the commander, with the same facial identity."
+      ],
+      "image": "characters/char_rudhra_young.png",
+      "preview": "characters/char_rudhra_young-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9197128
+    },
+    {
+      "id": "char_rudhra_commander",
+      "title": "COMMANDER RUDHRA — THE LAST HOUND",
+      "category": "characters",
+      "sections": [
+        "4.7"
+      ],
+      "covers": [
+        "Rudhra, age 44",
+        "Tall, lean build; long black hair and beard",
+        "Black-blue armor; dark purple cape; sword"
+      ],
+      "notes": [
+        "Predatory expression and a cocky half-smile distinguish him from the king."
+      ],
+      "image": "characters/char_rudhra_commander.png",
+      "preview": "characters/char_rudhra_commander-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9227283
+    },
+    {
+      "id": "char_rudhra_penitent",
+      "title": "RUDHRA — THE PENITENT",
+      "category": "characters",
+      "sections": [
+        "4.7"
+      ],
+      "covers": [
+        "Spared Rudhra in Chapter VII",
+        "Plain brown-gray robes; no armor or cape",
+        "Temple-sweeping broom"
+      ],
+      "notes": [
+        "His exact age in this chapter is unspecified."
+      ],
+      "image": "characters/char_rudhra_penitent.png",
+      "preview": "characters/char_rudhra_penitent-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9509226
+    },
+    {
+      "id": "char_dunkan_iron_king",
+      "title": "DUNKAN — THE IRON KING",
+      "category": "characters",
+      "sections": [
+        "4.8"
+      ],
+      "covers": [
+        "Dunkan, about 52: very broad and 1.25 times adult height",
+        "Gray hair and beard; black armor; crimson cape",
+        "Seven-spike gold crown; greatsword with a 1.5-meter blade",
+        "Seated throne and defeated kneeling studies"
+      ],
+      "notes": [
+        "The crown has seven spikes; the separate throne has five."
+      ],
+      "image": "characters/char_dunkan_iron_king.png",
+      "preview": "characters/char_dunkan_iron_king-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 10340143
+    },
+    {
+      "id": "char_senthil_conscript",
+      "title": "SENTHIL — THE YOUNG CONSCRIPT",
+      "category": "characters",
+      "sections": [
+        "4.9"
+      ],
+      "covers": [
+        "Senthil, age 16",
+        "Boyish frightened face and messy black hair",
+        "Gray soldier armor; no helmet"
+      ],
+      "notes": [
+        "He is a teenage conscript. The source does not specify an exact height."
+      ],
+      "image": "characters/char_senthil_conscript.png",
+      "preview": "characters/char_senthil_conscript-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9054341
+    },
+    {
+      "id": "char_senthil_builder",
+      "title": "SENTHIL — THE VILLAGE BUILDER",
+      "category": "characters",
+      "sections": [
+        "4.9"
+      ],
+      "covers": [
+        "Chapter VII Senthil in civilian builder clothes",
+        "Laying Thennur's first rebuilding stone"
+      ],
+      "notes": [
+        "Later age and clothing colors are unspecified design choices."
+      ],
+      "image": "characters/char_senthil_builder.png",
+      "preview": "characters/char_senthil_builder-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9667018
+    },
+    {
+      "id": "char_villager_mustard",
+      "title": "OLD MURUGAN — MUSTARD VILLAGER",
+      "category": "characters",
+      "sections": [
+        "4.11",
+        "3.5"
+      ],
+      "covers": [
+        "Mustard clothing variant: Old Murugan",
+        "Elder posture, cough and walking stick"
+      ],
+      "notes": [
+        "Links the named elder to the optional suggested house identity. Exact age is unspecified."
+      ],
+      "image": "characters/char_villager_mustard.png",
+      "preview": "characters/char_villager_mustard-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 8519400
+    },
+    {
+      "id": "char_villager_teal",
+      "title": "TEAL VILLAGER — WEAVER",
+      "category": "characters",
+      "sections": [
+        "4.11",
+        "3.5"
+      ],
+      "covers": [
+        "Teal clothing variant: weaver",
+        "Distinct female villager design"
+      ],
+      "notes": [
+        "Gender and occupation are proposed variety for the unnamed village population."
+      ],
+      "image": "characters/char_villager_teal.png",
+      "preview": "characters/char_villager_teal-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9429488
+    },
+    {
+      "id": "char_villager_plum",
+      "title": "PLUM VILLAGER — POTTER",
+      "category": "characters",
+      "sections": [
+        "4.11",
+        "3.5"
+      ],
+      "covers": [
+        "Plum clothing variant: potter",
+        "Distinct male villager design"
+      ],
+      "notes": [
+        "Gender and occupation are proposed variety for the unnamed village population."
+      ],
+      "image": "characters/char_villager_plum.png",
+      "preview": "characters/char_villager_plum-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 9329099
+    },
+    {
+      "id": "env_meditation_rock_dawn",
+      "title": "Meditation Rock — Dawn",
+      "category": "places",
+      "sections": [
+        "3.1"
+      ],
+      "covers": [
+        "Opening cliff rock",
+        "dawn",
+        "scale and clearance"
+      ],
+      "notes": [
+        "Rock at (20,-90), elevation ~51 m. Flat weathered gray boulder ~4 m diameter, under 1 m tall, cliff-edge short alpine grass. Tree-free radius 18 m. Misty valley below, temple southwest below. Waiting green Kurinji with closed violet buds. Dawn sky #5B 7FB 8, peach horizon #F 3B 98A, fog #E 8C 3A 8, light #FFC 48A."
+      ],
+      "image": "places/env_meditation_rock_dawn.png",
+      "preview": "places/env_meditation_rock_dawn-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 15921120
+    },
+    {
+      "id": "env_meditation_rock_bloom",
+      "title": "Meditation Rock — Last Bloom",
+      "category": "places",
+      "sections": [
+        "3.1"
+      ],
+      "covers": [
+        "Epilogue rock",
+        "bloom",
+        "same footprint"
+      ],
+      "notes": [
+        "SAME rock footprint at (20,-90), ~51 m elevation, flat 4 m boulder<1 m tall, 18 m tree-free radius. Final Kurinji blue-violet carpet #8A 7CF 0 and drifting petals, pink/lavender bloom atmosphere. Temple and long valley below. Old thin saffron monk 56 meditating optional tiny scale figure, Thamarai 33/Ilanadult nearby; no gore. Bloom sky #6A 8FD 8/horizon #F 7D 2E 8/fog #E 6D 6F 0/light #FFF 0D 8."
+      ],
+      "image": "places/env_meditation_rock_bloom.png",
+      "preview": "places/env_meditation_rock_bloom-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17400785
+    },
+    {
+      "id": "env_temple_peaceful",
+      "title": "Mountain Temple — Peaceful Dawn",
+      "category": "places",
+      "sections": [
+        "3.2"
+      ],
+      "covers": [
+        "Temple primary architecture",
+        "platform/pillars/steps",
+        "alternative"
+      ],
+      "notes": [
+        "Temple at (0,-72), terrace elevation~42 m, facing SOUTH (+z). Exact two-level platform 18x 14 m base,14x 10 m upper, FIVE front steps, EIGHT red pillars 4 m tall supporting cream shrine hall. Primary modest stepped Dravidian gopuram-style tower, brass lamps, incense, golden seated meditating statue, offerings, mango-leaf garlands. Worn mossy stone and wooden floor. Small clearly separated inset labeled CURRENT-BUILD ALTERNATIVE shows three stacked red pagoda roofs/gold spire and five-color prayer flags; not primary. Source colors platform#9A 8F 80 pillars#8A 2A 1A hall#D 8C 9A 8. Dawn."
+      ],
+      "image": "places/env_temple_peaceful.png",
+      "preview": "places/env_temple_peaceful-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17396136
+    },
+    {
+      "id": "env_temple_burning",
+      "title": "Mountain Temple — Night Raid",
+      "category": "places",
+      "sections": [
+        "3.2"
+      ],
+      "covers": [
+        "Temple burning/night",
+        "coherent damage"
+      ],
+      "notes": [
+        "SAME temple footprint at (0,-72),42 m elevation,18x 14 m base 14x 10 m upper,5 steps 8 pillars 4 m tall, modest stepped Dravidian tower creamhall. Night raid: localized roof/courtyard fire, orange embers/smoke, soot/cracked areas, steps clearly visible. No total collapse; no bodies/injury. Statue/lamp closeup amidst smoke. Night sky#050818 horizon#1A 2440 fog#141C 30 moonlight#9FB 4FF plus orange fire."
+      ],
+      "image": "places/env_temple_burning.png",
+      "preview": "places/env_temple_burning-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16681358
+    },
+    {
+      "id": "env_temple_rain_repaired",
+      "title": "Mountain Temple — Rain and Repair",
+      "category": "places",
+      "sections": [
+        "3.2"
+      ],
+      "covers": [
+        "Temple rainy/repaired",
+        "sweeping"
+      ],
+      "notes": [
+        "SAME primary Dravidian temple at (0,-72),42 m,18x 14 base 14x 10 upper 5 frontsteps 8 redpillars 4 m. Chapter VII repaired charred edges, wet stone stairs/wood, rain droplets and cool mist. A small penitent adult in plain brown-gray robe sweeping the steps (not a new hero). Stepped gopuram retained, brass lamps/mango-leaf garlands, no pagoda primary. Storm sky#2A 2E 38 horizon#6A 6A 70 fog#5A 5E 66 light#C 8 CCD 8."
+      ],
+      "image": "places/env_temple_rain_repaired.png",
+      "preview": "places/env_temple_rain_repaired-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17447007
+    },
+    {
+      "id": "env_bell_tower",
+      "title": "Bell Tower — Dawn Icon",
+      "category": "places",
+      "sections": [
+        "3.3"
+      ],
+      "covers": [
+        "Bell tower",
+        "bell/striker",
+        "construction"
+      ],
+      "notes": [
+        "At (9,-66) beside temple. Two dark wood posts 4 m high with crossbeam and small red pyramid roof. ONE large flared greenish-bronze bell 1.5 m tall #6A 5A 2A, suspended with believable joinery, wooden striker log. Temple shown behind for location. Dawn primary, small wet/final-ring weather variant in detail. Full elevation with 4 m post height 1.5 m bell; scale 1.9 m."
+      ],
+      "image": "places/env_bell_tower.png",
+      "preview": "places/env_bell_tower-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17234383
+    },
+    {
+      "id": "env_lantern_path",
+      "title": "Lantern Path — Warm Light",
+      "category": "places",
+      "sections": [
+        "3.4"
+      ],
+      "covers": [
+        "Lantern route",
+        "six lanterns",
+        "day/night"
+      ],
+      "notes": [
+        "Temple-to-village winding packed dirt path~3 m wide, exactly SIX stone lanterns 1.7 m tall arranged zigzag. Each stone pillar/pyramidcap/amber lampbox#FFC 066. Primary dusk establishing down temple slope toward village, waiting Kurinji shrubs. Closeups day/unlit and night/glowing SAME lantern geometry. Schematic 6 lantern numbered dots; exact positions labeled PROPOSED; no invented exact coordinates."
+      ],
+      "image": "places/env_lantern_path.png",
+      "preview": "places/env_lantern_path-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16233204
+    },
+    {
+      "id": "env_village_morning",
+      "title": "Kurinji Village — Morning Square",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "Village day",
+        "central well",
+        "stalls",
+        "life"
+      ],
+      "notes": [
+        "Village center(0,0),~30 m elevation, circular central clearing 24 m diameter, wider surrounding 11 house settlement. Houses cream plaster/claytiles/thinnai/kolam/garlands, no snow. One offcenter round well 2.4 m wide with 2 woodposts redpyramid roof. THREE stalls with red#B 03A 2A blue#2A 6AB 0 yellow#C 9A 227 awnings and orange/red/green fruit. Cooking smoke/laundry/chickens/goats, lantern posts, crates/barrels. Day sky#3F 7FD 0 horizon#BFDCF 0 fog#C 8 DCEA light#FFF 2DD. Plan positions for stalls/well PROPOSED, not exact source coordinates."
+      ],
+      "image": "places/env_village_morning.png",
+      "preview": "places/env_village_morning-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 18013468
+    },
+    {
+      "id": "env_village_envoy_dusk",
+      "title": "Kurinji Village — The Iron Envoy",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "Village dusk/envoy",
+        "footprint consistency"
+      ],
+      "notes": [
+        "SAME village center(0,0),30 m central 24 m clearing,11 houses beyond,2.4 m well/redroof/3 marketstalls red blueyellow same layout. Dusk violetorange sky and long shadows, lean longblackhaired/bearded Rudhra 44 in charcoalindigo armor/deepplum cape with few soldiers enter on southern gate road. Tiny figures only; primary environment. No burnedvillage. Dusk#2B 2550/#E 0703A/#B 0705A/#FF 7A 3A."
+      ],
+      "image": "places/env_village_envoy_dusk.png",
+      "preview": "places/env_village_envoy_dusk-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17695946
+    },
+    {
+      "id": "env_house_thamarai",
+      "title": "Thamarai’s Herb House",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 01",
+        "herbs",
+        "(-14,-10)"
+      ],
+      "notes": [
+        "House at(-14,-10). One-story creamplaster thinnai/terracotta clay-tile roof, darkwood door,2.6 m wall. Shared size range 4–5.5 m width x 3.5–4.5 m depth; proposed footprint 4.8x 4.0 m clearly labeled PROPOSED. Dryingherbbundles/neembranches/claypots/mortar&pestle on porch, small kolam/mangoleafgarland. Warmgreen/cream details. Amber window night inset."
+      ],
+      "image": "places/env_house_thamarai.png",
+      "preview": "places/env_house_thamarai-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16988686
+    },
+    {
+      "id": "env_house_kaali",
+      "title": "Kaali’s Home",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 02",
+        "soot/beam/hammer",
+        "(-17,2)"
+      ],
+      "notes": [
+        "House at(-17,2) beside forge(-13,8). Single-story sandplaster/claytile/thinnai,2.6 m walls, size 4–5.5x 3.5–4.5 m range; proposed 4.8x 4.0 m labeled PROPOSED. Sootstained wall, father's old forge beam with old hammer hanging; memorial respectful no violent imagery. Practical tools/wood joinery and night amberwindow inset. Separate from openforge shed."
+      ],
+      "image": "places/env_house_kaali.png",
+      "preview": "places/env_house_kaali-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17241173
+    },
+    {
+      "id": "env_house_murugan",
+      "title": "Old Murugan’s House",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 03",
+        "elder/tulsi",
+        "(-6,-16)"
+      ],
+      "notes": [
+        "House at(-6,-16). Single-story creamplaster claytile thinnai 2.6 m walls. Size 4–5.5x 3.5–4.5 m, proposed 4.5x 3.8 m PROPOSED. Rockingstool on porch, walkingstick, potted tulsi, visibly aged repair/low porch friendlyentry. Kolam/mangoleafgarland. Night amberwindow inset."
+      ],
+      "image": "places/env_house_murugan.png",
+      "preview": "places/env_house_murugan-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17669774
+    },
+    {
+      "id": "env_house_weaver",
+      "title": "The Weaver’s House",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 04",
+        "textiles",
+        "(8,-15)"
+      ],
+      "notes": [
+        "House at(8,-15). Single-story ivoryplaster claytilethinnai 2.6 m walls. Size 4–5.5x 3.5–4.5 m; proposed 5.0x 4.2 m PROPOSED. Dyed saffron/indigo/red cloth hanging to dry, simple wovenwork surface/spindlecloth details; strong angular fabricfolds. Kolam/garland. Night amberwindow inset."
+      ],
+      "image": "places/env_house_weaver.png",
+      "preview": "places/env_house_weaver-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17705790
+    },
+    {
+      "id": "env_house_potter",
+      "title": "The Potter’s House",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 05",
+        "pottery",
+        "(16,-6)"
+      ],
+      "notes": [
+        "House at(16,-6). Single-story sandplaster claytile thinnai 2.6 m walls, size 4–5.5x 3.5–4.5 m proposed 4.8x 4 m PROPOSED. Claypots stacked outside, believable potter'swheel and bowls wetclaywork detail. Kolam/garland and amberwindow night inset. Warmearthcolors."
+      ],
+      "image": "places/env_house_potter.png",
+      "preview": "places/env_house_potter-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17144681
+    },
+    {
+      "id": "env_house_shepherd",
+      "title": "The Shepherd’s House",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 06",
+        "goats/wool/doorbell",
+        "(18,22)"
+      ],
+      "notes": [
+        "House at(18,22). Single-story creamplaster claytile thinnai 2.6 m walls, sharedsize 4–5.5x 3.5–4.5 m; proposed 5x 4.2 m PROPOSED. Small attached goatpen, wool bundles, bronze bellondoor; goats faceted believable scale. Penlayout PROPOSED. Kolam/garland amberwindow inset."
+      ],
+      "image": "places/env_house_shepherd.png",
+      "preview": "places/env_house_shepherd-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17564494
+    },
+    {
+      "id": "env_house_granary",
+      "title": "The Rice Granary",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 07",
+        "larger stiltgranary",
+        "(-18,18)"
+      ],
+      "notes": [
+        "At(-18,18). Larger practical raisedwood/plaster ricegranary on stilts,claytile pitchedroof,grain sacks stacked and ventilated raisedfloor. Same village architecturefamily. Source says larger raisedhouse but no exact footprint: anyplan/elevation footprint labeled PROPOSED 6x 4.5 m, wallheight 2.6 m as housefamily, stiltheightdesignproposed. Show ladder/joinery/pestfree storage and grain sacks. No snow."
+      ],
+      "image": "places/env_house_granary.png",
+      "preview": "places/env_house_granary-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17186618
+    },
+    {
+      "id": "env_house_tea",
+      "title": "The Village Tea House",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 08",
+        "benches/kettle",
+        "(-6,20)"
+      ],
+      "notes": [
+        "House at(-6,20). Single-story creamplaster claytile thinnai 2.6 m walls,source size 4–5.5x 3.5–4.5 m; proposed 5.5x 4.5 m PROPOSED. Outdoorbenches/steaming kettle/cups, warmvillager gathering atmosphere; source gossipspot. Kolam/garland/nightamberwindow inset. Steam is white, no magic."
+      ],
+      "image": "places/env_house_tea.png",
+      "preview": "places/env_house_tea-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17611429
+    },
+    {
+      "id": "env_house_carpenter",
+      "title": "The Carpenter’s Workshop",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 09",
+        "carvedbirds/woodwork",
+        "(7,19)"
+      ],
+      "notes": [
+        "House at(7,19). Single-story sandplaster claytilethinnai 2.6 m wall;4–5.5x 3.5–4.5 m sharedrange proposed 5x 4.2 m PROPOSED. Woodshavings, half-carved kingfishers/sparrows/mynahs, simple woodworking bench/tools, neatlystackedplanks. Source Ilanlearnshere;9 yearboytiny figureoptional. Kolam/garland/nightamberwindow inset."
+      ],
+      "image": "places/env_house_carpenter.png",
+      "preview": "places/env_house_carpenter-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17351386
+    },
+    {
+      "id": "env_house_beekeeper",
+      "title": "The Beekeeper’s House",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 10",
+        "hives",
+        "(-24,-18)"
+      ],
+      "notes": [
+        "House at(-24,-18). Single-story ivoryplaster claytile thinnai 2.6 m wall;source 4–5.5x 3.5–4.5 m proposed 4.8x 4 m PROPOSED. Multiple traditional hives around sidegarden safeandpractical, modest honeyjars/workbasket, tiny bees not giantcreatures. Green waiting Kurinji aroundlandscape. Kolam/garland/nightamberwindow inset."
+      ],
+      "image": "places/env_house_beekeeper.png",
+      "preview": "places/env_house_beekeeper-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17896300
+    },
+    {
+      "id": "env_house_shrine",
+      "title": "The Village Shrine House",
+      "category": "places",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "House 11",
+        "Ganesha/oillamps",
+        "(24,-16)"
+      ],
+      "notes": [
+        "House at(24,-16). Single-story creamplaster claytilethinnai 2.6 m walls;4–5.5x 3.5–4.5 m sharedrange proposed 4.5x 3.8 m PROPOSED. Modest small GANESHA shrine consistently primary, brass oil lamps, flowers, gentle templefabric/kolam/mangoleafgarland. No additional deity/giantnewtemple. Nightlamp/amberwindow inset."
+      ],
+      "image": "places/env_house_shrine.png",
+      "preview": "places/env_house_shrine-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 18222200
+    },
+    {
+      "id": "env_forge_working",
+      "title": "Kaali’s Forge — Working Iron",
+      "category": "places",
+      "sections": [
+        "3.6"
+      ],
+      "covers": [
+        "Forge active",
+        "dimensions/tools"
+      ],
+      "notes": [
+        "Forge at(-13,8). EXACT open-sided 5x 3.5 m awning supported FOUR woodposts, slanted woodenroof, roundstone furnace 2 m wide withorangehotcoals, blackironanvil/tongs/quenchwaterbuckets/toolracks. Orange sparks/coldbluewater contrast. Kaali 38 darkskin muscularwoman longhairtiedburnscarforearms/rusbrowntop charcoaltrousers leatherapron optional 1.9 m figure. Fatherbeam memorial only nonviolent. No enclosedhouse."
+      ],
+      "image": "places/env_forge_working.png",
+      "preview": "places/env_forge_working-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17306348
+    },
+    {
+      "id": "env_forge_peaceful",
+      "title": "Kaali’s Forge — Tools for Peace",
+      "category": "places",
+      "sections": [
+        "3.6"
+      ],
+      "covers": [
+        "Forge peaceful/ploughmaking",
+        "same structure"
+      ],
+      "notes": [
+        "SAME forge(-13,8),5x 3.5 m awning 4 posts 2 m roundfurnace. Chapter VII functional repair,safelyworkingcoals, racks of PLOUGHS/agriculturaltools instead of weaponarsenal. Closeups ploughhead/joinery/quenchbucket. Samefootprint, no snow. Kaali smithtiny scalefigure optional."
+      ],
+      "image": "places/env_forge_peaceful.png",
+      "preview": "places/env_forge_peaceful-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17677722
+    },
+    {
+      "id": "env_training_ground",
+      "title": "The Training Ground",
+      "category": "places",
+      "sections": [
+        "3.7"
+      ],
+      "covers": [
+        "Training fourdummies",
+        "staverack"
+      ],
+      "notes": [
+        "At(14,10) eastvillage. Packed-dirt square size UNSPECIFIED; proposed 8x 8 m planclearly labeled PROPOSED. Exactly FOUR post-mounted straw/burlap trainingdummies, not walkinghumanactors. Tanburlap#C 9A 86A, patchesseams/strawstuffing batteredwoodposts. Rack ofwoodenstaves. Day highlandvillage no snow. Wholetargets show postgroundfixings."
+      ],
+      "image": "places/env_training_ground.png",
+      "preview": "places/env_training_ground-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17397759
+    },
+    {
+      "id": "env_gate_intact",
+      "title": "The Palisade Gate — Intact",
+      "category": "places",
+      "sections": [
+        "3.8"
+      ],
+      "covers": [
+        "Gate intact",
+        "wall/towers/doors"
+      ],
+      "notes": [
+        "Acrossvalley atz 46,center(0,46),~25 m elevation. EXACT 68 m total logwallwidth crossing 45 m floor and reaching sideslopes. Sharpenedverticallogs 4–4.8 m tall. TWO squarewatchtowers 7 m tall redpyramidcaps. TWO central doors each 3 m wide 4.2 m tall darkplanks#4A 2C 18 ironbands, swing INWARD. Rearwalkway/torches/spears. Panoramicfront establishing +constructiondetail+small overhead show hingeinward arc. No 6 doors/4 towers."
+      ],
+      "image": "places/env_gate_intact.png",
+      "preview": "places/env_gate_intact-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 18346558
+    },
+    {
+      "id": "env_gate_shattered_storm",
+      "title": "The Palisade Gate — Storm Breach",
+      "category": "places",
+      "sections": [
+        "3.8"
+      ],
+      "covers": [
+        "Gate shattered/rain/breach"
+      ],
+      "notes": [
+        "SAMEgate(0,46)25 m,68 m walllogs 4–4.8 m,2 watchtowers 7 m,2 doors 3x 4.2 m. Stormbattle shatteredcentraldouble doors brokenplanks/ironbands, batteringram atbreach, muddy rainy foreground; remainingwall/towers coherent. No total towercollapsewithout reason. Rearwalkway. Detailhinges/debris/breach plan. Storm#2A 2E 38/#6A 6A 70/#5A 5E 66/#C 8 CCD 8."
+      ],
+      "image": "places/env_gate_shattered_storm.png",
+      "preview": "places/env_gate_shattered_storm-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17508229
+    },
+    {
+      "id": "env_valley_road",
+      "title": "The Valley Road — Journey South",
+      "category": "places",
+      "sections": [
+        "3.9"
+      ],
+      "covers": [
+        "Road journey",
+        "path/forest/hidingdetail"
+      ],
+      "notes": [
+        "Gate-to-Thennur roadbetweenz 46 andz 98;~3 m packedredbrown dirt#8A 6A 44, gentle S-curves~7 m side-to-side across 45 m valleyfloor. Openmeadow,pine/shola/eucalyptus on slopes,boulders/fallentree, waiting Kurinjishrubs. No bridge primary as notimplemented. Closeups pathstones/footprints,falentrunk/memorypetal hidingalcove tinyvioletflower. Proposedpathsplinelabel. Duskjourney light."
+      ],
+      "image": "places/env_valley_road.png",
+      "preview": "places/env_valley_road-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16735253
+    },
+    {
+      "id": "env_stream_bridge_optional",
+      "title": "Stream Bridge — Optional Concept",
+      "category": "places",
+      "sections": [
+        "3.9"
+      ],
+      "covers": [
+        "Optional bridge/stream",
+        "proposedgeometry"
+      ],
+      "notes": [
+        "Clearly label title and everyplan OPTIONAL CONCEPT — NOT IMPLEMENTED. Proposed smallstonebridgeoverclearshallowstream onjourneyroadz 46–98, exactsite UNASSIGNED. Proposed 3 m pathwidth,bridge span 4 m clearly PROPOSED notsource. Grounded stonearch,angularrockbanks,woodfree bridge,waterplants,sholapines. No canonicalcoordinates. Showconstruction/detailsplan/1.9 m scale."
+      ],
+      "image": "places/env_stream_bridge_optional.png",
+      "preview": "places/env_stream_bridge_optional-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16922786
+    },
+    {
+      "id": "env_thennur_burning",
+      "title": "Thennur — The Burning Village",
+      "category": "places",
+      "sections": [
+        "3.10"
+      ],
+      "covers": [
+        "Thennur burning",
+        "sevenhouses",
+        "memorysky"
+      ],
+      "notes": [
+        "Thennurcenter(-8,98),~18 m elevation,32 m wideplateau. EXACT SEVEN single-storyhouses relatedto Kurinji plasterclaytilefamily, allburningduringprologue underbloodred MEMORYsky#1A 0505 horizon#8A 2A 10 fog#4A 1408 firelight#FF 5A 20. Roofdamage/embers/smoke. No victims/gore. Small siteplansevennumberedfootprintslots PROPOSED, preservelaterstates. Mallibeamspot(-12,104)marked. Charcoalwalls#2A 2420 emerging."
+      ],
+      "image": "places/env_thennur_burning.png",
+      "preview": "places/env_thennur_burning-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16540285
+    },
+    {
+      "id": "env_malli_memorial",
+      "title": "Malli’s Memorial — The Beam and Bush",
+      "category": "places",
+      "sections": [
+        "3.10"
+      ],
+      "covers": [
+        "Malli beam/bush",
+        "3.6 m",
+        "statecomparison"
+      ],
+      "notes": [
+        "At(-12,104)within Thennur. ONE fallenblackroofbeam 3.6 m longlying atanangle; ONE waist-high Kurinjibushbloomsoutofseason besidewhere Mallilay, glowing#8A 7CF 0/#3A 2A 9A. Mainquietashendusk mutedruinsblurbehind. No victim/gore. Insetsburnedbeam construction and peacefulrebuiltremembrance SAMEspot. Labelcoordinate/3.6 m/1.9 m scale. Onlythisflowercolorinruins."
+      ],
+      "image": "places/env_malli_memorial.png",
+      "preview": "places/env_malli_memorial-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17267284
+    },
+    {
+      "id": "env_fortress_hostile",
+      "title": "Dunkan’s Fortress — Iron and Smoke",
+      "category": "places",
+      "sections": [
+        "3.11"
+      ],
+      "covers": [
+        "Fortress hostile",
+        "sixroundtowers/fourbraziers/mine"
+      ],
+      "notes": [
+        "Fortresscenter(0,158)~14 m elevation. Courtyard EXACT 44 mwide 30 mdeep, darkstonewalls 7 m#3A 3638 battlements. Frontgate 8 m opening between 2 oftotal SIX ROUND towers 11 m tall#2A 2628, darkred CONICAL roofs#4A 0A 0A longcrimsonbanners#8A 0A 0A withsimple IRON ANVIL sigil. FOUR ironbraziers courtyard. EAST courtyard scarredminepit exactsize UNSPECIFIED. Rear 3 stepdais throneat(0,170). Intimidatingchains/slag/smoke. Mainhigh 3/4 planoverviewmakesall 6 towerscountable; inset groundgateandmine/detail, plan dimensions. Towercenters PROPOSED."
+      ],
+      "image": "places/env_fortress_hostile.png",
+      "preview": "places/env_fortress_hostile-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17270583
+    },
+    {
+      "id": "props_staves_swords",
+      "title": "Staves and swords",
+      "category": "assets",
+      "sections": [
+        "4.1",
+        "4.7",
+        "4.10",
+        "5"
+      ],
+      "covers": [
+        "Aruvan brass-capped 2m staff",
+        "Aruvan iron-capped 2m staff",
+        "Veeran sword",
+        "Soldier sword",
+        "Captain sword",
+        "Rudhra sword",
+        "Plain training/villager staff"
+      ],
+      "notes": [
+        "Distinct labeled related sword variants; iron anvil army sigil design interpretation.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_staves_swords.png",
+      "preview": "assets/props_staves_swords-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 8959584
+    },
+    {
+      "id": "props_heavy_weapons_royal",
+      "title": "Heavy weapons and royal objects",
+      "category": "assets",
+      "sections": [
+        "4.1",
+        "4.6",
+        "4.8",
+        "4.10",
+        "5"
+      ],
+      "covers": [
+        "Dunkan greatsword",
+        "Kaali war hammer",
+        "Brute war hammer",
+        "Dunkan seven-spike gold crown",
+        "Kaali father's sword reconstruction",
+        "Melted/recast iron staff cap material"
+      ],
+      "notes": [
+        "Father sword reconstruction proposed because original appearance unspecified; crown seven spikes.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_heavy_weapons_royal.png",
+      "preview": "assets/props_heavy_weapons_royal-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 10267729
+    },
+    {
+      "id": "props_story_collectibles_birds",
+      "title": "Story collectibles and carved birds",
+      "category": "assets",
+      "sections": [
+        "4.1",
+        "4.2",
+        "4.4",
+        "4.5",
+        "5"
+      ],
+      "covers": [
+        "Five-petal memory blossom",
+        "Malli single-stem flower",
+        "Wooden kingfisher",
+        "Wooden sparrow",
+        "Wooden mynah",
+        "Woven herb basket",
+        "Bitter-herb satchel",
+        "Prayer wrist beads"
+      ],
+      "notes": [
+        "12 instances of one collectible; reserved violet emission.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_story_collectibles_birds.png",
+      "preview": "assets/props_story_collectibles_birds-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 10846656
+    },
+    {
+      "id": "props_temple_hardware",
+      "title": "Temple hardware and offerings",
+      "category": "assets",
+      "sections": [
+        "3.2",
+        "3.3",
+        "3.4",
+        "5"
+      ],
+      "covers": [
+        "Bronze 1.5m bell",
+        "Wooden striker log",
+        "Stone 1.7m lantern",
+        "Golden seated meditating statue",
+        "Brass oil lamp",
+        "Incense vessel",
+        "Flower offerings"
+      ],
+      "notes": [
+        "Six lantern instances; one full bell design with scale.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_temple_hardware.png",
+      "preview": "assets/props_temple_hardware-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 10253179
+    },
+    {
+      "id": "props_ritual_banners_lights",
+      "title": "Ritual garlands banners and lights",
+      "category": "assets",
+      "sections": [
+        "0",
+        "3.2",
+        "3.5",
+        "3.8",
+        "3.11",
+        "4.10",
+        "5"
+      ],
+      "covers": [
+        "Mango-leaf thoranam primary",
+        "Five-colour prayer flags alternative",
+        "Crimson iron-anvil army banner",
+        "Village lantern post",
+        "Gate torch",
+        "Ganesha small shrine primary",
+        "Murugan small shrine alternative"
+      ],
+      "notes": [
+        "Iron anvil design interpretation; cultural alternatives labeled.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_ritual_banners_lights.png",
+      "preview": "assets/props_ritual_banners_lights-preview.webp",
+      "nativeResolution": [
+        1672,
+        940
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 11326629
+    },
+    {
+      "id": "props_market_supplies",
+      "title": "Market supplies and fruit",
+      "category": "assets",
+      "sections": [
+        "3.5",
+        "5"
+      ],
+      "covers": [
+        "1m wooden crate",
+        "Banded barrel",
+        "Market table",
+        "Orange fruit",
+        "Red fruit",
+        "Green fruit",
+        "Red awning cloth",
+        "Blue awning cloth",
+        "Yellow awning cloth"
+      ],
+      "notes": [
+        "Three awnings separately drawn.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_market_supplies.png",
+      "preview": "assets/props_market_supplies-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 11025835
+    },
+    {
+      "id": "props_healer_garden_household",
+      "title": "Healer garden and household",
+      "category": "assets",
+      "sections": [
+        "3.5",
+        "3.11"
+      ],
+      "covers": [
+        "Drying herb bundles",
+        "Neem branches",
+        "Clay herb pots",
+        "Mortar",
+        "Pestle",
+        "Potted tulsi",
+        "Herb-drying rack"
+      ],
+      "notes": [
+        "Named plants distinct; other herbs generic design studies.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_healer_garden_household.png",
+      "preview": "assets/props_healer_garden_household-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 12834490
+    },
+    {
+      "id": "props_textile_pottery",
+      "title": "Textiles laundry and pottery",
+      "category": "assets",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "Saffron dyed cloth",
+        "Indigo dyed cloth",
+        "Red dyed cloth",
+        "Laundry line and garments",
+        "Clay-pot family",
+        "Potter wheel"
+      ],
+      "notes": [
+        "Pot shapes production interpretation.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_textile_pottery.png",
+      "preview": "assets/props_textile_pottery-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 12530891
+    },
+    {
+      "id": "props_tea_elder_granary",
+      "title": "Tea elder and granary objects",
+      "category": "assets",
+      "sections": [
+        "3.5"
+      ],
+      "covers": [
+        "Rocking stool",
+        "Elder walking stick",
+        "Tea bench",
+        "Kettle with steam",
+        "Grain sacks",
+        "Rice sample",
+        "Granary stilt/threshold"
+      ],
+      "notes": [
+        "Traditional functional objects.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_tea_elder_granary.png",
+      "preview": "assets/props_tea_elder_granary-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 11036851
+    },
+    {
+      "id": "props_carpentry_shepherd_beekeeper",
+      "title": "Carpentry shepherd and beekeeper objects",
+      "category": "assets",
+      "sections": [
+        "3.5",
+        "4.5"
+      ],
+      "covers": [
+        "Half-carved bird",
+        "Wood shavings",
+        "Wood stock and offcuts",
+        "Goat-pen rail/gate",
+        "Wool bundle",
+        "Shepherd door bell",
+        "Beehive"
+      ],
+      "notes": [
+        "No unlisted horses or sheep.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_carpentry_shepherd_beekeeper.png",
+      "preview": "assets/props_carpentry_shepherd_beekeeper-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 13004520
+    },
+    {
+      "id": "props_forge_workshop",
+      "title": "Kaali forge workshop",
+      "category": "assets",
+      "sections": [
+        "3.5",
+        "3.6",
+        "4.6"
+      ],
+      "covers": [
+        "2m round stone furnace",
+        "Glowing coals",
+        "Black iron anvil",
+        "Tongs",
+        "Quench-water bucket",
+        "Tool rack",
+        "Farm plough",
+        "Father forge beam with hanging hammer"
+      ],
+      "notes": [
+        "Beam distinct from Malli roof beam; tool type elaborations labeled proposed.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_forge_workshop.png",
+      "preview": "assets/props_forge_workshop-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 12945368
+    },
+    {
+      "id": "props_fortress_iron",
+      "title": "Fortress iron throne and industry",
+      "category": "assets",
+      "sections": [
+        "3.11",
+        "5"
+      ],
+      "covers": [
+        "3.4m iron throne with five gold spikes",
+        "Iron brazier",
+        "Chains and anchor",
+        "Iron spikes",
+        "Slag heap",
+        "Mine-pit rim and exposed iron rock"
+      ],
+      "notes": [
+        "Empty throne; four brazier instances share design.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_fortress_iron.png",
+      "preview": "assets/props_fortress_iron-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 10837631
+    },
+    {
+      "id": "props_gate_training_defense",
+      "title": "Gate training and defense kit",
+      "category": "assets",
+      "sections": [
+        "3.7",
+        "3.8"
+      ],
+      "covers": [
+        "Four post-mounted straw dummy wear variants",
+        "Weapon rack",
+        "Leaning spear",
+        "Battering ram",
+        "4–4.8m pointed palisade log",
+        "Iron door band and hinge",
+        "Walkway bracket",
+        "Shattered log fracture"
+      ],
+      "notes": [
+        "Dummies are mounted targets not walking humanoids.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_gate_training_defense.png",
+      "preview": "assets/props_gate_training_defense-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 11370238
+    },
+    {
+      "id": "props_thennur_ruin_rebuild",
+      "title": "Thennur ruin and rebuilding kit",
+      "category": "assets",
+      "sections": [
+        "3.10",
+        "4.9"
+      ],
+      "covers": [
+        "3.6m fallen black roof beam",
+        "Charred roof/plank debris",
+        "Collapsed terracotta tile fragments",
+        "Ash and weed regrowth",
+        "Rebuilding stones",
+        "Fresh timber repair module"
+      ],
+      "notes": [
+        "Same materials burning/ruin/rebuilt; no child tragedy depicted.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "assets/props_thennur_ruin_rebuild.png",
+      "preview": "assets/props_thennur_ruin_rebuild-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 12707798
+    },
+    {
+      "id": "nature_terrain_materials",
+      "title": "Highland terrain materials",
+      "category": "nature",
+      "sections": [
+        "1",
+        "2",
+        "5"
+      ],
+      "covers": [
+        "Two highland grasses",
+        "Grass tuft",
+        "Village wildflowers",
+        "3m packed dirt path",
+        "Footprint and stones",
+        "Mossy granite",
+        "Alpine snow",
+        "Distant snow-capped peak",
+        "Falling-boulder geometry"
+      ],
+      "notes": [
+        "Source colour swatches; snow only high ridges.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "nature/nature_terrain_materials.png",
+      "preview": "nature/nature_terrain_materials-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 13311762
+    },
+    {
+      "id": "nature_forest_timber",
+      "title": "Forest trees foliage and timber",
+      "category": "nature",
+      "sections": [
+        "2",
+        "3.1",
+        "3.9"
+      ],
+      "covers": [
+        "3–6m conifer",
+        "Eucalyptus",
+        "Shola tree",
+        "Distinct foliage clusters",
+        "Bark and trunk material",
+        "Fallen tree",
+        "Stump/cut/fracture"
+      ],
+      "notes": [
+        "Pine/shola/eucalyptus mixture; no forest in rock clearing.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "nature/nature_forest_timber.png",
+      "preview": "nature/nature_forest_timber-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 12487822
+    },
+    {
+      "id": "nature_kurinji_lifecycle",
+      "title": "Kurinji lifecycle and bloom spread",
+      "category": "nature",
+      "sections": [
+        "0",
+        "2",
+        "3.10",
+        "5"
+      ],
+      "covers": [
+        "Waiting shrub closed buds",
+        "Bloom shrub",
+        "Out-of-season glowing bush",
+        "Leaf/twig",
+        "Flower cluster",
+        "Single bloom",
+        "Bloom-spread diagram"
+      ],
+      "notes": [
+        "Same plant structure between states; 4500 waist-high shrubs; source colours.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "nature/nature_kurinji_lifecycle.png",
+      "preview": "nature/nature_kurinji_lifecycle-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 14154072
+    },
+    {
+      "id": "nature_fauna",
+      "title": "Village fauna and tiny lights",
+      "category": "nature",
+      "sections": [
+        "2",
+        "3.5",
+        "6"
+      ],
+      "covers": [
+        "Village chicken",
+        "Village goat",
+        "Honey bee",
+        "Firefly and emission"
+      ],
+      "notes": [
+        "Bee contextual beekeeper interpretation; no unlisted fauna.",
+        "Dimensions, incidental material values and construction not specified in ART_REFERENCE.md are proposed visual design studies; source-specified values take precedence over illustrative proportions."
+      ],
+      "image": "nature/nature_fauna.png",
+      "preview": "nature/nature_fauna-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 10434092
+    },
+    {
+      "id": "lighting_dawn",
+      "title": "Dawn lighting",
+      "category": "lighting",
+      "sections": [
+        "2"
+      ],
+      "covers": [
+        "Same fixed terrace camera",
+        "Dawn sky/horizon/fog/sun palette",
+        "Low warm sun",
+        "Ch. I opening"
+      ],
+      "notes": [
+        "Lighting-only transformation of common test scene."
+      ],
+      "image": "lighting/lighting_dawn.png",
+      "preview": "lighting/lighting_dawn-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 15963328
+    },
+    {
+      "id": "lighting_day",
+      "title": "Day lighting",
+      "category": "lighting",
+      "sections": [
+        "2"
+      ],
+      "covers": [
+        "Same fixed terrace camera",
+        "Day sky/horizon/fog/sun palette",
+        "High sun",
+        "Ch. I village and Ch. VII"
+      ],
+      "notes": [
+        "Lighting-only transformation of common test scene."
+      ],
+      "image": "lighting/lighting_day.png",
+      "preview": "lighting/lighting_day-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 15766691
+    },
+    {
+      "id": "lighting_dusk",
+      "title": "Dusk lighting",
+      "category": "lighting",
+      "sections": [
+        "2"
+      ],
+      "covers": [
+        "Same fixed terrace camera",
+        "Dusk sky/horizon/fog/sun palette",
+        "Long shadows",
+        "Ch. II and Ch. V"
+      ],
+      "notes": [
+        "Lighting-only transformation of common test scene."
+      ],
+      "image": "lighting/lighting_dusk.png",
+      "preview": "lighting/lighting_dusk-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 14314421
+    },
+    {
+      "id": "lighting_night",
+      "title": "Night lighting",
+      "category": "lighting",
+      "sections": [
+        "2"
+      ],
+      "covers": [
+        "Same fixed terrace camera",
+        "Night sky/horizon/fog/moon palette",
+        "Moon and fireflies",
+        "Ch. III and Dunkan phase 2"
+      ],
+      "notes": [
+        "Lighting-only transformation of common test scene."
+      ],
+      "image": "lighting/lighting_night.png",
+      "preview": "lighting/lighting_night-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 13368017
+    },
+    {
+      "id": "lighting_memory",
+      "title": "Memory lighting",
+      "category": "lighting",
+      "sections": [
+        "2"
+      ],
+      "covers": [
+        "Same fixed terrace camera",
+        "Memory sky/horizon/fog/fire palette",
+        "Blood-red fire and smoke",
+        "Prologue"
+      ],
+      "notes": [
+        "Lighting-only transformation of common test scene."
+      ],
+      "image": "lighting/lighting_memory.png",
+      "preview": "lighting/lighting_memory-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 14275063
+    },
+    {
+      "id": "lighting_storm",
+      "title": "Storm lighting",
+      "category": "lighting",
+      "sections": [
+        "2"
+      ],
+      "covers": [
+        "Same fixed terrace camera",
+        "Storm sky/horizon/fog/light palette",
+        "Rain and wet surfaces",
+        "Ch. IV and Ch. VI"
+      ],
+      "notes": [
+        "Lighting-only transformation of common test scene."
+      ],
+      "image": "lighting/lighting_storm.png",
+      "preview": "lighting/lighting_storm-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 14674450
+    },
+    {
+      "id": "lighting_bloom",
+      "title": "Bloom lighting",
+      "category": "lighting",
+      "sections": [
+        "2"
+      ],
+      "covers": [
+        "Same fixed terrace camera",
+        "Bloom sky/horizon/fog/light palette",
+        "Pink-lavender flowering state and falling petals",
+        "Epilogue and title"
+      ],
+      "notes": [
+        "Lighting/weather/bloom-only transformation of common test scene."
+      ],
+      "image": "lighting/lighting_bloom.png",
+      "preview": "lighting/lighting_bloom-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16113324
+    },
+    {
+      "id": "ui_storybook_system",
+      "title": "Storybook interface visual proposal",
+      "category": "interface",
+      "sections": [
+        "6",
+        "8"
+      ],
+      "covers": [
+        "Cinzel title/label hierarchy",
+        "Cormorant Garamond dialogue/story type",
+        "Dark translucent dialogue panel",
+        "Thin gold rules",
+        "Objective treatment",
+        "Memory blossom icon",
+        "Gold objective diamond",
+        "Source palette and legibility samples"
+      ],
+      "notes": [
+        "Optional visual proposal only; no invented controls stats or mechanics.",
+        "Typography is an image-generation interpretation of the named fonts; this board does not supply installed/embedded font files or functional interface."
+      ],
+      "image": "interface/ui_storybook_system.png",
+      "preview": "interface/ui_storybook_system-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 12648633
+    },
+    {
+      "id": "style_master",
+      "title": "Faceted 3D art direction",
+      "category": "world",
+      "sections": [
+        "0"
+      ],
+      "covers": [
+        "Unified polygon style",
+        "Sacred north and iron south",
+        "Material shape language",
+        "Primary palettes"
+      ],
+      "notes": [
+        "Style anchor; document canon governs details"
+      ],
+      "image": "world/style_master.png",
+      "preview": "world/style_master-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 13303379
+    },
+    {
+      "id": "fx_fire_embers",
+      "title": "Fire and embers",
+      "category": "effects",
+      "sections": [
+        "6"
+      ],
+      "covers": [
+        "Roof fire",
+        "Courtyard fire",
+        "Brazier flames",
+        "Rising sparks and smoke"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_fire_embers.png",
+      "preview": "effects/fx_fire_embers-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 15409302
+    },
+    {
+      "id": "fx_kurinji_breath",
+      "title": "Kurinji Breath",
+      "category": "effects",
+      "sections": [
+        "6"
+      ],
+      "covers": [
+        "Violet petal burst",
+        "Expanding violet shockwave",
+        "Wind-up and decay"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_kurinji_breath.png",
+      "preview": "effects/fx_kurinji_breath-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 15034770
+    },
+    {
+      "id": "fx_dunkan_quake",
+      "title": "Dunkan's quake",
+      "category": "effects",
+      "sections": [
+        "6"
+      ],
+      "covers": [
+        "Orange-red shockwave",
+        "Ground dust",
+        "Falling gray boulders",
+        "Phase 2 impact"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_dunkan_quake.png",
+      "preview": "effects/fx_dunkan_quake-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16634703
+    },
+    {
+      "id": "fx_attack_warning",
+      "title": "Heavy-attack ground warnings",
+      "category": "effects",
+      "sections": [
+        "6"
+      ],
+      "covers": [
+        "Red area telegraph",
+        "Heavy attacks",
+        "Lunge warning",
+        "Warning-to-impact sequence"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_attack_warning.png",
+      "preview": "effects/fx_attack_warning-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16965704
+    },
+    {
+      "id": "fx_hit_sparks",
+      "title": "Golden impact sparks",
+      "category": "effects",
+      "sections": [
+        "6"
+      ],
+      "covers": [
+        "Staff/sword contact",
+        "Short gold sparks",
+        "Impact-to-decay frames"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_hit_sparks.png",
+      "preview": "effects/fx_hit_sparks-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 13491062
+    },
+    {
+      "id": "fx_falling_petals",
+      "title": "Drifting Kurinji petals",
+      "category": "effects",
+      "sections": [
+        "6"
+      ],
+      "covers": [
+        "Violet airborne motes",
+        "Petal motion silhouettes",
+        "Epilogue/title atmosphere"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_falling_petals.png",
+      "preview": "effects/fx_falling_petals-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 15458246
+    },
+    {
+      "id": "fx_fireflies",
+      "title": "Night fireflies",
+      "category": "effects",
+      "sections": [
+        "6"
+      ],
+      "covers": [
+        "Yellow-green night lights",
+        "Firefly glow",
+        "Temple-night ambience"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_fireflies.png",
+      "preview": "effects/fx_fireflies-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 13877146
+    },
+    {
+      "id": "fx_objective_marker",
+      "title": "Objective diamond",
+      "category": "effects",
+      "sections": [
+        "6"
+      ],
+      "covers": [
+        "Floating gold diamond",
+        "Faint vertical beam",
+        "Rotation/readability"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_objective_marker.png",
+      "preview": "effects/fx_objective_marker-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 15201839
+    },
+    {
+      "id": "fx_weather_atmosphere",
+      "title": "Weather and atmospheric layers",
+      "category": "effects",
+      "sections": [
+        "2",
+        "3"
+      ],
+      "covers": [
+        "Rain",
+        "Valley mist and fog",
+        "Incense smoke",
+        "Cooking smoke",
+        "Kettle steam",
+        "Forge sparks"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_weather_atmosphere.png",
+      "preview": "effects/fx_weather_atmosphere-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16458014
+    },
+    {
+      "id": "fx_bloom_propagation",
+      "title": "The mountain bloom wave",
+      "category": "effects",
+      "sections": [
+        "6"
+      ],
+      "covers": [
+        "Bloom starts at meditation rock",
+        "Waiting-to-bloom change",
+        "Violet hillside carpet",
+        "Petal emission"
+      ],
+      "notes": [
+        "Effect concept frames; not executable particle assets"
+      ],
+      "image": "effects/fx_bloom_propagation.png",
+      "preview": "effects/fx_bloom_propagation-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16145374
+    },
+    {
+      "id": "story_01_thennur_burning",
+      "title": "Thennur burning — prologue",
+      "category": "story",
+      "sections": [
+        "7.1"
+      ],
+      "covers": [
+        "Veeran 32",
+        "Seven burning houses",
+        "Blood-red memory sky"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_01_thennur_burning.png",
+      "preview": "story/story_01_thennur_burning-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16647597
+    },
+    {
+      "id": "story_02_malli_flower",
+      "title": "Malli's last flower",
+      "category": "story",
+      "sections": [
+        "7.2"
+      ],
+      "covers": [
+        "Malli 7 dress/barefoot",
+        "Veeran kneeling",
+        "Single violet stem",
+        "Non-graphic farewell"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_02_malli_flower.png",
+      "preview": "story/story_02_malli_flower-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16594961
+    },
+    {
+      "id": "story_03_dawn_meditation",
+      "title": "Dawn meditation above the valley",
+      "category": "story",
+      "sections": [
+        "7.3"
+      ],
+      "covers": [
+        "Aruvan 44",
+        "Meditation rock",
+        "Mist and temple below"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_03_dawn_meditation.png",
+      "preview": "story/story_03_dawn_meditation-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 18892599
+    },
+    {
+      "id": "story_04_village_morning",
+      "title": "Kurinji Village at morning",
+      "category": "story",
+      "sections": [
+        "7.4"
+      ],
+      "covers": [
+        "24m central square",
+        "Well and 3 marketstalls",
+        "Lived-in daily life"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_04_village_morning.png",
+      "preview": "story/story_04_village_morning-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 19671557
+    },
+    {
+      "id": "story_05_iron_envoy",
+      "title": "The Iron Envoy",
+      "category": "story",
+      "sections": [
+        "7.5"
+      ],
+      "covers": [
+        "Rudhra 44 andsoldiers",
+        "Samevillage square",
+        "Dusk atmosphere"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_05_iron_envoy.png",
+      "preview": "story/story_05_iron_envoy-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 17493701
+    },
+    {
+      "id": "story_06_guru_farewell",
+      "title": "The Guru's death — temple raid",
+      "category": "story",
+      "sections": [
+        "7.6"
+      ],
+      "covers": [
+        "Blind Guru 78",
+        "Aruvan 44 holding Guru",
+        "Temple steps",
+        "Nightfire"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_06_guru_farewell.png",
+      "preview": "story/story_06_guru_farewell-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16069653
+    },
+    {
+      "id": "story_07_gate_battle",
+      "title": "Battle at the palisade gate",
+      "category": "story",
+      "sections": [
+        "7.7"
+      ],
+      "covers": [
+        "Storm",
+        "Broken double doors",
+        "Batteringram",
+        "Villagers defending"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_07_gate_battle.png",
+      "preview": "story/story_07_gate_battle-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 18266047
+    },
+    {
+      "id": "story_08_bush_in_ruins",
+      "title": "The single bush in Thennur",
+      "category": "story",
+      "sections": [
+        "7.8"
+      ],
+      "covers": [
+        "Ashen seven-house ruins",
+        "Malli's 3.6m beam",
+        "One glowingbush"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_08_bush_in_ruins.png",
+      "preview": "story/story_08_bush_in_ruins-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 16589516
+    },
+    {
+      "id": "story_09_iron_throne",
+      "title": "Dunkan on the Iron Throne",
+      "category": "story",
+      "sections": [
+        "7.9"
+      ],
+      "covers": [
+        "Dunkan 52",
+        "Seven-spikecrown",
+        "Five-spikethrone",
+        "Stormlitfortress"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_09_iron_throne.png",
+      "preview": "story/story_09_iron_throne-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 14880852
+    },
+    {
+      "id": "story_10_empty_throne",
+      "title": "The empty throne — crown refused",
+      "category": "story",
+      "sections": [
+        "7.10"
+      ],
+      "covers": [
+        "Crown remains unworn",
+        "Aruvan refuses power-symbol",
+        "Empty throne",
+        "Defeatedking"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_10_empty_throne.png",
+      "preview": "story/story_10_empty_throne-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 15548828
+    },
+    {
+      "id": "story_11_peaceful_reign",
+      "title": "The peaceful reign",
+      "category": "story",
+      "sections": [
+        "7.11"
+      ],
+      "covers": [
+        "Rebuilt Thennur",
+        "Adult Ilan teaching",
+        "Five children withbirds",
+        "Senthil's firststone"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_11_peaceful_reign.png",
+      "preview": "story/story_11_peaceful_reign-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 19905198
+    },
+    {
+      "id": "story_12_last_bloom_poster",
+      "title": "The last bloom — poster image",
+      "category": "story",
+      "sections": [
+        "7.12"
+      ],
+      "covers": [
+        "Old Aruvan 56",
+        "Fullmountainbloom",
+        "Thamarai 33 andadult Ilan",
+        "Pinklavenderlight"
+      ],
+      "notes": [
+        "Cinematic staging follows source; geometry is a visual concept"
+      ],
+      "image": "story/story_12_last_bloom_poster.png",
+      "preview": "story/story_12_last_bloom_poster-preview.webp",
+      "nativeResolution": [
+        1672,
+        941
+      ],
+      "resolution": [
+        3840,
+        2160
+      ],
+      "upscaled": true,
+      "bytes": 19664383
+    }
+  ]
+}
