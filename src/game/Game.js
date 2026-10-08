@@ -266,10 +266,17 @@ export class Game {
     const mk = this.marker
     if (this.markTarget) { mk.visible = true; const p = typeof this.markTarget === 'function' ? this.markTarget() : this.markTarget; mk.position.set(p.x, p.y + 0.6 + Math.sin(this.t * 3) * 0.15, p.z); mk.rotation.y += dt * 2 }
     else mk.visible = false
+    let glow = null, glowD = 14 * 14
     for (const p of this.petals) if (!p.taken) {
       p.mesh.rotation.y += dt * 1.5; p.mesh.position.y = p.y + Math.sin(this.t * 2 + p.i) * 0.2
-      if (state.screen === 'game' && !this.cinematic && p.mesh.position.distanceTo(this.player.pos) < 1.8) this.collectPetal(p)
+      const d2 = p.mesh.position.distanceToSquared(this.player.pos)
+      if (d2 < glowD) { glowD = d2; glow = p }
+      if (state.screen === 'game' && !this.cinematic && d2 < 1.8 * 1.8) this.collectPetal(p)
     }
+    // the shared petal light follows the nearest petal; it dims to 0 (never removed) when none is close
+    const L = this.petalLight
+    if (glow && !glow.taken) { L.position.copy(glow.mesh.position); L.intensity += (2 - L.intensity) * Math.min(1, dt * 6) }
+    else L.intensity += (0 - L.intensity) * Math.min(1, dt * 6)
   }
   updateInteract(ok) {
     const it = this.interactable
@@ -293,12 +300,15 @@ export class Game {
     const got = new Set(saved?.petals || [])
     state.memories = PETALS.filter((p, i) => got.has(i)).map(p => p.memory)
     state.petals = got.size
+    // Petals share one geometry/material, and ONE light that is never added or removed. Changing the
+    // number of lights in the scene recompiles every lit shader (a multi-second freeze on pickup).
+    const petalGeo = new THREE.SphereGeometry(0.16, 6, 4), petalMat = new THREE.MeshStandardMaterial({ color: 0xa494ff, emissive: 0x6a54ff, emissiveIntensity: 1.6 })
+    this.petalLight = new THREE.PointLight(0x8a7aff, 0, 6); this.scene.add(this.petalLight)
     this.petals = PETALS.map((d, i) => {
       const mesh = new THREE.Group()
-      for (let k = 0; k < 5; k++) { const pe = new THREE.Mesh(new THREE.SphereGeometry(0.16, 6, 4), new THREE.MeshStandardMaterial({ color: 0xa494ff, emissive: 0x6a54ff, emissiveIntensity: 1.6 })); pe.scale.set(0.5, 0.15, 1); pe.position.set(Math.sin(k * 1.256) * 0.17, 0, Math.cos(k * 1.256) * 0.17); pe.rotation.y = k * 1.256; mesh.add(pe) }
+      for (let k = 0; k < 5; k++) { const pe = new THREE.Mesh(petalGeo, petalMat); pe.scale.set(0.5, 0.15, 1); pe.position.set(Math.sin(k * 1.256) * 0.17, 0, Math.cos(k * 1.256) * 0.17); pe.rotation.y = k * 1.256; mesh.add(pe) }
       const y = heightAt(d.x, d.z) + 1.1
       mesh.position.set(d.x, y, d.z); this.scene.add(mesh)
-      const light = new THREE.PointLight(0x8a7aff, 2, 5); mesh.add(light)
       const taken = got.has(i); mesh.visible = !taken
       return { mesh, y, i, taken, d }
     })

@@ -45,9 +45,10 @@ export function mat(key) {
     gold: () => new THREE.MeshStandardMaterial({ ...base, roughness: 0.3, metalness: 0.9 }),
     glow: () => new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }),
     cloth: () => new THREE.MeshStandardMaterial({ ...base, roughness: 0.92, side: THREE.DoubleSide }),
-    leaf: () => { const m = new THREE.MeshStandardMaterial({ ...base, roughness: 0.8, side: THREE.DoubleSide }); m.onBeforeCompile = windHook(0.0028); m.customProgramCacheKey = () => 'leaf'; return m },
+    // Trees, palms and bushes stand still (only grass sways); swaying whole trees read as jitter.
+    leaf: () => new THREE.MeshStandardMaterial({ ...base, roughness: 0.8, side: THREE.DoubleSide }),
     grass: () => { const m = new THREE.MeshStandardMaterial({ ...base, roughness: 0.9, side: THREE.DoubleSide }); m.onBeforeCompile = windHook(0.12); m.customProgramCacheKey = () => 'grass'; return m },
-    tree: () => { const m = new THREE.MeshStandardMaterial({ ...base, roughness: 0.85 }); m.onBeforeCompile = windHook(0.0007); m.customProgramCacheKey = () => 'tree'; return m },
+    tree: () => new THREE.MeshStandardMaterial({ ...base, roughness: 0.85 }),
   }
   const material = (M[key] || M.std)()
   material.userData.sharedKit = true

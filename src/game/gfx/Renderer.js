@@ -105,6 +105,10 @@ export class Renderer {
     composer.addPass(new EffectPass(camera, this.bloom, this.tone, this.hue, this.bc, this.vignette, this.grain))
     this.smaa = new EffectPass(camera, new SMAAEffect({ preset: SMAAPreset.MEDIUM }))
     composer.addPass(this.smaa)
+    // The composer only ever sends the LAST pass in its list to the screen, even when that pass is
+    // disabled. Anti-aliasing (the last pass) is off by default on phones, which left the canvas
+    // black. We route the output ourselves to the last pass that actually runs.
+    composer.autoRenderToScreen = false
 
     this.grade = { ...GRADES.dawn }
     this.dynScale = 1        // adaptive resolution factor
@@ -132,8 +136,15 @@ export class Renderer {
     this.bloom.resolution.scale = s.preset === 'low' ? 0.25 : 0.5
     this.smaa.enabled = s.aa
     this.updateDof()
+    this.routeOutput()
     this.onShadowSize?.(this.shadowSize)
     this.resize()
+  }
+  /** Draw to the screen from the last enabled pass (see the note where the passes are added). */
+  routeOutput() {
+    let last = null
+    for (const pass of this.composer.passes) { pass.renderToScreen = false; if (pass.enabled) last = pass }
+    if (last) last.renderToScreen = true
   }
   resize() {
     if (this.disposed) return

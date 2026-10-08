@@ -25,7 +25,7 @@ async function installApp() {
 }
 const showSettings = ref(false), showCredits = ref(false), launching = ref(false)
 const settingsTab = ref('graphics'), settingsPanel = ref(null), cutsceneVideo = ref(null)
-const portrait = ref(innerHeight > innerWidth)
+const portrait = ref(innerHeight > innerWidth), rotateDismissed = ref(false)
 const tabs = ['graphics', 'audio', 'story', 'camera']
 const audioControls = [['master', 'Master'], ['music', 'Music'], ['voice', 'Voices'], ['sfx', 'Sound effects'], ['ambience', 'Ambience']]
 const credits = [
@@ -49,11 +49,16 @@ async function toggleFullscreen() {
     else await requestLandscape(true)
   } catch {}
 }
-async function requestLandscape(force = false) {
-  if (!state.mobile && !force) return
+// Fullscreen and orientation-lock promises can stay pending forever on some phones, so callers must
+// never wait on them: this resolves after at most 800ms while the request carries on in the background.
+function requestLandscape(force = false) {
+  if (!state.mobile && !force) return Promise.resolve()
   const el = document.documentElement
-  try { if (!document.fullscreenElement && !document.webkitFullscreenElement) await (el.requestFullscreen?.({ navigationUI: 'hide' }) ?? el.webkitRequestFullscreen?.()) } catch {}
-  try { await screen.orientation?.lock?.('landscape') } catch {}
+  const run = async () => {
+    try { if (!document.fullscreenElement && !document.webkitFullscreenElement) await (el.requestFullscreen?.({ navigationUI: 'hide' }) ?? el.webkitRequestFullscreen?.()) } catch {}
+    try { await screen.orientation?.lock?.('landscape') } catch {}
+  }
+  return Promise.race([run(), new Promise(resolve => setTimeout(resolve, 800))])
 }
 const kick = () => game?.audio?.ensurePlaying()
 
@@ -97,7 +102,7 @@ onMounted(async () => {
 async function begin(ch = 0) {
   if (!ready.value || launching.value || state.loading) return
   launching.value = true
-  await requestLandscape()
+  requestLandscape() // fire and forget: starting the story must not wait on the browser's fullscreen prompt
   game.audio.ensurePlaying()
   showChapters.value = false
   try {
@@ -119,7 +124,7 @@ async function begin(ch = 0) {
 async function beginFreeRoam() {
   if (!ready.value || launching.value || state.loading || !completed.value) return
   launching.value = true
-  await requestLandscape()
+  requestLandscape()
   game.audio.ensurePlaying()
   showChapters.value = false
   try {
@@ -440,9 +445,9 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
     </div>
   </div>
 
-  <div v-if="state.mobile && portrait" class="rotate-overlay" role="dialog" aria-modal="true" aria-label="Rotate your device">
+  <div v-if="state.mobile && portrait && !rotateDismissed" class="rotate-overlay" role="dialog" aria-modal="true" aria-label="Rotate your device">
     <svg class="rotate-device" viewBox="0 0 100 100" aria-hidden="true"><rect x="29" y="13" width="42" height="74" rx="5" /><path d="M47 78h6M13 32a40 40 0 0 1 18-18M13 32l-1-12m1 12 12-1M87 68a40 40 0 0 1-18 18M87 68l1 12m-1-12-12 1" /></svg>
-    <h2>The mountain is wider than this.</h2><p>Turn your device to landscape to begin your journey.</p><button class="primary-button" @click="requestLandscape">Enter fullscreen</button>
+    <h2>The mountain is wider than this.</h2><p>Turn your device to landscape to begin your journey.</p><button class="primary-button" @click="requestLandscape(true)">Enter fullscreen</button><button class="ghost small" @click="rotateDismissed = true">Continue in portrait</button>
   </div>
   </div>
 </template>
