@@ -49,7 +49,10 @@ export class Input {
   initJoystick(zone) {
     this.joy?.destroy()
     this.joy = nipplejs.create({ zone, mode: 'semi', catchDistance: 140, position: { left: '110px', bottom: '110px' }, color: '#e8b46a', size: 130, restOpacity: 0.55, fadeTime: 120 })
-    this.joy.on('move', (_, d) => {
+    // nipplejs 1.x passes ONE event object ({ type, target, data }); 0.x passed (event, data).
+    this.joy.on('move', (evt, legacy) => {
+      const d = legacy ?? evt?.data
+      if (!d?.angle) return
       const raw = d.force, f = raw < 0.12 ? 0 : Math.min(1, (raw - 0.12) / 0.78)
       this.stick.x = Math.cos(d.angle.radian) * f; this.stick.y = Math.sin(d.angle.radian) * f
       this.stickRun = raw > 0.95
