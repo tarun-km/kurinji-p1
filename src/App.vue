@@ -5,6 +5,10 @@ import { state, ui, load, isComplete } from './game/store'
 import { Game } from './game/Game'
 import { CHAPTER_NAMES } from './game/story'
 import { settings, applyPreset, resetSettings, isMobile } from './game/settings'
+import TitleScreen from './ui/TitleScreen.vue'
+import LoadingScreen from './ui/LoadingScreen.vue'
+import Logo from './ui/Logo.vue'
+import { loadShots } from './ui/shots'
 
 const host = ref(null), joyZone = ref(null)
 let game = null, mounted = true
@@ -24,7 +28,7 @@ async function installApp() {
   if (isIOS) iosHint.value = !iosHint.value
 }
 const showSettings = ref(false), showCredits = ref(false), launching = ref(false)
-const settingsTab = ref('graphics'), settingsPanel = ref(null), cutsceneVideo = ref(null)
+const settingsTab = ref('graphics'), settingsPanel = ref(null), cutsceneVideo = ref(null), creditsPanel = ref(null)
 const portrait = ref(innerHeight > innerWidth), rotateDismissed = ref(false)
 const tabs = ['graphics', 'audio', 'story', 'camera']
 const audioControls = [['master', 'Master'], ['music', 'Music'], ['voice', 'Voices'], ['sfx', 'Sound effects'], ['ambience', 'Ambience']]
@@ -32,12 +36,10 @@ const credits = [
   ['Story & Characters', 'Tarun KM'], ['Music', 'Gemini'], ['Coding', 'Claude'],
   ['Character Visualizations & Visuals', 'ChatGPT'], ['Cut scenes', 'Stable Diffusion'], ['Voices', 'ElevenLabs'],
 ]
-// the key-art painting (public/art/loading.*) is used on every loading screen when present
-const loadingKeyArt = ref('')
-for (const ext of ['webp', 'jpg', 'png']) { const im = new Image(); im.onload = () => { if (!loadingKeyArt.value) loadingKeyArt.value = im.src }; im.src = `${import.meta.env.BASE_URL}art/loading.${ext}` }
-const loadingProgress = computed(() => Math.round(Math.max(0, Math.min(1, Number(state.loading?.progress) || 0)) * 100))
-const tips = ['A violet petal carries a memory of the mountain.', 'Evade a heavy strike, then answer with your staff.', 'Kurinji Breath gathers as you fight. Save it for a crowded moment.', 'Listen to the mountain. There is more than one way through a conversation.']
-const loadingTip = computed(() => tips[state.chapterIndex % tips.length])
+// loading screens play in-game shots from public/art/shots/index.json (see src/ui/shots.js),
+// falling back to each chapter's story painting
+loadShots()
+const BASE = import.meta.env.BASE_URL
 state.mobile = isMobile
 
 function updateOrientation() { portrait.value = innerHeight > innerWidth }
@@ -69,7 +71,7 @@ onMounted(async () => {
   addEventListener('keydown', onKey, true)
   Object.assign(state, { screen: 'title', paused: false, showJournal: false, cutscene: null, dialogue: null, choices: null, card: null, caption: '', prompt: '', deathMsg: '', fade: 0, breathingPrompt: false })
   ui.retryLoad = null
-  state.loading = { title: 'Kurinji', sub: 'The Last Bloom', art: '/art/story01.webp', progress: 0, label: 'Raising the mountain…', error: '' }
+  state.loading = { title: 'Kurinji', sub: 'The Last Bloom', art: `${BASE}art/story12-sm.webp`, progress: 0, label: 'Raising the mountain…', error: '' }
   try {
     game = new Game(host.value)
     await game.init()
@@ -187,6 +189,12 @@ watch(() => state.paused || showSettings.value, async open => {
   if (open) { priorFocus = document.activeElement; await nextTick(); settingsPanel.value?.querySelector('button')?.focus() }
   else priorFocus?.focus?.()
 })
+// credits opened from the title: move focus in, and back to the Credits entry on close
+let creditsFocus = null
+watch(showCredits, async open => {
+  if (open) { creditsFocus = document.activeElement; await nextTick(); creditsPanel.value?.querySelector('button')?.focus({ preventScroll: true }) }
+  else creditsFocus?.focus?.({ preventScroll: true })
+})
 watch(() => state.paused, paused => {
   const video = cutsceneVideo.value
   if (!video) return
@@ -198,8 +206,9 @@ function onKey(e) {
     e.preventDefault(); e.stopImmediatePropagation()
     if (state.showJournal) { state.showJournal = false; return }
     if (showCredits.value) { showCredits.value = false; return }
-    if (state.paused || showSettings.value) resume()
-    else openPause()
+    if (state.paused || showSettings.value) { resume(); return }
+    if (showChapters.value && state.screen === 'title') { showChapters.value = false; return }
+    openPause()
     return
   }
   if (state.paused || showSettings.value || showCredits.value) {
@@ -249,36 +258,10 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
 
   <!-- ============ TITLE ============ -->
   <transition name="fadeout">
-    <div v-if="state.screen === 'title'" class="title">
-      <div class="title-inner">
-        <h1>KURINJI</h1>
-        <div class="sub">The Last Bloom</div>
-        <p class="tag">Once a soldier. Then a monk. Then a king. <br />The flower blooms once in twelve years. He promised to wait.</p>
-        <div v-if="!ready" class="loading">Raising the mountain…</div>
-        <div v-else class="menu">
-          <button :disabled="launching" @click="begin(0)">{{ saveData ? 'New Journey' : 'Begin' }}</button>
-          <button v-if="saveData && saveData.chapter > 0" :disabled="launching" @click="begin(saveData.chapter)">Continue — {{ CHAPTER_NAMES[saveData.chapter] }}</button>
-          <button v-if="saveData && saveData.best > 0" class="ghost" @click="showChapters = !showChapters">Chapters</button>
-          <div v-if="showChapters" class="chapters">
-            <button v-for="(n, i) in CHAPTER_NAMES" :key="i" :disabled="i > (saveData?.best || 0)" class="ghost small" @click="begin(i)">{{ n }}</button>
-          </div>
-          <button class="ghost free-roam" :disabled="!completed || launching" @click="beginFreeRoam" :aria-label="completed ? 'Free roam' : 'Free roam, locked until you finish the story'"><svg v-if="!completed" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="1" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>Free Roam<small v-if="!completed">Finish the story to unlock</small></button>
-          <div class="title-links"><button class="ghost small" @click="openSettings">Settings</button><button class="ghost small" @click="showCredits = true">Credits</button></div>
-          <label class="toggle"><input type="checkbox" v-model="settings.voiceActing" /> Voiced dialogue</label>
-        </div>
-        <div class="howto" v-if="!state.mobile">WASD move · Click to look · J strike · K heavy · Space evade<br />F Kurinji Breath · E interact · Tab memories · Esc pause</div>
-        <div class="howto" v-else>Left thumb moves (push fully to run) · right thumb looks · tap to fight</div>
-        <p class="title-attribution">Story & Characters by Tarun KM</p>
-        <div v-if="state.mobile && !standalone" class="mobile-notice">
-          <p><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2" /><path d="M7 12h.01" /></svg>For the full experience, play in <b>landscape</b> and <b>fullscreen</b>.</p>
-          <div class="mobile-actions">
-            <button class="ghost small" @click="requestLandscape(true)">Play fullscreen</button>
-            <button v-if="canInstall || isIOS" class="ghost small" @click="installApp">Install the game</button>
-          </div>
-          <p v-if="iosHint" class="ios-hint">On iPhone and iPad: tap <b>Share</b>, then <b>Add to Home Screen</b>. Kurinji will open fullscreen like an app.</p>
-        </div>
-      </div>
-    </div>
+    <TitleScreen v-if="state.screen === 'title'" v-model:chapters="showChapters" :ready="ready" :launching="launching" :save="saveData" :completed="completed"
+      :mobile="state.mobile" :notice="state.mobile && !standalone" :can-install="canInstall" :is-ios="isIOS" :ios-hint="iosHint"
+      :covered="showSettings || showCredits || !!state.loading"
+      @begin="begin" @free-roam="beginFreeRoam" @settings="openSettings" @credits="showCredits = true" @fullscreen="requestLandscape(true)" @install="installApp" />
   </transition>
 
   <!-- ============ HUD ============ -->
@@ -368,9 +351,9 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
   </transition>
 
   <!-- ============ CREDITS ============ -->
-  <div v-if="state.screen === 'credits' || showCredits" class="credits">
+  <div v-if="state.screen === 'credits' || showCredits" ref="creditsPanel" class="credits">
     <div class="roll">
-      <h1>KURINJI</h1><div class="sub">The Last Bloom</div>
+      <Logo class="roll-logo" />
       <p class="dedic">For everyone still waiting for something gentle to bloom.</p>
       <div class="credit-person" v-for="[role, name] in credits" :key="role"><h4>{{ role }}</h4><p>{{ name }}</p></div>
       <h4>Characters</h4>
@@ -436,14 +419,7 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
     <button class="ghost small" @click="ui.endCutscene?.()">Continue story</button>
   </div>
 
-  <div v-if="state.loading" class="chapter-loading" :class="{ failed: state.loading.error }" role="status" aria-live="polite">
-    <img v-if="loadingKeyArt || state.loading.art" class="loading-art" :src="loadingKeyArt || state.loading.art" alt="" />
-    <div class="loading-scrim"></div>
-    <div class="loading-content"><h2>{{ state.loading.title }}</h2><p class="loading-sub">{{ state.loading.sub }}</p>
-      <template v-if="!state.loading.error"><div class="loading-bar" role="progressbar" aria-label="Chapter preparation" :aria-valuenow="loadingProgress" aria-valuemin="0" aria-valuemax="100"><span :style="{ transform: `scaleX(${loadingProgress / 100})` }"></span></div><div class="loading-status"><span>{{ state.loading.label || 'Preparing your journey…' }}</span><output>{{ loadingProgress }}%</output></div><p class="loading-tip">{{ loadingTip }}</p></template>
-      <template v-else><p class="loading-error">{{ state.loading.error }}</p><button class="primary-button" @click="ui.retryLoad?.()">Try again</button></template>
-    </div>
-  </div>
+  <transition name="loader"><LoadingScreen v-if="state.loading" /></transition>
 
   <div v-if="state.mobile && portrait && !rotateDismissed" class="rotate-overlay" role="dialog" aria-modal="true" aria-label="Rotate your device">
     <svg class="rotate-device" viewBox="0 0 100 100" aria-hidden="true"><rect x="29" y="13" width="42" height="74" rx="5" /><path d="M47 78h6M13 32a40 40 0 0 1 18-18M13 32l-1-12m1 12 12-1M87 68a40 40 0 0 1-18 18M87 68l1 12m-1-12-12 1" /></svg>

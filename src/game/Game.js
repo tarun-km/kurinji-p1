@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 import { watch } from 'vue'
 import { Renderer } from './gfx/Renderer'
+import { accelerateRaycasts } from './gfx/bvh'
 import { settings, GRAPHICS_KEYS } from './settings'
 import { CHAPTER_ASSETS, runTasks, loadArtwork, fetchAsset, nextFrame } from './assets'
 import { Pane } from 'tweakpane'
@@ -37,6 +38,9 @@ export class Game {
     this.renderer.onShadowSize = n => this.world.setShadowSize(n)
     this.world.setShadowSize(this.renderer.shadowSize)
     this.world.updateEnv()
+    // BVH-accelerated raycasts for the static world (camera clear-shot / line of sight)
+    accelerateRaycasts(this.world.occluders); this.world.bvh = true
+    this.ray = new THREE.Raycaster(); this.ray.firstHitOnly = true
     progress(0.35, 'Building the world'); await nextFrame(); alive()
     this.physics = await new Physics().init(this.scene)
     alive()

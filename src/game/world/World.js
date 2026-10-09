@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
-import { Builder, G, rock, jitter, rng, mat, WIND } from '../gfx/kit'
+import { Builder, G, rock, jitter, rng, mat, WIND, SURF } from '../gfx/kit'
 import { FOG } from '../gfx/Renderer'
 import { PLACES, heightAt, pathX, BOUNDS, buildTerrain, TERRAIN_U, smooth } from './terrain'
 import { Sky } from './sky'
@@ -12,20 +12,12 @@ import * as K from './props'
 import { house, temple, bellTower, palisadeLog, watchtower, fortWall, roundTower, kolam, tileRoof } from './buildings'
 import { settings } from '../settings'
 import { RIM } from '../Characters'
+import { TIMES, rimColor, createSunDisc } from './lighting'
+import { accelerateRaycasts } from '../gfx/bvh'
 
 export { PLACES, heightAt, pathX, BOUNDS }
 
-/* Lighting presets — the seven lighting boards (sky top / horizon / fog / key light). */
-const TIMES = {
-  dawn:   { top: 0x5b7fb8, bottom: 0xf3b98a, fog: 0xe8c3a8, haze: 0xf0c6a8, sun: 0xffc48a, si: 3.068, hemi: 0.54, sky: 0xffd8b8, ground: 0x4a4a32, dir: [70, 22, -40], fogD: 0.0017, hf: [18, 0.12, 0.203, 0.7], mistAmt: 0.9, cloud: 0xffc8b0, cloudLit: 0xfff0e8, cloudGlow: 0.5, sunSize: 1.6, night: false, lamps: 0.6, hazeAmt: 0.16 },
-  day:    { top: 0x3f7fd0, bottom: 0xbfdcf0, fog: 0xc8dcea, haze: 0xcfe2f0, sun: 0xfff2dd, si: 3.54, hemi: 0.684, sky: 0xd8ecff, ground: 0x4a5a32, dir: [40, 90, 30], fogD: 0.0014, hf: [18, 0.12, 0.113, 0.35], mistAmt: 0.45, cloud: 0xe8f0ff, cloudLit: 0xffffff, cloudGlow: 0.42, sunSize: 1, night: false, lamps: 0, hazeAmt: 0.1 },
-  dusk:   { top: 0x2b2550, bottom: 0xe0703a, fog: 0xb0705a, haze: 0xd88a6a, sun: 0xff7a3a, si: 2.596, hemi: 0.396, sky: 0xc87a6a, ground: 0x3a2a2a, dir: [-70, 16, 50], fogD: 0.0027, hf: [22, 0.08, 0.248, 0.9], mistAmt: 0.65, cloud: 0xff9a6a, cloudLit: 0xffd0b0, cloudGlow: 0.5, sunSize: 2, night: false, lamps: 1 },
-  night:  { top: 0x050818, bottom: 0x1a2440, fog: 0x141c30, haze: 0x1a2440, sun: 0x9fb4ff, si: 1.062, hemi: 0.288, sky: 0x4a5a8a, ground: 0x1a1a22, dir: [-30, 70, -20], fogD: 0.0036, hf: [20, 0.08, 0.203, 0.2], mistAmt: 0.45, cloud: 0x1a2440, cloudLit: 0x6a7aa0, cloudGlow: 0.2, sunSize: 1, night: true, lamps: 1 },
-  memory: { top: 0x1e0606, bottom: 0xc0401a, fog: 0x4a1a10, haze: 0x9a3418, sun: 0xffa060, si: 3.0, hemi: 0.5, sky: 0x8a4a3a, ground: 0x2a120a, dir: [-30, 22, 70], fogD: 0.0026, hf: [12, 0.07, 0.18, 1.0], mistAmt: 0.2, cloud: 0x8a2a14, cloudLit: 0x4a160c, cloudGlow: 0.7, sunSize: 4, night: false, lamps: 1 },
-  storm:  { top: 0x2a2e38, bottom: 0x6a6a70, fog: 0x5a5e66, haze: 0x6a6e76, sun: 0xc8ccd8, si: 1.534, hemi: 0.72, sky: 0x8a90a0, ground: 0x3e3e42, dir: [-20, 60, -40], fogD: 0.0038, hf: [24, 0.07, 0.27, 0.2], mistAmt: 0.75, cloud: 0x4a4e58, cloudLit: 0x8a8e98, cloudGlow: 0.25, sunSize: 0.6, night: false, lamps: 1 },
-  bloom:  { top: 0x6a8fd8, bottom: 0xf7d2e8, fog: 0xe6d6f0, haze: 0xe8d4ec, sun: 0xfff0d8, si: 3.186, hemi: 0.684, sky: 0xe8dcff, ground: 0x4a4a5a, dir: [70, 30, -60], fogD: 0.0019, hf: [22, 0.08, 0.203, 0.7], mistAmt: 0.75, cloud: 0xffd8e8, cloudLit: 0xfff4f0, cloudGlow: 0.55, sunSize: 1.4, night: false, lamps: 0.3 },
-  white:  { top: 0xffffff, bottom: 0xffffff, fog: 0xffffff, haze: 0xffffff, sun: 0xffffff, si: 2.5, hemi: 1.2, sky: 0xffffff, ground: 0xffffff, dir: [0, 80, 0], fogD: 0.02, hf: [30, 0.05, 1, 0], mistAmt: 1, cloud: 0xffffff, cloudLit: 0xffffff, cloudGlow: 1, sunSize: 1, night: false, lamps: 0 },
-}
+/* Lighting presets (sky, sun, fog, rim, wetness, shafts, grade) live in ./lighting.js. */
 
 export class World {
   constructor(scene, game) {
@@ -38,6 +30,7 @@ export class World {
     this.state = {}
     this.buildLights()
     this.sky = new Sky(scene)
+    this.game?.renderer?.setSun?.(createSunDisc())   // sun shafts follow the sky's sun direction
     this.terrain = buildTerrain(scene)
     this.fx = new FX(scene, this)
     this.markOpen()
@@ -75,7 +68,7 @@ export class World {
     c(0, -72, 11); c(0, -1, 10.5); c(14, 10, 5.5); c(-13, 8, 4); c(0, 46, 4); c(-8, 98, 7); c(20, -90, 3.2)
     this.clear.push({ rect: true, x0: -23, x1: 23, z0: 149, z1: 181 })
   }
-  addMesh(b, opts) { const g = b.build(opts); this.scene.add(g); (this.occluders ||= []).push(g); return g }
+  addMesh(b, opts) { const g = b.build(opts); this.scene.add(g); (this.occluders ||= []).push(g); if (this.bvh) accelerateRaycasts(g); return g }
   light(p, color = 0xffa040, power = 6, kind = 'lamp') { this.emitters.push({ p: new THREE.Vector3(...p), color: new THREE.Color(color), power, kind }) }
 
   /* ================= lights ================= */
@@ -84,7 +77,7 @@ export class World {
     const sun = this.sun = new THREE.DirectionalLight(0xffffff, 2)
     sun.castShadow = true
     const c = sun.shadow.camera; c.left = -45; c.right = 45; c.top = 45; c.bottom = -45; c.near = 1; c.far = 320
-    sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05
+    sun.shadow.bias = -0.00012; sun.shadow.normalBias = 0.06   // retuned per map size in setShadowSize
     this.scene.add(sun, sun.target)
     this.sunOffset = new THREE.Vector3(50, 80, 30)
     this.pool = Array.from({ length: 6 }, () => { const l = new THREE.PointLight(0xffa040, 0, 16, 1.7); this.scene.add(l); return l })
@@ -93,6 +86,8 @@ export class World {
   setShadowSize(n) {
     this.sun.castShadow = n > 0
     if (n && this.sun.shadow.mapSize.x !== n) { this.sun.shadow.mapSize.set(n, n); this.sun.shadow.map?.dispose(); this.sun.shadow.map = null }
+    // bias in proportion to one shadow texel (90 m frustum); the receiver offset always points to the light (gfx/chunks.js)
+    if (n) { const texel = 90 / n; this.sun.shadow.normalBias = texel * 1.4; this.sun.shadow.bias = -0.00012; this.sun.shadow.radius = n >= 4096 ? 1.8 : n >= 2048 ? 1.3 : 1 }
   }
   updateEnv() {
     const gl = this.game.renderer?.gl; if (!gl) return
@@ -100,7 +95,7 @@ export class World {
     if (!this.envScene) { this.envScene = new THREE.Scene(); const d = new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), this.sky.dome.material.clone()); d.material.uniforms = this.sky.U; this.envScene.add(d) }
     const rt = this.pmrem.fromScene(this.envScene, 0.05)
     this.envTarget?.dispose(); this.envTarget = rt; this.scene.environment = rt.texture
-    this.scene.environmentIntensity = 0.55
+    this.scene.environmentIntensity = TIMES[this.timeName]?.env ?? 0.55
   }
   setTime(name, dur = 3) {
     const P = TIMES[name]; this.timeName = name
@@ -109,7 +104,7 @@ export class World {
     this.scene.fog ||= new THREE.FogExp2(0xffffff, 0.004)
     tw(this.scene.fog.color, P.fog); tw(this.sun.color, P.sun); tw(this.hemi.color, P.sky); tw(this.hemi.groundColor, P.ground); tw(FOG.uFogSunCol.value, P.sun)
     tw(this.water.sky, P.top)
-    { const rc = new THREE.Color(P.sun).multiplyScalar(name === 'night' ? 0.35 : name === 'memory' ? 0.5 : 0.22); dur ? gsap.to(RIM.value, { r: rc.r, g: rc.g, b: rc.b, duration: dur }) : RIM.value.copy(rc) }
+    { const rc = rimColor(P); dur ? gsap.to(RIM.value, { r: rc.r, g: rc.g, b: rc.b, duration: dur }) : RIM.value.copy(rc) }
     const n = new THREE.Vector3(...P.dir).normalize()
     const to = (o, props) => dur ? gsap.to(o, { ...props, duration: dur }) : Object.assign(o, props)
     to(this.scene.fog, { density: P.fogD }); to(this.sun, { intensity: P.si }); to(this.hemi, { intensity: P.hemi })
@@ -119,6 +114,8 @@ export class World {
     to(this, { lampLevel: P.lamps })
     this.fx.fireflies.visible = name === 'night'
     this.game.renderer?.setGrade(name, dur)
+    this.game.renderer?.setShafts?.(P.shafts ?? 0, dur)
+    to(SURF.uSurfWet, { value: P.wet ?? 0 })
     this.updateEnv(); if (dur) setTimeout(() => { if (this.timeName === name) this.updateEnv() }, dur * 1000 + 50)
     this.fx.setRain(name === 'storm')
     this.storm = name === 'storm'
@@ -518,10 +515,17 @@ export class World {
   update(dt, t, focus, cam) {
     WIND.uTime.value = t
     for (const f of this.anim) f(dt, t)
-    // shadows follow the focus, snapped to texels to avoid shimmer
-    const s = this.sun, size = 90 / (s.shadow.mapSize.x || 2048)
-    const fx = Math.round(focus.x / size) * size, fz = Math.round(focus.z / size) * size
-    s.target.position.set(fx, focus.y, fz); s.position.set(fx, focus.y, fz).add(this.sunOffset)
+    // shadows cover what the camera sees: centred ~22 m ahead of the lens (the follow camera's player,
+    // 4–12 m ahead, stays well inside the 90 m frustum), snapped to texels to avoid shimmer
+    const s = this.sun, size = 90 / (s.shadow.mapSize.x || 2048), camObj = this.game.camera
+    let sx = focus.x, sz = focus.z, sy = focus.y
+    if (camObj) {
+      const d = camObj.getWorldDirection(this._shDir ||= new THREE.Vector3()), fl = Math.hypot(d.x, d.z) || 1
+      sx = camObj.position.x + d.x / fl * 22; sz = camObj.position.z + d.z / fl * 22
+      sy = heightAt(sx, sz)
+    }
+    const fx = Math.round(sx / size) * size, fz = Math.round(sz / size) * size
+    s.target.position.set(fx, sy, fz); s.position.set(fx, sy, fz).add(this.sunOffset)
     this.sky.update(dt, t, cam)
     this.water.update(dt, t)
     this.fx.update(dt, t, cam)
