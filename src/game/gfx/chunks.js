@@ -76,7 +76,8 @@ THREE.Material.prototype.onBeforeCompile = function (shader, r) { patchFog(shade
 /* ---------- shadow receiver: smooth 3x3 tent PCF (directional + spot) ---------- */
 {
   const src = C.shadowmap_pars_fragment
-  const start = src.indexOf('// Use IGN to rotate sampling pattern per pixel')
+  // anchor on code, not comments: the published three.js build strips GLSL comments
+  const start = src.indexOf('float phi = interleavedGradientNoise( gl_FragCoord.xy ) * PI2;')
   const end = start < 0 ? -1 : src.indexOf(') * 0.2;', start)
   if (start >= 0 && end > start && src.lastIndexOf('getShadow( sampler2DShadow', start) >= 0 && src.indexOf('getPointShadow', 0) > end) {
     const tent = `// smooth 3x3 tent of hardware-filtered taps (no per-pixel dither)
