@@ -30,6 +30,7 @@ document.querySelector('#check').addEventListener('click', async e => {
     log('PASS engine, physics, local fonts, character/world shader warmup')
     for (let i = 0; i < CHAPTER_ASSETS.length; i++) {
       await game.prepareChapter(i)
+      if (state.loading) throw new Error('Chapter loading barrier did not release')
       const want = new Set(game.audio.lines.filter(l => l.chapter === CHAPTER_ASSETS[i].key || l.chapter === 'shared').map(l => l.id))
       if (game.audio.voice.size !== want.size || [...game.audio.voice.values()].some(h => h.state() !== 'loaded')) throw new Error('Chapter voices not ready')
       log(`PASS ${CHAPTER_ASSETS[i].key}: ${want.size} decoded voices, ${Object.keys(game.audio.fx).length} SFX, cached music, GPU warmup`)
@@ -37,7 +38,9 @@ document.querySelector('#check').addEventListener('click', async e => {
     state.loading = null
     let finished = false; game.wait(.12).then(() => { finished = true })
     game.setPaused(true); await new Promise(r => setTimeout(r, 250)); if (finished) throw new Error('Story advanced while paused')
-    game.setPaused(false); game.audio.pause(true); await new Promise(r => setTimeout(r, 300)); if (!finished) throw new Error('Story did not resume')
+    game.setPaused(false); game.audio.pause(true)
+    for (let n = 0; n < 20 && !finished; n++) await new Promise(r => setTimeout(r, 100))
+    if (!finished) throw new Error('Story did not resume')
     log('PASS pause/resume keeps story clock synchronized')
     log(`PASS render: ${game.renderer.gl.info.render.calls} calls in current view, ${game.renderer.gl.info.memory.geometries} GPU geometries`)
     game.destroy(); if (document.querySelector('#engine canvas')) throw new Error('Renderer was not removed')

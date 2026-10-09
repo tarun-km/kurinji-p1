@@ -33,44 +33,44 @@ export function stoneLantern(b, at, rot = 0) {
 export function lanternPost(b, at, rot = 0) {
   b.push(at, [0, rot, 0])
   b.add(rock(0.35, 3, 0.6, 0), P.granite, { at: [0, 0.1, 0], m: 'stone' })
-  b.add(G.chamfer(0.16, 2.5, 0.16, 0.03), P.woodDark, { at: [0, 1.25, 0] })
-  b.add(G.chamfer(0.75, 0.12, 0.12, 0.02), P.woodDark, { at: [0.3, 2.35, 0] })
-  b.add(G.box(0.1, 0.42, 0.1), P.woodDark, { at: [0.12, 2.12, 0], rot: [0, 0, 0.75] })
-  b.add(G.cyl(0.005, 0.005, 0.2, 3), P.iron, { at: [0.6, 2.2, 0] })
+  b.add(G.chamfer(0.16, 2.5, 0.16, 0.03), P.woodDark, { at: [0, 1.25, 0] , m: 'wood' })
+  b.add(G.chamfer(0.75, 0.12, 0.12, 0.02), P.woodDark, { at: [0.3, 2.35, 0] , m: 'wood' })
+  b.add(G.box(0.1, 0.42, 0.1), P.woodDark, { at: [0.12, 2.12, 0], rot: [0, 0, 0.75] , m: 'wood' })
+  b.add(G.cyl(0.005, 0.005, 0.2, 3), P.iron, { at: [0.6, 2.2, 0] , m: 'iron' })
   b.add(G.cyl(0.16, 0.13, 0.34, 6), P.lamp, { at: [0.6, 1.95, 0], m: 'glow', hdr: 2.4, grad: 0 })
-  b.add(G.cone(0.2, 0.14, 6), P.iron, { at: [0.6, 2.18, 0], m: 'metal' })
-  b.add(G.cyl(0.17, 0.17, 0.03, 6), P.iron, { at: [0.6, 1.77, 0], m: 'metal' })
+  b.add(G.cone(0.2, 0.14, 6), P.iron, { at: [0.6, 2.18, 0], m: 'iron' })
+  b.add(G.cyl(0.17, 0.17, 0.03, 6), P.iron, { at: [0.6, 1.77, 0], m: 'iron' })
   b.pop()
   const c = Math.cos(rot), s = Math.sin(rot)
   return [at[0] + 0.6 * c, at[1] + 1.95, at[2] - 0.6 * s]
 }
 export function brassLamp(b, at, h = 1.1) {
   b.push(at)
-  b.add(G.cyl(0.16, 0.2, 0.06, 8), P.brass, { at: [0, 0.03, 0], m: 'gold' })
-  b.add(G.cyl(0.035, 0.05, h, 6), P.brass, { at: [0, h / 2, 0], m: 'gold' })
-  for (const y of [0.35, 0.7]) if (y < h) b.add(G.cyl(0.08, 0.05, 0.05, 8), P.brass, { at: [0, y * h, 0], m: 'gold' })
-  b.add(G.cyl(0.16, 0.05, 0.08, 8), P.brass, { at: [0, h + 0.03, 0], m: 'gold' })
+  b.add(G.cyl(0.16, 0.2, 0.06, 8), P.brass, { at: [0, 0.03, 0], m: 'brass' })
+  b.add(G.cyl(0.035, 0.05, h, 6), P.brass, { at: [0, h / 2, 0], m: 'brass' })
+  for (const y of [0.35, 0.7]) if (y < h) b.add(G.cyl(0.08, 0.05, 0.05, 8), P.brass, { at: [0, y * h, 0], m: 'brass' })
+  b.add(G.cyl(0.16, 0.05, 0.08, 8), P.brass, { at: [0, h + 0.03, 0], m: 'brass' })
   b.add(G.cone(0.035, 0.12, 5), 0xffd27a, { at: [0, h + 0.13, 0], m: 'glow', hdr: 3, grad: 0 })
   b.pop()
   return [at[0], at[1] + h + 0.15, at[2]]
 }
 export function torch(b, at) {
   b.push(at)
-  b.add(G.cyl(0.07, 0.09, 2.2, 6), P.wood, { at: [0, 1.1, 0] })
+  b.add(G.cyl(0.07, 0.09, 2.2, 6), P.wood, { at: [0, 1.1, 0] , m: 'wood' })
   for (const y of [0.6, 1.4]) b.add(G.cyl(0.1, 0.1, 0.12, 6), 0xb89a6a, { at: [0, y, 0] })
-  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; b.add(G.box(0.04, 0.32, 0.04), P.iron, { at: [Math.cos(a) * 0.15, 2.3, Math.sin(a) * 0.15], rot: [Math.sin(a) * 0.3, 0, -Math.cos(a) * 0.3], m: 'metal' }) }
-  b.add(G.cyl(0.14, 0.1, 0.12, 6), P.iron, { at: [0, 2.16, 0], m: 'metal' })
+  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; b.add(G.box(0.04, 0.32, 0.04), P.iron, { at: [Math.cos(a) * 0.15, 2.3, Math.sin(a) * 0.15], rot: [Math.sin(a) * 0.3, 0, -Math.cos(a) * 0.3], m: 'iron' }) }
+  b.add(G.cyl(0.14, 0.1, 0.12, 6), P.iron, { at: [0, 2.16, 0], m: 'iron' })
   b.add(G.ico(0.13, 0), P.ember, { at: [0, 2.25, 0], m: 'glow', hdr: 2, grad: 0 })
   b.pop()
   return [at[0], at[1] + 2.45, at[2]]
 }
 export function brazier(b, at, lit = true) {
   b.push(at)
-  b.add(G.chamfer(0.9, 0.18, 0.9, 0.04), P.ironDark, { at: [0, 0.09, 0], m: 'metal' })
-  for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + Math.PI / 4; b.add(G.box(0.12, 1.3, 0.12), P.iron, { at: [Math.cos(a) * 0.24, 0.8, Math.sin(a) * 0.24], rot: [Math.sin(a) * -0.18, 0, Math.cos(a) * 0.18], m: 'metal' }) }
-  b.add(G.cyl(0.22, 0.32, 0.5, 8), P.iron, { at: [0, 0.75, 0], m: 'metal' })
-  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; b.add(G.cone(0.05, 0.42, 4), P.iron, { at: [Math.cos(a) * 0.48, 1.75, Math.sin(a) * 0.48], rot: [Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35], m: 'metal' }) }
-  b.add(G.cyl(0.5, 0.36, 0.3, 10, true), P.iron, { at: [0, 1.55, 0], m: 'metal' })
+  b.add(G.chamfer(0.9, 0.18, 0.9, 0.04), P.ironDark, { at: [0, 0.09, 0], m: 'iron' })
+  for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + Math.PI / 4; b.add(G.box(0.12, 1.3, 0.12), P.iron, { at: [Math.cos(a) * 0.24, 0.8, Math.sin(a) * 0.24], rot: [Math.sin(a) * -0.18, 0, Math.cos(a) * 0.18], m: 'iron' }) }
+  b.add(G.cyl(0.22, 0.32, 0.5, 8), P.iron, { at: [0, 0.75, 0], m: 'iron' })
+  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; b.add(G.cone(0.05, 0.42, 4), P.iron, { at: [Math.cos(a) * 0.48, 1.75, Math.sin(a) * 0.48], rot: [Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35], m: 'iron' }) }
+  b.add(G.cyl(0.5, 0.36, 0.3, 10, true), P.iron, { at: [0, 1.55, 0], m: 'iron' })
   for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2; b.add(G.oct(0.06), P.gold, { at: [Math.cos(a) * 0.36, 1.1, Math.sin(a) * 0.36], m: 'gold' }) }
   if (lit) b.add(G.ico(0.32, 0), P.ember, { at: [0, 1.5, 0], scale: [1, 0.5, 1], m: 'glow', hdr: 2.2, grad: 0 })
   b.pop()
@@ -106,17 +106,17 @@ export function awning(b, at, rot, color, w = 2.6, d = 1.8, h = 2.3) {
   const p = g.attributes.position
   for (let i = 0; i < p.count; i++) { const x = p.getX(i), z = p.getZ(i); p.setY(i, -Math.cos((x / w) * Math.PI) * 0.12 - (z / d + 0.5) * 0.35 + (i % 3) * 0.02) }
   b.add(g, color, { at: [0, h, 0], m: 'cloth', jit: 0.14 })
-  for (const [x, z] of [[-w / 2, -d / 2], [w / 2, -d / 2], [-w / 2, d / 2], [w / 2, d / 2]]) b.add(G.cyl(0.04, 0.05, h + (z < 0 ? 0.3 : -0.1), 5), P.woodDark, { at: [x, (h + (z < 0 ? 0.3 : -0.1)) / 2, z] })
+  for (const [x, z] of [[-w / 2, -d / 2], [w / 2, -d / 2], [-w / 2, d / 2], [w / 2, d / 2]]) b.add(G.cyl(0.04, 0.05, h + (z < 0 ? 0.3 : -0.1), 5), P.woodDark, { at: [x, (h + (z < 0 ? 0.3 : -0.1)) / 2, z] , m: 'wood' })
   b.pop()
 }
 export function banner(b, at, rot = 0, w = 1.2, h = 3.2, color = P.crimson) {
   b.push(at, [0, rot, 0])
-  b.add(G.cyl(0.04, 0.04, w + 0.4, 6).rotateZ(Math.PI / 2), P.ironDark, { at: [0, 0, 0], m: 'metal' })
-  for (const s of [-1, 1]) b.add(G.cone(0.06, 0.16, 4).rotateZ(-s * Math.PI / 2), P.ironDark, { at: [s * (w / 2 + 0.28), 0, 0], m: 'metal' })
+  b.add(G.cyl(0.04, 0.04, w + 0.4, 6).rotateZ(Math.PI / 2), P.ironDark, { at: [0, 0, 0], m: 'iron' })
+  for (const s of [-1, 1]) b.add(G.cone(0.06, 0.16, 4).rotateZ(-s * Math.PI / 2), P.ironDark, { at: [s * (w / 2 + 0.28), 0, 0], m: 'iron' })
   const sh = new THREE.Shape(); sh.moveTo(-w / 2, 0); sh.lineTo(w / 2, 0); sh.lineTo(w / 2, -h + 0.45); sh.lineTo(0, -h); sh.lineTo(-w / 2, -h + 0.45); sh.closePath()
   b.add(new THREE.ShapeGeometry(sh), color, { at: [0, -0.05, 0.02], m: 'cloth', jit: 0.1, grad: 0.3 })
   // gold border + black anvil sigil
-  for (const s of [-1, 1]) b.add(G.box(0.05, h - 0.6, 0.01), P.gold, { at: [s * (w / 2 - 0.08), -h / 2 + 0.2, 0.035] })
+  for (const s of [-1, 1]) b.add(G.box(0.05, h - 0.6, 0.01), P.gold, { at: [s * (w / 2 - 0.08), -h / 2 + 0.2, 0.035] , m: 'gold' })
   b.add(G.box(w * 0.46, 0.14, 0.012), 0x141414, { at: [0, -h * 0.5, 0.04] })
   b.add(G.box(w * 0.22, 0.12, 0.012), 0x141414, { at: [0, -h * 0.5 - 0.12, 0.04] })
   b.add(G.box(w * 0.36, 0.08, 0.012), 0x141414, { at: [0, -h * 0.5 - 0.24, 0.04] })
@@ -128,30 +128,30 @@ export function banner(b, at, rot = 0, w = 1.2, h = 3.2, color = P.crimson) {
 /* ---------------- market ---------------- */
 export function crate(b, at, rot = 0, s = 1) {
   b.push(at, [0, rot, 0], s)
-  b.add(G.box(1, 1, 1), P.wood, { at: [0, 0.5, 0] })
+  b.add(G.box(1, 1, 1), P.wood, { at: [0, 0.5, 0] , m: 'wood' })
   for (const [x, z, ry] of [[0, 0.505, 0], [0, -0.505, 0], [0.505, 0, Math.PI / 2], [-0.505, 0, Math.PI / 2]]) {
     b.push([x, 0.5, z], [0, ry, 0])
-    b.add(G.box(1.02, 0.1, 0.03), P.woodLight, { at: [0, 0.45, 0] }); b.add(G.box(1.02, 0.1, 0.03), P.woodLight, { at: [0, -0.45, 0] })
-    b.add(G.box(0.1, 1.22, 0.03), P.woodLight, { rot: [0, 0, 0.78] })
+    b.add(G.box(1.02, 0.1, 0.03), P.woodLight, { at: [0, 0.45, 0] , m: 'wood' }); b.add(G.box(1.02, 0.1, 0.03), P.woodLight, { at: [0, -0.45, 0] , m: 'wood' })
+    b.add(G.box(0.1, 1.22, 0.03), P.woodLight, { rot: [0, 0, 0.78] , m: 'wood' })
     b.pop()
   }
   b.pop()
 }
 export function barrel(b, at, rot = 0, s = 1) {
   b.push(at, [0, rot, 0], s)
-  b.add(G.lathe([[0, 0], [0.38, 0], [0.45, 0.25], [0.48, 0.55], [0.45, 0.85], [0.38, 1.1], [0, 1.1]], 10), P.wood, { jit: 0.1 })
-  for (const y of [0.12, 0.38, 0.72, 0.98]) b.add(G.cyl(0.475 - Math.abs(y - 0.55) * 0.15, 0.475 - Math.abs(y - 0.55) * 0.15, 0.06, 10, true), P.iron, { at: [0, y, 0], m: 'metal' })
+  b.add(G.lathe([[0, 0], [0.38, 0], [0.45, 0.25], [0.48, 0.55], [0.45, 0.85], [0.38, 1.1], [0, 1.1]], 10), P.wood, { jit: 0.1 , m: 'wood' })
+  for (const y of [0.12, 0.38, 0.72, 0.98]) b.add(G.cyl(0.475 - Math.abs(y - 0.55) * 0.15, 0.475 - Math.abs(y - 0.55) * 0.15, 0.06, 10, true), P.iron, { at: [0, y, 0], m: 'iron' })
   b.pop()
 }
 export function table(b, at, rot = 0, L = 2, W = 0.8) {
   b.push(at, [0, rot, 0])
-  for (let i = 0; i < 4; i++) b.add(G.chamfer(L, 0.07, W / 4 - 0.01, 0.015), P.wood, { at: [0, 0.75, -W / 2 + W / 8 + i * W / 4] })
+  for (let i = 0; i < 4; i++) b.add(G.chamfer(L, 0.07, W / 4 - 0.01, 0.015), P.wood, { at: [0, 0.75, -W / 2 + W / 8 + i * W / 4] , m: 'wood' })
   for (const s of [-1, 1]) {
-    b.add(G.box(0.08, 0.72, 0.08), P.woodDark, { at: [s * (L / 2 - 0.25), 0.36, -W / 2 + 0.08], rot: [0, 0, s * 0.12] })
-    b.add(G.box(0.08, 0.72, 0.08), P.woodDark, { at: [s * (L / 2 - 0.25), 0.36, W / 2 - 0.08], rot: [0, 0, s * 0.12] })
-    b.add(G.box(0.08, 0.08, W), P.woodDark, { at: [s * (L / 2 - 0.25), 0.68, 0] })
+    b.add(G.box(0.08, 0.72, 0.08), P.woodDark, { at: [s * (L / 2 - 0.25), 0.36, -W / 2 + 0.08], rot: [0, 0, s * 0.12] , m: 'wood' })
+    b.add(G.box(0.08, 0.72, 0.08), P.woodDark, { at: [s * (L / 2 - 0.25), 0.36, W / 2 - 0.08], rot: [0, 0, s * 0.12] , m: 'wood' })
+    b.add(G.box(0.08, 0.08, W), P.woodDark, { at: [s * (L / 2 - 0.25), 0.68, 0] , m: 'wood' })
   }
-  b.add(G.box(L - 0.6, 0.07, 0.07), P.woodDark, { at: [0, 0.3, 0] })
+  b.add(G.box(L - 0.6, 0.07, 0.07), P.woodDark, { at: [0, 0.3, 0] , m: 'wood' })
   b.pop()
 }
 export function fruit(b, at, kind = 'orange', n = 9) {
@@ -193,54 +193,54 @@ export function furnace(b, at) {
     const a = i / 12 * Math.PI * 2 + ring * 0.26
     b.add(G.chamfer(0.5, 0.32, 0.38, 0.05), [P.stoneDark, 0x8a8478, 0x6a6560][(i + ring) % 3], { at: [Math.cos(a) * 0.82, 0.16 + ring * 0.32, Math.sin(a) * 0.82], rot: [0, -a, 0], m: 'stone' })
   }
-  b.add(G.torus(0.98, 0.04, 4, 16), P.iron, { at: [0, 0.62, 0], rot: [Math.PI / 2, 0, 0], m: 'metal' })
+  b.add(G.torus(0.98, 0.04, 4, 16), P.iron, { at: [0, 0.62, 0], rot: [Math.PI / 2, 0, 0], m: 'iron' })
   const r = rng(5)
   for (let i = 0; i < 26; i++) { const a = r() * 6.28, d = Math.sqrt(r()) * 0.62; b.add(G.ico(0.1 + r() * 0.06, 0), r() < 0.55 ? 0xff5a1a : 0x2a1a14, { at: [Math.cos(a) * d, 0.82 + r() * 0.08, Math.sin(a) * d], m: r() < 0.55 ? 'glow' : 'std', hdr: 2.6, grad: 0 }) }
-  for (const s of [-1, 1]) b.add(G.box(0.08, 1.3, 0.08), P.wood, { at: [s * 1.05, 0.65, -0.3] })
+  for (const s of [-1, 1]) b.add(G.box(0.08, 1.3, 0.08), P.wood, { at: [s * 1.05, 0.65, -0.3] , m: 'wood' })
   b.pop()
   return [at[0], at[1] + 0.95, at[2]]
 }
 export function anvil(b, at, rot = 0) {
   b.push(at, [0, rot, 0])
-  b.add(G.cyl(0.28, 0.34, 0.5, 8), 0x4a3424, { at: [0, 0.25, 0] })
-  b.add(G.chamfer(0.36, 0.2, 0.28, 0.03), P.iron, { at: [0, 0.6, 0], m: 'metal' })
-  b.add(G.chamfer(0.62, 0.16, 0.26, 0.03), P.iron, { at: [0.02, 0.78, 0], m: 'metal' })
-  b.add(G.cone(0.12, 0.34, 4).rotateZ(-Math.PI / 2), P.iron, { at: [0.48, 0.79, 0], rot: [Math.PI / 4, 0, 0], m: 'metal' })
+  b.add(G.cyl(0.28, 0.34, 0.5, 8), 0x4a3424, { at: [0, 0.25, 0] , m: 'wood' })
+  b.add(G.chamfer(0.36, 0.2, 0.28, 0.03), P.iron, { at: [0, 0.6, 0], m: 'iron' })
+  b.add(G.chamfer(0.62, 0.16, 0.26, 0.03), P.iron, { at: [0.02, 0.78, 0], m: 'iron' })
+  b.add(G.cone(0.12, 0.34, 4).rotateZ(-Math.PI / 2), P.iron, { at: [0.48, 0.79, 0], rot: [Math.PI / 4, 0, 0], m: 'iron' })
   b.pop()
 }
 export function hammerProp(b, at, rot = [0, 0, 0], s = 1) {
   b.push(at, rot, s)
-  b.add(G.cyl(0.035, 0.04, 0.9, 6), P.wood, { at: [0, 0.45, 0] })
-  b.add(G.chamfer(0.3, 0.14, 0.14, 0.02), P.iron, { at: [0, 0.92, 0], m: 'metal' })
+  b.add(G.cyl(0.035, 0.04, 0.9, 6), P.wood, { at: [0, 0.45, 0] , m: 'wood' })
+  b.add(G.chamfer(0.3, 0.14, 0.14, 0.02), P.iron, { at: [0, 0.92, 0], m: 'iron' })
   b.pop()
 }
 export function toolRack(b, at, rot = 0) {
   b.push(at, [0, rot, 0])
-  for (const s of [-1, 1]) b.add(G.chamfer(0.12, 1.4, 0.12, 0.02), P.wood, { at: [s * 0.9, 0.7, 0] })
-  for (const y of [0.4, 1.2]) b.add(G.chamfer(2, 0.1, 0.1, 0.02), P.wood, { at: [0, y, 0] })
+  for (const s of [-1, 1]) b.add(G.chamfer(0.12, 1.4, 0.12, 0.02), P.wood, { at: [s * 0.9, 0.7, 0] , m: 'wood' })
+  for (const y of [0.4, 1.2]) b.add(G.chamfer(2, 0.1, 0.1, 0.02), P.wood, { at: [0, y, 0] , m: 'wood' })
   for (let i = 0; i < 6; i++) hammerProp(b, [-0.7 + i * 0.28, 0.25, 0.08], [0, 0, 0], 0.7)
   b.pop()
 }
 export function bucket(b, at) {
   b.push(at)
-  b.add(G.cyl(0.32, 0.27, 0.55, 9, false), P.wood, { at: [0, 0.27, 0] })
-  for (const y of [0.1, 0.45]) b.add(G.cyl(0.33, 0.31, 0.05, 9, true), P.iron, { at: [0, y, 0], m: 'metal' })
+  b.add(G.cyl(0.32, 0.27, 0.55, 9, false), P.wood, { at: [0, 0.27, 0] , m: 'wood' })
+  for (const y of [0.1, 0.45]) b.add(G.cyl(0.33, 0.31, 0.05, 9, true), P.iron, { at: [0, y, 0], m: 'iron' })
   b.add(G.cyl(0.3, 0.3, 0.02, 9), 0x2a4a5a, { at: [0, 0.5, 0], m: 'metal' })
   b.pop()
 }
 export function plough(b, at, rot = 0) {
   b.push(at, [0, rot, 0])
-  b.add(G.chamfer(2.2, 0.12, 0.12, 0.02), P.wood, { at: [0.4, 0.5, 0], rot: [0, 0, 0.25] })
-  b.add(G.chamfer(0.12, 1, 0.12, 0.02), P.wood, { at: [-0.6, 0.45, 0], rot: [0, 0, -0.5] })
-  b.add(G.cone(0.18, 0.5, 4).rotateZ(Math.PI / 2), P.iron, { at: [-0.95, 0.1, 0], m: 'metal' })
+  b.add(G.chamfer(2.2, 0.12, 0.12, 0.02), P.wood, { at: [0.4, 0.5, 0], rot: [0, 0, 0.25] , m: 'wood' })
+  b.add(G.chamfer(0.12, 1, 0.12, 0.02), P.wood, { at: [-0.6, 0.45, 0], rot: [0, 0, -0.5] , m: 'wood' })
+  b.add(G.cone(0.18, 0.5, 4).rotateZ(Math.PI / 2), P.iron, { at: [-0.95, 0.1, 0], m: 'iron' })
   b.pop()
 }
 
 /* ---------------- training & defense ---------------- */
 export function dummy(b, at, rot = 0, variant = 0) {
   b.push(at, [0, rot, 0])
-  for (const [x, z] of [[0.35, 0], [-0.35, 0], [0, 0.35], [0, -0.35]]) b.add(G.box(Math.abs(x) * 2 || 0.1, 0.12, Math.abs(z) * 2 || 0.1), P.woodDark, { at: [x / 2, 0.06, z / 2] })
-  b.add(G.chamfer(0.14, 1.3, 0.14, 0.02), P.wood, { at: [0, 0.7, 0] })
+  for (const [x, z] of [[0.35, 0], [-0.35, 0], [0, 0.35], [0, -0.35]]) b.add(G.box(Math.abs(x) * 2 || 0.1, 0.12, Math.abs(z) * 2 || 0.1), P.woodDark, { at: [x / 2, 0.06, z / 2] , m: 'wood' })
+  b.add(G.chamfer(0.14, 1.3, 0.14, 0.02), P.wood, { at: [0, 0.7, 0] , m: 'wood' })
   b.add(jitter(G.cyl(0.26, 0.2, 0.62, 7), 0.05, variant), P.burlap, { at: [0, 1.5, 0] })
   b.add(jitter(G.ico(0.17, 0), 0.04, variant + 3), P.burlap, { at: [0, 1.98, 0], scale: [1, 1.15, 1] })
   for (const s of [-1, 1]) b.add(G.cone(0.08, 0.5, 5).rotateZ(s * Math.PI / 2), P.straw, { at: [s * 0.45, 1.66, 0] })
@@ -250,14 +250,14 @@ export function dummy(b, at, rot = 0, variant = 0) {
 }
 export function weaponRack(b, at, rot = 0) {
   b.push(at, [0, rot, 0])
-  for (const s of [-1, 1]) { b.add(G.chamfer(0.1, 1.2, 0.1, 0.02), P.wood, { at: [s * 0.8, 0.6, 0] }); b.add(G.box(0.1, 0.1, 0.6), P.wood, { at: [s * 0.8, 0.05, 0] }) }
-  b.add(G.chamfer(1.7, 0.08, 0.1, 0.02), P.wood, { at: [0, 1.05, 0] }); b.add(G.chamfer(1.7, 0.08, 0.3, 0.02), P.wood, { at: [0, 0.2, 0] })
+  for (const s of [-1, 1]) { b.add(G.chamfer(0.1, 1.2, 0.1, 0.02), P.wood, { at: [s * 0.8, 0.6, 0] , m: 'wood' }); b.add(G.box(0.1, 0.1, 0.6), P.wood, { at: [s * 0.8, 0.05, 0] , m: 'wood' }) }
+  b.add(G.chamfer(1.7, 0.08, 0.1, 0.02), P.wood, { at: [0, 1.05, 0] , m: 'wood' }); b.add(G.chamfer(1.7, 0.08, 0.3, 0.02), P.wood, { at: [0, 0.2, 0] , m: 'wood' })
   for (let i = 0; i < 6; i++) b.add(G.cyl(0.03, 0.035, 2, 5), i % 2 ? P.woodLight : P.wood, { at: [-0.6 + i * 0.24, 1.05, 0.05], rot: [0.12, 0, 0] })
   b.pop()
 }
 export function spear(b, at, rot = [0, 0, 0]) {
   b.push(at, rot)
-  b.add(G.cyl(0.025, 0.03, 2.2, 5), P.wood, { at: [0, 1.1, 0] })
+  b.add(G.cyl(0.025, 0.03, 2.2, 5), P.wood, { at: [0, 1.1, 0] , m: 'wood' })
   b.add(G.oct(0.07), 0x9a9aa2, { at: [0, 2.3, 0], scale: [0.6, 2.4, 0.25], m: 'metal' })
   b.pop()
 }
@@ -265,7 +265,7 @@ export function spear(b, at, rot = [0, 0, 0]) {
 /* ---------------- household & trades ---------------- */
 export function herbRack(b, at, rot = 0, w = 1.6) {
   b.push(at, [0, rot, 0])
-  b.add(G.chamfer(w, 0.08, 0.08, 0.02), P.wood, { at: [0, 0, 0] })
+  b.add(G.chamfer(w, 0.08, 0.08, 0.02), P.wood, { at: [0, 0, 0] , m: 'wood' })
   for (let i = 0; i < Math.round(w / 0.32); i++) {
     const x = -w / 2 + 0.2 + i * 0.32
     b.add(G.cyl(0.004, 0.004, 0.12, 3), 0x8a6a40, { at: [x, -0.06, 0] })
@@ -281,8 +281,8 @@ export function mortar(b, at) {
 }
 export function beehive(b, at) {
   b.push(at)
-  for (const [x, z] of [[-0.25, -0.25], [0.25, -0.25], [-0.25, 0.25], [0.25, 0.25]]) b.add(G.box(0.08, 0.5, 0.08), P.woodDark, { at: [x, 0.25, z] })
-  b.add(G.chamfer(0.7, 0.06, 0.7, 0.01), P.wood, { at: [0, 0.5, 0] })
+  for (const [x, z] of [[-0.25, -0.25], [0.25, -0.25], [-0.25, 0.25], [0.25, 0.25]]) b.add(G.box(0.08, 0.5, 0.08), P.woodDark, { at: [x, 0.25, z] , m: 'wood' })
+  b.add(G.chamfer(0.7, 0.06, 0.7, 0.01), P.wood, { at: [0, 0.5, 0] , m: 'wood' })
   for (let i = 0; i < 5; i++) b.add(G.cyl(0.33 - i * 0.025, 0.34 - i * 0.025, 0.14, 10, true), 0xa87a40, { at: [0, 0.6 + i * 0.13, 0] })
   b.add(G.cone(0.42, 0.35, 10), 0xb08a4a, { at: [0, 1.38, 0], jit: 0.12 })
   b.add(G.box(0.12, 0.06, 0.04), 0x2a1a10, { at: [0, 0.62, 0.32] })
@@ -291,28 +291,28 @@ export function beehive(b, at) {
 export function fence(b, a, c, h = 1.0) {
   const A = new THREE.Vector3(...a), C = new THREE.Vector3(...c), L = A.distanceTo(C), n = Math.max(1, Math.round(L / 1.4))
   const ang = -Math.atan2(C.z - A.z, C.x - A.x)
-  for (let i = 0; i <= n; i++) { const p = A.clone().lerp(C, i / n); b.add(G.chamfer(0.12, h + 0.2, 0.12, 0.02), P.woodDark, { at: [p.x, p.y + (h + 0.2) / 2 - 0.1, p.z] }) }
-  for (const y of [h * 0.45, h * 0.9]) b.add(G.chamfer(L, 0.09, 0.07, 0.015), P.wood, { at: [(A.x + C.x) / 2, (A.y + C.y) / 2 + y, (A.z + C.z) / 2], rot: [0, ang, 0] })
+  for (let i = 0; i <= n; i++) { const p = A.clone().lerp(C, i / n); b.add(G.chamfer(0.12, h + 0.2, 0.12, 0.02), P.woodDark, { at: [p.x, p.y + (h + 0.2) / 2 - 0.1, p.z] , m: 'wood' }) }
+  for (const y of [h * 0.45, h * 0.9]) b.add(G.chamfer(L, 0.09, 0.07, 0.015), P.wood, { at: [(A.x + C.x) / 2, (A.y + C.y) / 2 + y, (A.z + C.z) / 2], rot: [0, ang, 0] , m: 'wood' })
 }
 export function clothLine(b, a, c, colors = [0xd9822b, 0x2a4a8a, 0x8a2a3a, 0x3a7a5a]) {
-  b.add(G.cyl(0.05, 0.06, 2.2, 5), P.woodDark, { at: [a[0], a[1] + 1.1, a[2]] })
-  b.add(G.cyl(0.05, 0.06, 2.2, 5), P.woodDark, { at: [c[0], c[1] + 1.1, c[2]] })
+  b.add(G.cyl(0.05, 0.06, 2.2, 5), P.woodDark, { at: [a[0], a[1] + 1.1, a[2]] , m: 'wood' })
+  b.add(G.cyl(0.05, 0.06, 2.2, 5), P.woodDark, { at: [c[0], c[1] + 1.1, c[2]] , m: 'wood' })
   const A = new THREE.Vector3(a[0], a[1] + 2.05, a[2]), C = new THREE.Vector3(c[0], c[1] + 2.05, c[2]), ang = -Math.atan2(C.z - A.z, C.x - A.x)
   colors.forEach((col, i) => { const t = (i + 0.7) / (colors.length + 0.4), p = A.clone().lerp(C, t); p.y -= Math.sin(Math.PI * t) * 0.2; b.add(G.plane(0.6, 0.9, 2, 2), col, { at: [p.x, p.y - 0.45, p.z], rot: [0, ang, 0], m: 'cloth', jit: 0.1 }) })
 }
 export function bench(b, at, rot = 0, L = 1.6) {
   b.push(at, [0, rot, 0])
-  b.add(G.chamfer(L, 0.08, 0.36, 0.02), P.wood, { at: [0, 0.45, 0] })
-  for (const s of [-1, 1]) b.add(G.box(0.08, 0.42, 0.3), P.woodDark, { at: [s * (L / 2 - 0.15), 0.21, 0] })
+  b.add(G.chamfer(L, 0.08, 0.36, 0.02), P.wood, { at: [0, 0.45, 0] , m: 'wood' })
+  for (const s of [-1, 1]) b.add(G.box(0.08, 0.42, 0.3), P.woodDark, { at: [s * (L / 2 - 0.15), 0.21, 0] , m: 'wood' })
   b.pop()
 }
 export function woolBundle(b, at) { b.add(jitter(G.ico(0.35, 1), 0.08, 3), 0xe8e0d0, { at: [at[0], at[1] + 0.25, at[2]], scale: [1.2, 0.7, 1] }) }
 export function stoneBlock(b, at, rot = 0, s = 1) { b.add(G.chamfer(0.9 * s, 0.5 * s, 0.6 * s, 0.05), 0xb0a898, { at: [at[0], at[1] + 0.25 * s, at[2]], rot: [0, rot, 0], m: 'stone' }) }
 export function scaffold(b, at, rot = 0, w = 3, h = 3) {
   b.push(at, [0, rot, 0])
-  for (const x of [-w / 2, w / 2]) for (const z of [-0.5, 0.5]) b.add(G.cyl(0.05, 0.06, h, 5), P.woodLight, { at: [x, h / 2, z] })
-  for (const y of [h * 0.45, h * 0.95]) { b.add(G.chamfer(w + 0.2, 0.08, 1.1, 0.01), P.woodLight, { at: [0, y, 0] }) }
-  b.add(G.cyl(0.04, 0.04, Math.hypot(w, h), 4), P.woodLight, { at: [0, h / 2, 0.55], rot: [0, 0, Math.atan2(w, h)] })
+  for (const x of [-w / 2, w / 2]) for (const z of [-0.5, 0.5]) b.add(G.cyl(0.05, 0.06, h, 5), P.woodLight, { at: [x, h / 2, z] , m: 'wood' })
+  for (const y of [h * 0.45, h * 0.95]) { b.add(G.chamfer(w + 0.2, 0.08, 1.1, 0.01), P.woodLight, { at: [0, y, 0] , m: 'wood' }) }
+  b.add(G.cyl(0.04, 0.04, Math.hypot(w, h), 4), P.woodLight, { at: [0, h / 2, 0.55], rot: [0, 0, Math.atan2(w, h)] , m: 'wood' })
   b.pop()
 }
 
@@ -391,9 +391,9 @@ export function ganeshaShrine(b, at, rot = 0) {
   b.pop()
 }
 export function bell(b) { // bronze temple bell (lathe), local origin at the crown
-  b.add(G.lathe([[0, 0], [0.18, 0], [0.24, -0.12], [0.36, -0.55], [0.5, -1.15], [0.62, -1.42], [0.6, -1.5], [0, -1.5]], 12), P.bronze, { m: 'gold', jit: 0.05 })
+  b.add(G.lathe([[0, 0], [0.18, 0], [0.24, -0.12], [0.36, -0.55], [0.5, -1.15], [0.62, -1.42], [0.6, -1.5], [0, -1.5]], 12), P.bronze, { m: 'brass', jit: 0.05 })
   b.add(G.torus(0.6, 0.05, 4, 14), 0x8a7a3a, { at: [0, -1.38, 0], rot: [Math.PI / 2, 0, 0], m: 'gold' })
-  b.add(G.torus(0.1, 0.035, 4, 8), P.bronze, { at: [0, 0.08, 0], m: 'gold' })
+  b.add(G.torus(0.1, 0.035, 4, 8), P.bronze, { at: [0, 0.08, 0], m: 'brass' })
 }
 export function ironThrone(b, at, rot = 0) {
   b.push(at, [0, rot, 0])
@@ -425,7 +425,7 @@ export function crown(b, at, s = 1) {
 }
 export function chain(b, a, c, link = 0.16) {
   const A = new THREE.Vector3(...a), C = new THREE.Vector3(...c), n = Math.round(A.distanceTo(C) / link)
-  for (let i = 0; i < n; i++) { const p = A.clone().lerp(C, (i + 0.5) / n); p.y -= Math.sin(Math.PI * (i + 0.5) / n) * 0.25; b.add(G.torus(0.07, 0.02, 3, 6), P.iron, { at: p.toArray(), rot: [i % 2 ? Math.PI / 2 : 0, Math.atan2(C.x - A.x, C.z - A.z), 0], m: 'metal' }) }
+  for (let i = 0; i < n; i++) { const p = A.clone().lerp(C, (i + 0.5) / n); p.y -= Math.sin(Math.PI * (i + 0.5) / n) * 0.25; b.add(G.torus(0.07, 0.02, 3, 6), P.iron, { at: p.toArray(), rot: [i % 2 ? Math.PI / 2 : 0, Math.atan2(C.x - A.x, C.z - A.z), 0], m: 'iron' }) }
 }
 export function slagHeap(b, at, s = 1) {
   const r = rng(at[0] * 3 + at[2])

@@ -247,7 +247,7 @@ export class Audio {
     this.stopVoice()
     const h = this.voice.get(voiceKey(speaker, text))
     if (this.disposed || !settings.voiceActing || !h || h.state() !== 'loaded') return { duration: text.length / 14, ended: Promise.resolve(), silent: true }
-    h.volume((whisper ? 0.6 : 0.85) * clamp(settings.voice)); h.rate(1)
+    h.volume((whisper ? 0.5 : 0.65) * clamp(settings.voice)); h.rate(1)
     let finish
     const ended = new Promise(resolve => { finish = resolve })
     const sid = h.play()

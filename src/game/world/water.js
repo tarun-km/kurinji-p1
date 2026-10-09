@@ -26,14 +26,14 @@ float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f); return mix(
 void main(){
   vec2 uv = vUv;
   float flow = n(vec2(uv.x * 6.0, uv.y * (fall > 0.5 ? 1.2 : 3.0) - time * speed)) * 0.6 + n(vec2(uv.x * 14.0, uv.y * 7.0 - time * speed * 1.7)) * 0.4;
-  float edge = smoothstep(0.32, 0.0, uv.x) + smoothstep(0.68, 1.0, uv.x);
+  float edge = (1.0 - smoothstep(0.0, 0.32, uv.x)) + smoothstep(0.68, 1.0, uv.x);
   vec3 v = normalize(vW - cameraPosition);
   float fres = pow(1.0 - abs(v.y), 3.0) * (1.0 - fall);
   vec3 c = mix(deep, shallow, flow * 0.8 + fall * 0.35);
   c = mix(c, sky, fres * 0.45);
   float streak = smoothstep(0.55, 0.85, flow) * (0.35 + fall * 0.65);
   c = mix(c, foam, clamp(streak + edge * 0.55 + fall * 0.35, 0.0, 1.0));
-  float a = mix(0.82, 0.9, fall) * (fall > 0.5 ? smoothstep(0.0, 0.12, uv.x) * smoothstep(1.0, 0.88, uv.x) : 1.0);
+  float a = mix(0.82, 0.9, fall) * (fall > 0.5 ? smoothstep(0.0, 0.12, uv.x) * (1.0 - smoothstep(0.88, 1.0, uv.x)) : 1.0);
   gl_FragColor = vec4(c, a);
   #include <fog_fragment>
 }`

@@ -1,1 +1,100 @@
-{}
+{
+ "ch1": [
+  {
+   "src": "ch1-1-93ae2376.webp",
+   "thumb": "ch1-1-93ae2376-sm.webp"
+  },
+  {
+   "src": "ch1-2-5a3377cf.webp",
+   "thumb": "ch1-2-5a3377cf-sm.webp"
+  }
+ ],
+ "ch2": [
+  {
+   "src": "ch2-1-55af1254.webp",
+   "thumb": "ch2-1-55af1254-sm.webp"
+  },
+  {
+   "src": "ch2-2-93bcb35d.webp",
+   "thumb": "ch2-2-93bcb35d-sm.webp"
+  }
+ ],
+ "ch3": [
+  {
+   "src": "ch3-1-ac3baac6.webp",
+   "thumb": "ch3-1-ac3baac6-sm.webp"
+  },
+  {
+   "src": "ch3-2-f77712f4.webp",
+   "thumb": "ch3-2-f77712f4-sm.webp"
+  }
+ ],
+ "ch4": [
+  {
+   "src": "ch4-1-13d8af54.webp",
+   "thumb": "ch4-1-13d8af54-sm.webp"
+  }
+ ],
+ "ch5": [
+  {
+   "src": "ch5-1-7b2eb933.webp",
+   "thumb": "ch5-1-7b2eb933-sm.webp"
+  },
+  {
+   "src": "ch5-2-7d00b765.webp",
+   "thumb": "ch5-2-7d00b765-sm.webp"
+  }
+ ],
+ "ch6": [
+  {
+   "src": "ch6-1-d7b9d7ea.webp",
+   "thumb": "ch6-1-d7b9d7ea-sm.webp"
+  },
+  {
+   "src": "ch6-2-37d5aa8a.webp",
+   "thumb": "ch6-2-37d5aa8a-sm.webp"
+  }
+ ],
+ "prologue": [
+  {
+   "src": "prologue-1-230dfdc5.webp",
+   "thumb": "prologue-1-230dfdc5-sm.webp"
+  },
+  {
+   "src": "prologue-2-d86e5940.webp",
+   "thumb": "prologue-2-d86e5940-sm.webp"
+  },
+  {
+   "src": "prologue-3-5b80dc61.webp",
+   "thumb": "prologue-3-5b80dc61-sm.webp"
+  },
+  {
+   "src": "prologue-4-6754005e.webp",
+   "thumb": "prologue-4-6754005e-sm.webp"
+  }
+ ],
+ "ch7": [
+  {
+   "src": "ch7-1-407f2646.webp",
+   "thumb": "ch7-1-407f2646-sm.webp"
+  }
+ ],
+ "epilogue": [
+  {
+   "src": "epilogue-1-fcdb572b.webp",
+   "thumb": "epilogue-1-fcdb572b-sm.webp"
+  }
+ ],
+ "freeroam": [
+  {
+   "src": "freeroam-1-64fcf5d1.webp",
+   "thumb": "freeroam-1-64fcf5d1-sm.webp"
+  }
+ ],
+ "title": [
+  {
+   "src": "title-1-efe49569.webp",
+   "thumb": "title-1-efe49569-sm.webp"
+  }
+ ]
+}

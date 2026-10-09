@@ -1,18 +1,27 @@
 // Kurinji service worker: makes the game installable and keeps heavy media
 // (music, voices, effects, art, fonts) on the device after the first play.
 // Code and pages are always fetched fresh first, so updates arrive normally.
-const MEDIA = 'kurinji-media-v1', SHELL = 'kurinji-shell-v1'
+const MEDIA = 'kurinji-media-v2', SHELL = 'kurinji-shell-v2'
 const MEDIA_RE = /\/(audio|voice|sfx|art|fonts|icons)\//
 
 self.addEventListener('install', () => self.skipWaiting())
 self.addEventListener('activate', e => e.waitUntil((async () => {
-  for (const k of await caches.keys()) if (![MEDIA, SHELL].includes(k)) await caches.delete(k)
+  for (const k of await caches.keys()) if (k.startsWith('kurinji-') && ![MEDIA, SHELL].includes(k)) await caches.delete(k)
   await self.clients.claim()
 })()))
 
 self.addEventListener('fetch', e => {
   const req = e.request
   if (req.method !== 'GET' || new URL(req.url).origin !== location.origin || req.headers.has('range')) return
+  if (/\/art\/shots\//.test(new URL(req.url).pathname)) {
+    // Screenshots and their index change when graphics improve. Revalidate them
+    // instead of leaving installed players on an older capture of the game.
+    e.respondWith(caches.open(MEDIA).then(async c => {
+      try { const response = await fetch(req); if (response.ok && response.status === 200) await c.put(req, response.clone()); return response }
+      catch { return (await c.match(req)) || Response.error() }
+    }))
+    return
+  }
   if (MEDIA_RE.test(new URL(req.url).pathname)) {
     // media never changes under the same name: cache first
     e.respondWith(caches.open(MEDIA).then(async c => (await c.match(req)) || fetch(req).then(r => { if (r.ok && r.status === 200) c.put(req, r.clone()); return r })))

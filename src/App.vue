@@ -8,7 +8,7 @@ import { settings, applyPreset, resetSettings, isMobile } from './game/settings'
 import TitleScreen from './ui/TitleScreen.vue'
 import LoadingScreen from './ui/LoadingScreen.vue'
 import Logo from './ui/Logo.vue'
-import { loadShots } from './ui/shots'
+import { loadShots, CHAPTER_KEYS } from './ui/shots'
 
 const host = ref(null), joyZone = ref(null)
 let game = null, mounted = true
@@ -36,10 +36,8 @@ const credits = [
   ['Story & Characters', 'Tarun KM'], ['Music', 'Gemini'], ['Coding', 'Claude'],
   ['Character Visualizations & Visuals', 'ChatGPT'], ['Cut scenes', 'Stable Diffusion'], ['Voices', 'ElevenLabs'],
 ]
-// loading screens play in-game shots from public/art/shots/index.json (see src/ui/shots.js),
-// falling back to each chapter's story painting
+// Loading screens and chapter cards use captures of the upgraded game.
 loadShots()
-const BASE = import.meta.env.BASE_URL
 state.mobile = isMobile
 
 function updateOrientation() { portrait.value = innerHeight > innerWidth }
@@ -71,7 +69,7 @@ onMounted(async () => {
   addEventListener('keydown', onKey, true)
   Object.assign(state, { screen: 'title', paused: false, showJournal: false, cutscene: null, dialogue: null, choices: null, card: null, caption: '', prompt: '', deathMsg: '', fade: 0, breathingPrompt: false })
   ui.retryLoad = null
-  state.loading = { title: 'Kurinji', sub: 'The Last Bloom', art: `${BASE}art/story12-sm.webp`, progress: 0, label: 'Raising the mountain…', error: '' }
+  state.loading = { key: 'title', title: 'Kurinji', sub: 'The Last Bloom', art: '', progress: 0, label: 'Raising the mountain…', error: '' }
   try {
     game = new Game(host.value)
     await game.init()
@@ -96,7 +94,7 @@ onMounted(async () => {
     if (!mounted) return
     console.error('Kurinji could not start:', error)
     game?.destroy?.()
-    state.loading = { title: 'The mountain could not load', sub: 'Your saved journey is safe.', art: '/art/story01.webp', progress: 0, label: '', error: `${error?.message || 'The game could not prepare its assets.'} Reload to try again.` }
+    state.loading = { key: 'title', title: 'The mountain could not load', sub: 'Your saved journey is safe.', art: '', progress: 0, label: '', error: `${error?.message || 'The game could not prepare its assets.'} Reload to try again.` }
     ui.retryLoad = () => location.reload()
   }
 })
@@ -117,7 +115,7 @@ async function begin(ch = 0) {
     if (!mounted) return
     console.error('The journey could not begin:', error)
     if (!state.loading?.error) {
-      state.loading = { title: 'This chapter could not load', sub: CHAPTER_NAMES[ch], art: '/art/story01.webp', progress: 0, label: '', error: 'Reload to return to your saved journey and try again.' }
+      state.loading = { key: CHAPTER_KEYS[ch], title: 'This chapter could not load', sub: CHAPTER_NAMES[ch], art: '', progress: 0, label: '', error: 'Reload to return to your saved journey and try again.' }
       ui.retryLoad = () => location.reload()
     }
   } finally { launching.value = false }
@@ -138,7 +136,7 @@ async function beginFreeRoam() {
   } catch (error) {
     if (!mounted) return
     console.error('Free roam could not begin:', error)
-    state.loading = { title: 'Free roam could not load', sub: 'Your saved journey is safe.', art: '/art/story11.webp', progress: 0, label: '', error: 'Reload to try again.' }
+    state.loading = { key: 'freeroam', title: 'Free roam could not load', sub: 'Your saved journey is safe.', art: '', progress: 0, label: '', error: 'Reload to try again.' }
     ui.retryLoad = () => location.reload()
   } finally { launching.value = false }
 }
@@ -213,7 +211,8 @@ function onKey(e) {
   }
   if (state.paused || showSettings.value || showCredits.value) {
     if (e.code === 'Tab') {
-      const controls = [...(settingsPanel.value?.querySelectorAll('button:not([disabled]), select, input') || [])]
+      const panel = showCredits.value ? creditsPanel.value : settingsPanel.value
+      const controls = [...(panel?.querySelectorAll('button:not([disabled]), select, input') || [])]
       const first = controls[0], last = controls.at(-1)
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus() }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus() }
@@ -231,6 +230,7 @@ onUnmounted(() => {
   removeEventListener('keydown', onKey, true); removeEventListener('resize', updateOrientation); removeEventListener('kurinji-installable', onInstallable)
   document.removeEventListener('fullscreenchange', onFullscreen); document.removeEventListener('webkitfullscreenchange', onFullscreen)
   removeEventListener('pointerdown', kick); removeEventListener('keydown', kick)
+  clearTimeout(moveHintTimer)
   game?.destroy?.()
 })
 
@@ -241,7 +241,8 @@ const press = a => { if (!state.paused && !state.loading && !state.cutscene) gam
 // touch controls hide for story conversations (but stay during fights, where dialogue moves to the top)
 const touchControls = computed(() => state.mobile && state.screen === 'game' && !state.letterbox && !state.paused && !state.loading && !state.cutscene && !state.showJournal && !state.choices && !state.breathingPrompt && !(state.dialogue && !state.inCombat))
 const movedOnce = ref(false)
-watch(touchControls, on => { if (on && !movedOnce.value) setTimeout(() => { movedOnce.value = true }, 9000) })
+let moveHintTimer = 0
+watch(touchControls, on => { if (on && !movedOnce.value && !moveHintTimer) moveHintTimer = setTimeout(() => { movedOnce.value = true; moveHintTimer = 0 }, 9000) })
 const promptText = computed(() => state.mobile ? String(state.prompt || '').replace(/^\[[^\]]+\]\s*/, '') : state.prompt)
 const restartToTitle = () => location.reload()
 const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howler.js', 'nippleJS', 'Tweakpane']
@@ -351,7 +352,7 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
   </transition>
 
   <!-- ============ CREDITS ============ -->
-  <div v-if="state.screen === 'credits' || showCredits" ref="creditsPanel" class="credits">
+  <div v-if="state.screen === 'credits' || showCredits" ref="creditsPanel" class="credits" :role="showCredits ? 'dialog' : 'region'" :aria-modal="showCredits || undefined" aria-label="Credits">
     <div class="roll">
       <Logo class="roll-logo" />
       <p class="dedic">For everyone still waiting for something gentle to bloom.</p>

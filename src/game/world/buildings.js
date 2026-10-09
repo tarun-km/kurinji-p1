@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { G, jitter, rock, tileSlope, rng } from '../gfx/kit'
+import { G, jitter, rock, tileSlope, rng, detailLevel } from '../gfx/kit'
 import { P, brassLamp, garland, marigoldStrand, banner, torch, bell, ironThrone } from './props'
 
 /* ===========================================================================
@@ -11,18 +11,18 @@ import { P, brassLamp, garland, marigoldStrand, banner, torch, bell, ironThrone 
 /** Gable roof of clay tiles. Ridge runs along local x; slopes fall toward ±z. */
 export function tileRoof(b, w, dFront, dBack, ridgeY, pitch = 0.5, color = P.tile) {
   const front = dFront / Math.cos(pitch), back = dBack / Math.cos(pitch)
-  b.add(tileSlope(w, front), color, { at: [0, ridgeY, 0], rot: [pitch, 0, 0], jit: 0.1, grad: 0 })
-  b.add(tileSlope(w, back), color, { at: [0, ridgeY, 0], rot: [-pitch, Math.PI, 0], jit: 0.1, grad: 0 })
+  b.add(tileSlope(w, front), color, { at: [0, ridgeY, 0], rot: [pitch, 0, 0], jit: 0.1, grad: 0, m: 'tile' })
+  b.add(tileSlope(w, back), color, { at: [0, ridgeY, 0], rot: [-pitch, Math.PI, 0], jit: 0.1, grad: 0, m: 'tile' })
   // underside boards (so the roof reads solid from below)
-  b.add(G.box(w, 0.06, front), P.woodDark, { at: [0, ridgeY - Math.sin(pitch) * front / 2 - 0.06, Math.cos(pitch) * front / 2], rot: [pitch, 0, 0] })
-  b.add(G.box(w, 0.06, back), P.woodDark, { at: [0, ridgeY - Math.sin(pitch) * back / 2 - 0.06, -Math.cos(pitch) * back / 2], rot: [-pitch, 0, 0] })
-  b.add(G.cyl(0.13, 0.13, w + 0.1, 5).rotateZ(Math.PI / 2), P.tileDark, { at: [0, ridgeY + 0.04, 0] })
+  b.add(G.box(w, 0.06, front), P.woodDark, { at: [0, ridgeY - Math.sin(pitch) * front / 2 - 0.06, Math.cos(pitch) * front / 2], rot: [pitch, 0, 0] , m: 'wood' })
+  b.add(G.box(w, 0.06, back), P.woodDark, { at: [0, ridgeY - Math.sin(pitch) * back / 2 - 0.06, -Math.cos(pitch) * back / 2], rot: [-pitch, 0, 0] , m: 'wood' })
+  b.add(G.cyl(0.13, 0.13, w + 0.1, 5).rotateZ(Math.PI / 2), P.tileDark, { at: [0, ridgeY + 0.04, 0] , m: 'tile' })
 }
 /** Triangular gable wall. */
 function gable(b, d1, d2, h, color, at, rot = 0) {
   const s = new THREE.Shape(); s.moveTo(-d2, 0); s.lineTo(d1, 0); s.lineTo(0, h); s.closePath()
   const g = new THREE.ExtrudeGeometry(s, { depth: 0.22, bevelEnabled: false }); g.translate(0, 0, -0.11)
-  b.add(g, color, { at, rot: [0, rot + Math.PI / 2, 0], jit: 0.06 })
+  b.add(g, color, { at, rot: [0, rot + Math.PI / 2, 0], jit: 0.06, m: 'plaster' })
 }
 function kolamTexture() {
   const c = document.createElement('canvas'); c.width = c.height = 256
@@ -64,26 +64,31 @@ export function house(b, { w = 4.8, d = 4, wall = P.plaster, roof = P.tile, stat
       const h = wallTop(); if (charred && r() < 0.15) continue
       const isDoor = door && Math.abs(cx) < sl * 0.6
       const bh = isDoor ? h - 2.0 : h
-      if (bh > 0.05) b.add(G.chamfer(sl + 0.02, bh, 0.24, 0.04), wallCol, { at: [x + Math.cos(ry) * cx, plinth + (isDoor ? 2.0 + bh / 2 : bh / 2), z - Math.sin(ry) * cx], rot: [0, ry, 0], jit: 0.07 })
+      if (bh > 0.05) b.add(G.chamfer(sl + 0.02, bh, 0.24, 0.04), wallCol, { at: [x + Math.cos(ry) * cx, plinth + (isDoor ? 2.0 + bh / 2 : bh / 2), z - Math.sin(ry) * cx], rot: [0, ry, 0], jit: 0.07, m: 'plaster' })
     }
   }
   panel(w, 0, d / 2, 0, true); panel(w, 0, -d / 2, 0, false); panel(d, -w / 2, 0, Math.PI / 2, false); panel(d, w / 2, 0, Math.PI / 2, false)
   // door + frame, window + bars
   const doorCol = charred ? 0x1a1410 : P.door
   b.add(G.box(1.0, 2.0, 0.08), doorCol, { at: [0, plinth + 1.0, d / 2 - 0.05] })
-  b.add(G.box(1.22, 0.14, 0.3), P.woodDark, { at: [0, plinth + 2.07, d / 2 + 0.02] })
-  for (const s of [-1, 1]) b.add(G.box(0.12, 2.05, 0.3), P.woodDark, { at: [s * 0.56, plinth + 1.02, d / 2 + 0.02] })
+  if (!charred && detailLevel() > 0) {
+    for (let i = -2; i <= 2; i++) b.add(G.box(0.012, 1.91, 0.012), P.woodDark, { at: [i * 0.19, plinth + 1, d / 2], m: 'wood', grad: 0 })
+    for (const y of [0.5, 1.55]) b.add(G.chamfer(0.92, 0.06, 0.045, 0.008), P.iron, { at: [0, plinth + y, d / 2 + 0.045], m: 'iron' })
+    b.add(G.torus(0.055, 0.012, 3, 8), P.brass, { at: [0.25, plinth + 1, d / 2 + 0.08], m: 'brass' })
+  }
+  b.add(G.box(1.22, 0.14, 0.3), P.woodDark, { at: [0, plinth + 2.07, d / 2 + 0.02] , m: 'wood' })
+  for (const s of [-1, 1]) b.add(G.box(0.12, 2.05, 0.3), P.woodDark, { at: [s * 0.56, plinth + 1.02, d / 2 + 0.02] , m: 'wood' })
   if (!charred) for (const s of [-1, 1]) {
     const wx = s * (w / 2 - 0.95)
     b.add(G.box(0.85, 0.75, 0.1), state === 'burning' ? 0xffa040 : 0x2a1c12, { at: [wx, plinth + 1.45, d / 2 + 0.04], m: state === 'burning' ? 'glow' : 'std', hdr: state === 'burning' ? 1.8 : 1 })
-    b.add(G.box(1.0, 0.1, 0.18), P.woodDark, { at: [wx, plinth + 1.05, d / 2 + 0.08] }); b.add(G.box(1.0, 0.1, 0.18), P.woodDark, { at: [wx, plinth + 1.85, d / 2 + 0.08] })
-    for (let k = -1; k <= 1; k++) b.add(G.box(0.05, 0.75, 0.06), P.woodDark, { at: [wx + k * 0.22, plinth + 1.45, d / 2 + 0.1] })
+    b.add(G.box(1.0, 0.1, 0.18), P.woodDark, { at: [wx, plinth + 1.05, d / 2 + 0.08] , m: 'wood' }); b.add(G.box(1.0, 0.1, 0.18), P.woodDark, { at: [wx, plinth + 1.85, d / 2 + 0.08] , m: 'wood' })
+    for (let k = -1; k <= 1; k++) b.add(G.box(0.05, 0.75, 0.06), P.woodDark, { at: [wx + k * 0.22, plinth + 1.45, d / 2 + 0.1] , m: 'wood' })
   }
   if (state === 'ruined') {
     // fallen charred beams and rubble instead of a roof
-    for (let i = 0; i < 4; i++) b.add(G.box(0.18, 0.18, d * (0.6 + r() * 0.5)), 0x1a1410, { at: [(r() - 0.5) * w * 0.8, plinth + 0.4 + r() * 1.5, (r() - 0.5) * d * 0.4], rot: [(r() - 0.5) * 0.8, r() * 3, (r() - 0.5) * 0.5] })
+    for (let i = 0; i < 4; i++) b.add(G.box(0.18, 0.18, d * (0.6 + r() * 0.5)), 0x1a1410, { at: [(r() - 0.5) * w * 0.8, plinth + 0.4 + r() * 1.5, (r() - 0.5) * d * 0.4], rot: [(r() - 0.5) * 0.8, r() * 3, (r() - 0.5) * 0.5] , m: 'wood' })
     for (let i = 0; i < 10; i++) b.add(rock(0.18 + r() * 0.2, i + seed, 0.6, 0), r() < 0.5 ? P.tileDark : 0x3a322a, { at: [(r() - 0.5) * (w + 1.5), plinth + 0.1, (r() - 0.5) * (d + 1.5)], m: 'stone' })
-    for (const s of [-1, 1]) if (r() < 0.7) b.add(G.chamfer(0.18, 2.2, 0.18, 0.03), 0x1a1410, { at: [s * (w / 2 - 0.5), plinth + 1.1, d / 2 + 1.5], rot: [0, 0, s * 0.15] })
+    for (const s of [-1, 1]) if (r() < 0.7) b.add(G.chamfer(0.18, 2.2, 0.18, 0.03), 0x1a1410, { at: [s * (w / 2 - 0.5), plinth + 1.1, d / 2 + 1.5], rot: [0, 0, s * 0.15] , m: 'wood' })
     return out
   }
   // gables + roof
@@ -96,10 +101,10 @@ export function house(b, { w = 4.8, d = 4, wall = P.plaster, roof = P.tile, stat
     for (const s of [-1, 1]) {
       b.add(G.chamfer(0.22, 0.22, 0.22, 0.03), 0x8e877c, { at: [s * (w / 2 - 0.2), plinth + 0.11, d / 2 + 1.6], m: 'stone' })
       const ph = ridge - Math.tan(pitch) * (d / 2 + 1.6) - plinth - 0.25
-      b.add(G.chamfer(0.18, ph, 0.18, 0.03), P.woodDark, { at: [s * (w / 2 - 0.2), plinth + 0.22 + ph / 2, d / 2 + 1.6] })
+      b.add(G.chamfer(0.18, ph, 0.18, 0.03), P.woodDark, { at: [s * (w / 2 - 0.2), plinth + 0.22 + ph / 2, d / 2 + 1.6] , m: 'wood' })
     }
     const beamY = ridge - Math.tan(pitch) * (d / 2 + 1.6) - 0.05
-    b.add(G.chamfer(w + 0.3, 0.16, 0.18, 0.03), P.woodDark, { at: [0, beamY, d / 2 + 1.6] })
+    b.add(G.chamfer(w + 0.3, 0.16, 0.18, 0.03), P.woodDark, { at: [0, beamY, d / 2 + 1.6] , m: 'wood' })
     for (const s of [-1, 1]) b.add(G.chamfer(1.4, 0.42, 0.7, 0.05), 0xd8ccb4, { at: [s * (w / 2 - 1.1), plinth + 0.21, d / 2 + 0.4], m: 'stone' })
     garland(b, [-0.75, plinth + 2.25, d / 2 + 0.12], [0.75, plinth + 2.25, d / 2 + 0.12], { sag: 0.12, kind: 'mango' })
     out.beamY = beamY
@@ -109,11 +114,18 @@ export function house(b, { w = 4.8, d = 4, wall = P.plaster, roof = P.tile, stat
 }
 
 /* ------------------------------ Mountain temple ------------------------------ */
+export const TEMPLE_LAYOUT = {
+  stair: { count: 5, width: 5.2, rise: 0.4, run: 0.88, front: 8.4 },
+  pillars: [[-5.2, 3.6], [-1.9, 3.6], [1.9, 3.6], [5.2, 3.6], [-5.2, 0.4], [5.2, 0.4], [-5.2, -2.8], [5.2, -2.8]],
+}
 export function temple(b, s = {}) {
   const st = P.stone, burnt = s.state === 'burning'
   const block = (w, h, d, at, col = st) => b.add(G.chamfer(w, h, d, 0.06), col, { at, m: 'stone', jit: 0.09 })
   // base platform 18 × 14, upper 14 × 10 (masonry blocks on the faces)
-  block(18, 1, 14, [0, 0.5, 0], 0x8f8576)
+  // A stair recess in the base keeps the first two treads above their actual
+  // ground surface. A solid 18×14 box buried them and blocked the entrance.
+  block(18, 1, 11, [0, 0.5, -1.5], 0x8f8576)
+  for (const sx of [-1, 1]) block(6.4, 1, 3, [sx * 5.8, 0.5, 5.5], 0x8f8576)
   block(14, 1, 10, [0, 1.5, -1], 0x9a8f80)
   const r = rng(9)
   for (const [w, d, y, oz] of [[18, 14, 0.5, 0], [14, 10, 1.5, -1]]) {
@@ -121,20 +133,26 @@ export function temple(b, s = {}) {
     for (let z = -d / 2 + 0.6; z < d / 2; z += 1.2) for (const x of [-w / 2, w / 2]) b.add(G.chamfer(0.2, 0.45, 1.15, 0.04), [0x9a8f80, 0x8a8070, 0xa69a88][(r() * 3) | 0], { at: [x + Math.sign(x) * 0.05, y - 0.22 + (r() < 0.5 ? 0.45 : 0), z + oz], m: 'stone' })
   }
   // five front steps
-  for (let i = 0; i < 5; i++) block(5.2, 0.4, 1.0, [0, 0.2 + i * 0.4, 7.4 - i * 0.55 + 0.6], 0xa8a090)
+  const stair = TEMPLE_LAYOUT.stair
+  for (let i = 0; i < stair.count; i++) {
+    const height = stair.rise * (i + 1), z = stair.front - (i + 0.5) * stair.run
+    block(stair.width, height, stair.run, [0, height / 2, z], P.step)
+    if (detailLevel() > 0) for (const sx of [-1, 1]) b.add(G.chamfer(1.0, 0.035, 0.15, 0.008), 0xbeb3a1, { at: [sx * 1.8, height + 0.012, z + stair.run * 0.32], m: 'stone', grad: 0 })
+  }
   // 8 red pillars, 4 m (front row + sides)
-  const pillars = [[-5.2, 3.6], [-1.9, 3.6], [1.9, 3.6], [5.2, 3.6], [-5.2, 0.4], [5.2, 0.4], [-5.2, -2.8], [5.2, -2.8]]
+  const pillars = TEMPLE_LAYOUT.pillars
   const top = 2 + 4
   for (const [x, z] of pillars) {
     b.add(G.chamfer(0.75, 0.35, 0.75, 0.05), 0x8a8070, { at: [x, 2.18, z], m: 'stone' })
-    b.add(G.chamfer(0.46, 3.3, 0.46, 0.06), burnt ? 0x5a1a10 : P.red, { at: [x, 2.35 + 1.65, z], jit: 0.08 })
+    b.add(G.chamfer(0.46, 3.3, 0.46, 0.06), burnt ? 0x5a1a10 : P.red, { at: [x, 2.35 + 1.65, z], jit: 0.08, m: 'plaster' })
     b.add(G.chamfer(0.7, 0.3, 0.7, 0.05), 0xc9a24a, { at: [x, top - 0.15, z], m: 'gold' })
     for (const y of [3.0, 4.6]) b.add(G.box(0.5, 0.1, 0.5), 0xc9a24a, { at: [x, y, z], m: 'gold' })
+    if (detailLevel() > 0) for (const sx of [-1, 1]) b.add(G.chamfer(0.12, 0.5, 0.42, 0.02), 0xbcb09c, { at: [x + sx * 0.27, top - 0.52, z], rot: [0, 0, sx * 0.65], m: 'stone' })
   }
   // mandapam roof: stone slab + red clay-tile eave band + parapet
   block(12.4, 0.45, 8.6, [0, top + 0.22, 0.4], 0xd8c9a8)
   for (const [w, d, at, ry] of [[12.8, 1.6, [0, top + 0.05, 4.75], 0], [12.8, 1.6, [0, top + 0.05, -3.95], Math.PI], [8.8, 1.6, [6.35, top + 0.05, 0.4], -Math.PI / 2], [8.8, 1.6, [-6.35, top + 0.05, 0.4], Math.PI / 2]])
-    { b.push(at, [0, ry, 0]); b.add(tileSlope(w, d), burnt ? 0x5a2a1a : P.tile2, { rot: [0.42, 0, 0], jit: 0.1, grad: 0 }); b.pop() }
+    { b.push(at, [0, ry, 0]); b.add(tileSlope(w, d), burnt ? 0x5a2a1a : P.tile2, { rot: [0.42, 0, 0], jit: 0.1, grad: 0, m: 'tile' }); b.pop() }
   for (let i = 0; i < 9; i++) for (const z of [4.4, -3.6]) b.add(G.cone(0.14, 0.4, 6), P.gold, { at: [-6 + i * 1.5, top + 0.65, z], m: 'gold' })
   // shrine hall (cream plaster) at the back with the golden statue inside
   // hollow sanctum: back + side walls, front wall with an open doorway, ceiling slab
@@ -167,10 +185,10 @@ export function temple(b, s = {}) {
   b.add(G.lathe([[0, 0], [0.22, 0], [0.3, 0.2], [0.18, 0.4], [0.08, 0.7], [0, 0.9]], 8), P.gold, { at: [0, y + 1.2, -2.6], m: 'gold' })
   // altar, lamps, bells and garlands
   const lamps = []
-  for (const [x, z] of [[-6.4, 6.3], [6.4, 6.3], [-2.6, 7.6], [2.6, 7.6], [-6.4, -0.8], [6.4, -0.8], [-1.6, 0.6], [1.6, 0.6]]) lamps.push(brassLamp(b, [x, z > 6 ? 1.0 : 2.0, z], 1.15))
+  for (const [x, z] of [[-6.4, 6.3], [6.4, 6.3], [-3.5, 6.8], [3.5, 6.8], [-6.4, -0.8], [6.4, -0.8], [-1.6, 0.6], [1.6, 0.6]]) lamps.push(brassLamp(b, [x, z > 4 ? 1.0 : 2.0, z], 1.15))
   for (const x of [-3.55, 0, 3.55]) {
     b.add(G.cyl(0.006, 0.006, 0.9, 3), 0x6a5a2a, { at: [x, top - 0.6, 3.6] })
-    b.add(G.lathe([[0, 0], [0.08, 0], [0.12, -0.18], [0.14, -0.24], [0, -0.24]], 8), P.brass, { at: [x, top - 1.05, 3.6], m: 'gold' })
+    b.add(G.lathe([[0, 0], [0.08, 0], [0.12, -0.18], [0.14, -0.24], [0, -0.24]], 8), P.brass, { at: [x, top - 1.05, 3.6], m: 'brass' })
   }
   if (!burnt) for (let i = 0; i < 3; i++) { const x0 = [-5.2, -1.9, 1.9][i], x1 = [-1.9, 1.9, 5.2][i]; garland(b, [x0, top - 0.35, 3.85], [x1, top - 0.35, 3.85], { sag: 0.5, kind: 'mango' }); marigoldStrand(b, [x0 + 0.1, top - 0.4, 3.85], 0.9); marigoldStrand(b, [x1 - 0.1, top - 0.4, 3.85], 0.9) }
   return { lamps, statue: [0, 2.6, -3.0], top }
@@ -180,33 +198,33 @@ export function temple(b, s = {}) {
 export function bellTower(b) {
   b.add(G.chamfer(3.2, 0.5, 2.2, 0.05), 0x8e877c, { at: [0, 0.25, 0], m: 'stone' })
   for (const s of [-1, 1]) {
-    b.add(G.chamfer(0.75, 1.0, 0.75, 0.06), 0xa69a88, { at: [s * 1.1, 1.0, 0], m: 'stone' })
-    b.add(G.chamfer(0.38, 3.4, 0.38, 0.05), 0x4a2f1e, { at: [s * 1.1, 3.2, 0] })
-    b.add(G.chamfer(0.12, 0.9, 0.12, 0.02), 0x4a2f1e, { at: [s * 0.78, 4.35, 0], rot: [0, 0, s * 0.8] })
+    b.add(G.chamfer(0.6, 0.5, 0.6, 0.06), 0xa69a88, { at: [s * 1.1, 0.75, 0], m: 'stone' })
+    b.add(G.chamfer(0.38, 3.5, 0.38, 0.05), P.woodDark, { at: [s * 1.1, 2.25, 0], m: 'wood' })
+    b.add(G.chamfer(0.12, 0.9, 0.12, 0.02), P.woodDark, { at: [s * 0.78, 3.7, 0], rot: [0, 0, s * 0.8], m: 'wood' })
   }
-  b.add(G.chamfer(3.0, 0.32, 0.45, 0.04), 0x4a2f1e, { at: [0, 4.9, 0] })
-  b.add(G.chamfer(2.6, 0.18, 0.3, 0.04), 0x4a2f1e, { at: [0, 4.6, 0] })
-  b.add(G.cone(2.35, 1.25, 4), P.tile, { at: [0, 5.75, 0], rot: [0, Math.PI / 4, 0], scale: [1, 1, 0.78], jit: 0.08 })
-  b.add(G.cone(0.12, 0.4, 6), P.gold, { at: [0, 6.55, 0], m: 'gold' })
+  b.add(G.chamfer(3.0, 0.32, 0.45, 0.04), P.woodDark, { at: [0, 4.1, 0], m: 'wood' })
+  b.add(G.chamfer(2.6, 0.18, 0.3, 0.04), P.woodDark, { at: [0, 3.9, 0], m: 'wood' })
+  b.add(G.cone(2.35, 1.1, 4), P.tile, { at: [0, 4.8, 0], rot: [0, Math.PI / 4, 0], scale: [1, 1, 0.78], jit: 0.08, m: 'tile' })
+  b.add(G.cone(0.12, 0.3, 6), P.gold, { at: [0, 5.5, 0], m: 'gold' })
   // striker log on ropes
-  b.add(G.cyl(0.13, 0.13, 1.3, 7).rotateZ(Math.PI / 2), P.wood, { at: [-1.0, 3.3, 0.45] })
-  for (const x of [-1.5, -0.5]) b.add(G.cyl(0.01, 0.01, 1.5, 3), 0x8a6a40, { at: [x, 4.0, 0.45] })
+  b.add(G.cyl(0.13, 0.13, 1.3, 7).rotateZ(Math.PI / 2), P.wood, { at: [-1.0, 2.8, 0.45], m: 'wood' })
+  for (const x of [-1.5, -0.5]) b.add(G.cyl(0.01, 0.01, 1.15, 3), 0x8a6a40, { at: [x, 3.375, 0.45], m: 'cloth' })
 }
 export function bellMesh(b) { bell(b) }
 
 /* ------------------------------ Palisade gate (68 m, logs 4–4.8 m) ------------------------------ */
 export function palisadeLog(b, x, y, z, h, seed) {
   const g = jitter(new THREE.CylinderGeometry(0.15, 0.17, h, 7, 1), 0.03, seed)
-  b.add(g, [0x5b4636, 0x4a3828, 0x6a5240][seed % 3], { at: [x, y + h / 2 - 0.3, z], jit: 0.1 })
-  b.add(G.cone(0.155, 0.6, 7), 0x8a6a48, { at: [x, y + h + 0.0, z], jit: 0.08 })
+  b.add(g, [0x5b4636, 0x4a3828, 0x6a5240][seed % 3], { at: [x, y + h / 2 - 0.3, z], jit: 0.1, m: 'bark' })
+  b.add(G.cone(0.155, 0.6, 7), 0x8a6a48, { at: [x, y + h + 0.0, z], jit: 0.08, m: 'wood' })
 }
 export function watchtower(b, at, h = 7) {
   b.push(at)
-  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) b.add(G.chamfer(0.3, h + 1.6, 0.3, 0.04), 0x4a3424, { at: [x, h / 2 - 0.8, z] })
-  for (const y of [1.6, 3.8]) for (const s of [-1, 1]) { b.add(G.box(2.2, 0.12, 0.12), 0x5b4636, { at: [0, y, s], rot: [0, 0, (y > 2 ? 1 : -1) * 0.55] }); b.add(G.box(0.12, 0.12, 2.2), 0x5b4636, { at: [s, y, 0], rot: [(y > 2 ? 1 : -1) * 0.55, 0, 0] }) }
-  b.add(G.chamfer(2.8, 0.18, 2.8, 0.03), 0x6a5240, { at: [0, h - 1.4, 0] })
-  for (const s of [-1, 1]) { b.add(G.box(2.8, 0.9, 0.12), 0x5b4636, { at: [0, h - 0.9, s * 1.35] }); b.add(G.box(0.12, 0.9, 2.8), 0x5b4636, { at: [s * 1.35, h - 0.9, 0] }) }
-  b.add(G.cone(2.3, 1.5, 4), P.tile, { at: [0, h + 0.7, 0], rot: [0, Math.PI / 4, 0], jit: 0.08 })
+  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) b.add(G.chamfer(0.3, h + 1.6, 0.3, 0.04), 0x4a3424, { at: [x, h / 2 - 0.8, z] , m: 'wood' })
+  for (const y of [1.6, 3.8]) for (const s of [-1, 1]) { b.add(G.box(2.2, 0.12, 0.12), 0x5b4636, { at: [0, y, s], rot: [0, 0, (y > 2 ? 1 : -1) * 0.55] , m: 'wood' }); b.add(G.box(0.12, 0.12, 2.2), 0x5b4636, { at: [s, y, 0], rot: [(y > 2 ? 1 : -1) * 0.55, 0, 0] , m: 'wood' }) }
+  b.add(G.chamfer(2.8, 0.18, 2.8, 0.03), 0x6a5240, { at: [0, h - 1.4, 0] , m: 'wood' })
+  for (const s of [-1, 1]) { b.add(G.box(2.8, 0.9, 0.12), 0x5b4636, { at: [0, h - 0.9, s * 1.35] , m: 'wood' }); b.add(G.box(0.12, 0.9, 2.8), 0x5b4636, { at: [s * 1.35, h - 0.9, 0] , m: 'wood' }) }
+  b.add(G.cone(2.3, 1.5, 4), P.tile, { at: [0, h + 0.7, 0], rot: [0, Math.PI / 4, 0], jit: 0.08 , m: 'tile' })
   b.pop()
 }
 
@@ -233,8 +251,8 @@ export function roundTower(b, at, h = 11, banners = true) {
   }
   b.add(G.cyl(2.4, 2.4, 0.4, 12), 0x2a2628, { at: [0, h + 0.2, 0], m: 'stone' })
   for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; b.add(G.chamfer(0.7, 0.8, 0.5, 0.04), 0x2a2628, { at: [Math.cos(a) * 2.2, h + 0.8, Math.sin(a) * 2.2], rot: [0, -a, 0], m: 'stone' }) }
-  b.add(G.cone(2.7, 3.2, 10), 0x5a0e0e, { at: [0, h + 2.5, 0], jit: 0.08 })
-  b.add(G.cyl(0.04, 0.04, 1.6, 4), P.ironDark, { at: [0, h + 4.6, 0], m: 'metal' })
+  b.add(G.cone(2.7, 3.2, 10), 0x5a0e0e, { at: [0, h + 2.5, 0], jit: 0.08 , m: 'tile' })
+  b.add(G.cyl(0.04, 0.04, 1.6, 4), P.ironDark, { at: [0, h + 4.6, 0], m: 'iron' })
   b.add(G.plane(0.9, 0.5), P.crimson, { at: [0.45, h + 5.1, 0], m: 'cloth' })
   for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + 0.4; b.add(G.box(0.18, 0.7, 0.3), 0x0a0808, { at: [Math.cos(a) * 2.38, h - 2.2, Math.sin(a) * 2.38], rot: [0, -a, 0] }) }
   b.pop()

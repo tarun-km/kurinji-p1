@@ -11,6 +11,7 @@ import puppeteer from 'puppeteer-core'
 import sharp from 'sharp'
 import fs from 'node:fs'
 import path from 'node:path'
+import { createHash } from 'node:crypto'
 
 const argv = process.argv.slice(2)
 const opt = (n, d) => { const i = argv.indexOf('--' + n); if (i < 0) return d; const v = argv[i + 1]; argv.splice(i, 2); return v }
@@ -52,11 +53,11 @@ export const SHOTS = {
     { name: 'last-hound', time: 'dusk', world: { thennur: 'ruined' }, actors: [['rudhra', 'rudhra', -4, 110, Math.PI], ['aruvan', 'aruvan', -4, 105, 0]], cam: [-1.2, 1.2, 104], look: [-4, 1.8, 110], fov: 34 },
   ],
   ch6: [
-    { name: 'iron-throne', time: 'night', world: { fortress: 'iron' }, actors: [['dunkan', 'dunkan', 0, 170, Math.PI, { sustain: 'throne' }]], cam: [-3.2, 0.9, 162.5], look: [0, 3.0, 170], fov: 38 },
-    { name: 'empty-throne', time: 'dusk', world: { fortress: 'iron' }, actors: [['aruvan', 'aruvan', -1.2, 166, 0.3, { sustain: 'refuse' }]], cam: [-6.5, 1.6, 162.5], look: [0, 1.6, 167.6], fov: 40 },
+    { name: 'iron-throne', time: 'night', world: { fortress: 'iron' }, actors: [['dunkan', 'dunkan', 0, 170, Math.PI, { sustain: 'throne', onThrone: true }]], cam: [-3.2, 0.9, 162.5], look: [0, 3.0, 170], fov: 38 },
+    { name: 'empty-throne', time: 'dusk', world: { fortress: 'iron' }, actors: [['aruvan', 'aruvan', -1.2, 166, 0.3, { sustain: 'refuse' }], ['dunkan', 'dunkan', 0.4, 167.5, Math.PI, { sustain: 'kneel', dropCrown: true }]], cam: [-6.5, 1.6, 162.5], look: [0, 1.6, 167.6], fov: 40 },
   ],
   ch7: [
-    { name: 'peaceful-reign', time: 'day', world: { thennur: 'rebuilt', fortress: 'healing' }, actors: [['ilanAdult', 'ilanAdult', -8, 98, 0.4, { sustain: 'teach' }], ['k1', 'ilan', -7, 100, Math.PI, { sustain: 'sit', extra: { cloth: 0xc94a4a } }], ['k2', 'ilan', -9, 100.4, Math.PI, { sustain: 'sit', extra: { cloth: 0x4a8ac9 } }]], cam: [-12.2, 1.3, 102.6], look: [-8, 0.9, 98], fov: 40 },
+    { name: 'peaceful-reign', time: 'day', world: { thennur: 'rebuilt', fortress: 'healing' }, actors: [['ilanAdult', 'ilanAdult', -8, 98, 0.4, { sustain: 'teach' }], ...Array.from({ length: 5 }, (_, i) => [`k${i}`, 'ilan', -11 + i * 1.4, 100 + Math.sin(i) * 0.4, Math.PI, { sustain: 'sit', extra: { cloth: [0xc94a4a, 0x4a8ac9, 0xb19036, 0x688552, 0x995bb1][i] } }])], cam: [-12.8, 1.9, 104.5], look: [-8, 0.9, 98], fov: 46 },
   ],
   epilogue: [
     { name: 'last-bloom', time: 'bloom', world: { bloom: 0.9, petals: 0.8 }, actors: [['aruvan', 'aruvanOld', 20, -90, 0.15, { sustain: 'meditate', onRock: true }]], cam: [22.6, 1.9, -94.6], look: [15, -6, -50], fov: 46 },
@@ -84,6 +85,8 @@ try {
   const page = await browser.newPage()
   const errors = []
   page.on('pageerror', e => errors.push(e.message))
+  page.on('console', m => { if (m.type() === 'error') errors.push(m.text().slice(0, 500)) })
+  await page.evaluateOnNewDocument(() => { localStorage.setItem('kurinji-settings-v3', JSON.stringify({ master: 0 })) })
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.waitForFunction('window.__game && window.__game.world && window.__view', { timeout: 180000 })
   await page.evaluate(async preset => {
@@ -98,6 +101,7 @@ try {
       const shot = shots[n]
       const data = await page.evaluate(async s => {
         const g = window.__game, w = g.world
+        if (w.fallenCrown) { w.fallenCrown.userData.dispose?.(); w.fallenCrown = null }
         for (const id of [...g.npcs.keys()]) g.dropNpc(id)
         w.setThennur?.(s.world.thennur || 'ruined'); w.setTemple?.(s.world.temple || 'peaceful')
         w.setFortress?.(s.world.fortress || 'iron'); w.setGate?.(...(s.world.gate || [false, 0, false]))
@@ -108,27 +112,36 @@ try {
           const n = g.npc(id, preset, x, z, face, o.extra)
           n.lookAtPlayer = false
           if (o.onRock) { n.pos.y = w.rockTop.y; n.setPos?.(w.rockTop.x, w.rockTop.z, face); n.pos.y = w.rockTop.y }
+          if (o.onThrone) n.pos.copy(w.throneSeat)
           if (o.weapon) n.char.setWeapon(o.weapon)
           if (o.sustain) n.char.sustain = o.sustain
           if (o.activity) n.char.activity = o.activity
+          if (o.dropCrown) { const crown = n.char.dropCrown(g.scene, { x: x + 0.7, y: gy(x + 0.7, z + 0.3) + 0.1, z: z + 0.3 }); if (crown) { w.fallenCrown = crown; crown.rotation.set(0.2, 0.5, 1.1) } }
         }
-        const at = (p, base) => s.abs ? p : [p[0], p[1] + gy(base[0], base[2]), p[2]]
+        // Rock tableaux use the slab as one coherent height reference. Sampling
+        // terrain separately under the lens and distant target tilts into shrubs.
+        const rockShot = s.actors.some(a => a[5]?.onRock)
+        const baseY = rockShot ? w.rockTop.y : null
+        const at = (p, base) => s.abs ? p : [p[0], p[1] + (baseY ?? gy(base[0], base[2])), p[2]]
         const target = s.look
-        const cam = at(s.cam, s.cam), look = s.abs ? s.look : [target[0], target[1] + gy(target[0], target[2]), target[2]]
+        const cam = at(s.cam, s.cam), look = at(target, target)
         window.__view(cam, look, s.time)
         g.lens.fov = s.fov; g.lens.roll = s.roll || 0; g.lens.hand = 0
         g.renderer.dynScale = 1; g.renderer.resize()
         await new Promise(r => setTimeout(r, 4500)) // poses settle, shadows and fades finish
         return new Promise(r => requestAnimationFrame(() => { g.renderer.composer.render(0.016); r(g.renderer.gl.domElement.toDataURL('image/png')) }))
       }, shot)
-      const file = `${key}-${n + 1}.webp`
-      await sharp(Buffer.from(data.split(',')[1], 'base64')).resize(W, H, { fit: 'cover' }).webp({ quality: 86 }).toFile(path.join(OUT, file))
-      await sharp(Buffer.from(data.split(',')[1], 'base64')).resize(640, 360, { fit: 'cover' }).webp({ quality: 80 }).toFile(path.join(OUT, file.replace('.webp', '-sm.webp')))
-      index[key].push(file)
+      const pixels = Buffer.from(data.split(',')[1], 'base64')
+      const hash = createHash('sha256').update(pixels).digest('hex').slice(0, 8)
+      const file = `${key}-${n + 1}-${hash}.webp`, thumb = file.replace('.webp', '-sm.webp')
+      await sharp(pixels).resize(W, H, { fit: 'cover' }).webp({ quality: 90 }).toFile(path.join(OUT, file))
+      await sharp(pixels).resize(640, 360, { fit: 'cover' }).webp({ quality: 82 }).toFile(path.join(OUT, thumb))
+      index[key].push({ src: file, thumb })
       console.log(`✓ ${file}  (${shot.name})`)
     }
+    fs.writeFileSync(indexPath, JSON.stringify(index, null, 1) + '\n')
   }
   fs.writeFileSync(indexPath, JSON.stringify(index, null, 1) + '\n')
-  if (errors.length) console.log('page errors:\n' + errors.slice(0, 10).join('\n'))
+  if (errors.length) throw new Error('Capture errors:\n' + errors.slice(0, 10).join('\n'))
   console.log(`saved ${Object.values(index).flat().length} shots → ${OUT}`)
 } finally { await browser.close() }

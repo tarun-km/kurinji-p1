@@ -2,7 +2,7 @@ import { reactive } from 'vue'
 
 export const state = reactive({
   screen: 'title',          // title | game | credits
-  loading: null,           // { title, sub, art, progress, label, error }
+  loading: null,           // { key, title, sub, art, progress, label, error }; key selects captured game shots
   paused: false,
   cutscene: null,          // { src, type: 'video' | 'image' }
   hp: 100, maxHp: 100,

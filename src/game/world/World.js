@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
-import { Builder, G, rock, jitter, rng, mat, WIND, SURF } from '../gfx/kit'
+import { Builder, G, rock, jitter, rng, mat, WIND, SURF, detailLevel } from '../gfx/kit'
 import { FOG } from '../gfx/Renderer'
 import { PLACES, heightAt, pathX, BOUNDS, buildTerrain, TERRAIN_U, smooth } from './terrain'
 import { Sky } from './sky'
@@ -9,7 +9,7 @@ import { Water } from './water'
 import { FX, dotTexture } from './fx'
 import { Fauna } from './fauna'
 import * as K from './props'
-import { house, temple, bellTower, palisadeLog, watchtower, fortWall, roundTower, kolam, tileRoof } from './buildings'
+import { house, temple, TEMPLE_LAYOUT, bellTower, palisadeLog, watchtower, fortWall, roundTower, kolam, tileRoof } from './buildings'
 import { settings } from '../settings'
 import { RIM } from '../Characters'
 import { TIMES, rimColor, createSunDisc } from './lighting'
@@ -43,29 +43,34 @@ export class World {
     this.setTime('dawn', 0)
   }
   y(x, z) { return heightAt(x, z) }
-  solid(x, z, r) { this.colliders.push({ x, z, r }) }
+  solid(x, z, r) { const collider = { x, z, r }; this.colliders.push(collider); return collider }
   /** Walkable structure surfaces (platforms, steps, daises) layered over the terrain. */
   floor(f) { (this.floors ||= []).push(f) }
   /** Ground height for actors: terrain or the highest structure surface underfoot. */
   groundAt(x, z) {
     let h = heightAt(x, z)
     for (const f of this.floors || []) {
+      if (f.enabled && !f.enabled()) continue
       if (f.disc) { if ((x - f.x) ** 2 + (z - f.z) ** 2 < f.r * f.r) h = Math.max(h, f.y) }
-      else if (x > f.x0 && x < f.x1 && z > f.z0 && z < f.z1) h = Math.max(h, f.steps ? f.steps(x, z) : f.y)
+      else if (x >= f.x0 && x <= f.x1 && z >= f.z0 && z <= f.z1) h = Math.max(h, f.steps ? f.steps(x, z) : f.y)
     }
     return h
   }
   blocked(x, z, pad = 0) {
     for (const c of this.colliders) if (c.r && (x - c.x) ** 2 + (z - c.z) ** 2 < (c.r + pad) ** 2) return true
     for (const c of this.clear) {
-      if (c.rect) { if (x > c.x0 - pad && x < c.x1 + pad && z > c.z0 - pad && z < c.z1 + pad) return true }
-      else if ((x - c.x) ** 2 + (z - c.z) ** 2 < (c.r + pad) ** 2) return true
+      const clearance = Math.max(0, pad)
+      if (c.rect) { if (x > c.x0 - clearance && x < c.x1 + clearance && z > c.z0 - clearance && z < c.z1 + clearance) return true }
+      else if ((x - c.x) ** 2 + (z - c.z) ** 2 < (c.r + clearance) ** 2) return true
     }
     return false
   }
   markOpen() {
     const c = (x, z, r) => this.clear.push({ x, z, r })
     c(0, -72, 11); c(0, -1, 10.5); c(14, 10, 5.5); c(-13, 8, 4); c(0, 46, 4); c(-8, 98, 7); c(20, -90, 3.2)
+    const T = PLACES.temple
+    this.clear.push({ rect: true, x0: T.x - 9.4, x1: T.x + 9.4, z0: T.z - 7.4, z1: T.z + 8.6 })
+    this.clear.push({ rect: true, x0: T.x - 3.1, x1: T.x + 3.1, z0: T.z + 8, z1: T.z + 23 })
     this.clear.push({ rect: true, x0: -23, x1: 23, z0: 149, z1: 181 })
   }
   addMesh(b, opts) { const g = b.build(opts); this.scene.add(g); (this.occluders ||= []).push(g); if (this.bvh) accelerateRaycasts(g); return g }
@@ -130,11 +135,18 @@ export class World {
     this.templeGroup = this.addMesh(b)
     for (const l of t.lamps) this.light([T.x + l[0], T.y + l[1], T.z + l[2]], 0xffb050, 3, 'temple')
     this.statuePos = new THREE.Vector3(T.x, T.y + 2.6, T.z - 3)
-    this.floor({ x0: T.x - 9, x1: T.x + 9, z0: T.z - 7, z1: T.z + 7, y: T.y + 1 })
+    this.floor({ x0: T.x - 9, x1: T.x + 9, z0: T.z - 7, z1: T.z + 4, y: T.y + 1 })
+    for (const sx of [-1, 1]) this.floor({ x0: T.x + (sx < 0 ? -9 : 2.6), x1: T.x + (sx < 0 ? -2.6 : 9), z0: T.z + 4, z1: T.z + 7, y: T.y + 1 })
     this.floor({ x0: T.x - 7, x1: T.x + 7, z0: T.z - 6, z1: T.z + 4, y: T.y + 2 })
-    this.floor({ x0: T.x - 2.6, x1: T.x + 2.6, z0: T.z + 4, z1: T.z + 8.5, steps: (x, z) => T.y + 0.4 * (Math.min(4, Math.max(0, Math.floor((T.z + 8.5 - z) / 0.55))) + 1) })
-    this.solid(T.x, T.z - 2.6, 3.6); this.solid(T.x - 2.2, T.z - 2.6, 2.4); this.solid(T.x + 2.2, T.z - 2.6, 2.4)
-    for (const [x, z] of [[-5.2, 3.6], [-1.9, 3.6], [1.9, 3.6], [5.2, 3.6], [-5.2, 0.4], [5.2, 0.4], [-5.2, -2.8], [5.2, -2.8]]) this.solid(T.x + x, T.z + z, 0.45)
+    const stair = TEMPLE_LAYOUT.stair
+    for (let i = 0; i < stair.count; i++) this.floor({ x0: T.x - stair.width / 2, x1: T.x + stair.width / 2, z0: T.z + stair.front - (i + 1) * stair.run, z1: T.z + stair.front - i * stair.run, y: T.y + stair.rise * (i + 1) })
+    // Wall segments preserve the open shrine doorway; coarse circular blockers
+    // previously made the visually hollow sanctum impossible to enter.
+    for (const sx of [-1, 1]) for (let z = -4.6; z <= -0.6; z += 0.7) this.solid(T.x + sx * 3, T.z + z, 0.27)
+    for (let x = -3; x <= 3; x += 0.65) this.solid(T.x + x, T.z - 4.6, 0.27)
+    for (const sx of [-1, 1]) for (let x = 1.45; x <= 3; x += 0.55) this.solid(T.x + sx * x, T.z - 0.6, 0.25)
+    this.solid(T.x, T.z - 3.6, 0.9)
+    for (const [x, z] of TEMPLE_LAYOUT.pillars) this.solid(T.x + x, T.z + z, 0.42)
     // temple platform raises the floor: terraced ground handled by zone flattening; steps lead up at +z
     this.templeFires = [[-5, 7.2, 3.6], [4, 8.5, -1], [-1, 9.5, -2.6], [6, 6.8, 0.5], [-6.5, 6.6, -2]].map(([x, y, z]) => [T.x + x, T.y + y, T.z + z, 1.3])
     this.fx.setFires('temple', this.templeFires, false)
@@ -148,12 +160,16 @@ export class World {
     const w = new Builder(103), r = rng(5)
     const edge = T.z + 15.5
     for (let x = -15; x <= 15; x += 1.25) {
-      if (Math.abs(x) < 2.2) continue
+      if (Math.abs(x) < 2.8) continue
       const z = edge - Math.abs(x) * 0.18, y0 = heightAt(x, z + 1.2)
       const top = Math.max(y0, T.y)
       for (let y = y0 - 0.4; y < top + 0.5; y += 0.55) w.add(G.chamfer(1.22, 0.55, 0.7, 0.05), [0x8a8070, 0x9a8f80, 0x7a7470][(r() * 3) | 0], { at: [x, y + 0.27, z], m: 'stone' })
     }
-    for (let i = 0; i < 9; i++) { const z = edge - 0.6 + i * 0.75, y = Math.max(heightAt(0, z), T.y - i * 0.45); w.add(G.chamfer(4.2, 0.4, 0.8, 0.04), 0xa8a090, { at: [0, y - 0.15, z], m: 'stone' }) }
+    for (let i = 0; i < 9; i++) {
+      const z = edge - 0.6 + i * 0.75, y = Math.max(heightAt(0, z) + 0.04, T.y - i * 0.45)
+      w.add(G.chamfer(4.2, 0.4, 0.8, 0.04), 0xa8a090, { at: [0, y - 0.2, z], m: 'stone' })
+      this.floor({ x0: -2.1, x1: 2.1, z0: z - 0.4, z1: z + 0.4, y })
+    }
     for (const s2 of [-1, 1]) { K.fence(w, [s2 * 2.4, T.y, edge - 0.5], [s2 * 2.4, heightAt(s2 * 2.4, edge + 6), edge + 6]); this.light(K.brassLamp(w, [s2 * 2.6, T.y, edge - 0.9], 1.2), 0xffb050, 3, 'temple') }
     this.addMesh(w)
     // bell tower (9, -66) + swinging bronze bell
@@ -161,20 +177,26 @@ export class World {
     bt.push([B.x, B.y, B.z], [0, -0.3, 0]); bellTower(bt); bt.pop()
     this.addMesh(bt)
     const bb = new Builder(105); K.bell(bb)
-    this.bell = bb.build(); this.bell.position.set(B.x, B.y + 4.75, B.z); this.bell.rotation.y = -0.3; this.scene.add(this.bell)
+    this.bell = bb.build(); this.bell.position.set(B.x, B.y + 3.85, B.z); this.bell.rotation.y = -0.3; this.scene.add(this.bell)
     this.solid(B.x, B.z, 1.6)
     this.floor({ disc: true, x: B.x, z: B.z, r: 1.7, y: B.y + 0.5 })
   }
   buildRock() {
     const R = PLACES.rock, b = new Builder(106)
     // the meditation rock: one wide flat weathered granite slab (4 m, < 1 m tall) among angular stones
-    const slab = jitter(new THREE.CylinderGeometry(2.0, 2.25, 0.85, 9, 1), 0.22, 9)
-    b.add(slab, (f, cy) => new THREE.Color(cy > 0.8 ? 0x8a847c : 0x6e6a64), { at: [R.x, R.y + 0.32, R.z], m: 'stone', jit: 0.1 })
+    const slab = jitter(new THREE.CylinderGeometry(2.0, 2.15, 0.85, 12, 1), 0.15, 9)
+    const vertices = slab.attributes.position
+    for (let i = 0; i < vertices.count; i++) vertices.setY(i, vertices.getY(i) > 0 ? 0.43 : -0.42)
+    b.add(slab, (f, cy) => new THREE.Color(cy > 0.8 ? 0x8a847c : 0x6e6a64), { at: [R.x, R.y + 0.35, R.z], m: 'stone', jit: 0.06 })
+    if (detailLevel() > 0) for (let i = 0; i < 5; i++) {
+      const a = i * 1.25 + 0.2
+      b.add(G.box(0.018, 0.006, 0.85), 0x53524b, { at: [R.x + Math.sin(a) * 1.1, R.y + 0.782, R.z + Math.cos(a) * 1.1], rot: [0, a + 0.7, 0], m: 'stone', grad: 0, jit: 0 })
+    }
     const r = rng(8)
     for (let i = 0; i < 14; i++) { const a = r() * 6.28, d = 2.6 + r() * 3.5, s = 0.4 + r() * 0.9; b.add(rock(s, i + 20, 0.7, 1), 0x7a746c, { at: [R.x + Math.cos(a) * d, heightAt(R.x + Math.cos(a) * d, R.z + Math.sin(a) * d) + s * 0.25, R.z + Math.sin(a) * d], rot: [0, a, 0], m: 'stone' }) }
     this.addMesh(b)
     this.rockTop = new THREE.Vector3(R.x, R.y + 0.78, R.z)
-    this.floor({ disc: true, x: R.x, z: R.z, r: 2.0, y: R.y + 0.72 })
+    this.floor({ disc: true, x: R.x, z: R.z, r: 1.94, y: R.y + 0.78 })
   }
   buildLanternPath() {
     const b = new Builder(107)
@@ -216,18 +238,27 @@ export class World {
     // well (2.4 m) with tiled pavilion roof, pulley and bucket
     const W = [3, -2.5], wy = heightAt(...W)
     b.push([W[0], wy, W[1]])
-    for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; b.add(G.chamfer(0.62, 0.9, 0.36, 0.05), [0x8a8478, 0x9a948a, 0x7a746c][i % 3], { at: [Math.cos(a) * 1.2, 0.45, Math.sin(a) * 1.2], rot: [0, -a + Math.PI / 2, 0], m: 'stone' }) }
+    for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; b.add(G.chamfer(0.55, 0.9, 0.32, 0.05), [0x8a8478, 0x9a948a, 0x7a746c][i % 3], { at: [Math.cos(a) * 1.03, 0.45, Math.sin(a) * 1.03], rot: [0, -a + Math.PI / 2, 0], m: 'stone' }) }
     b.add(G.cyl(1.05, 1.05, 0.05, 14), 0x1a2a30, { at: [0, 0.6, 0], m: 'metal' })
-    b.add(G.cyl(1.55, 1.7, 1.6, 14), 0x8a8478, { at: [0, -0.7, 0], m: 'stone' })
-    for (const [x, z] of [[-1.3, -1.3], [1.3, -1.3], [-1.3, 1.3], [1.3, 1.3]]) b.add(G.chamfer(0.18, 2.7, 0.18, 0.03), K.P.woodDark, { at: [x, 1.35, z] })
-    b.add(G.chamfer(2.9, 0.16, 0.16, 0.03), K.P.woodDark, { at: [0, 2.7, -1.3] }); b.add(G.chamfer(2.9, 0.16, 0.16, 0.03), K.P.woodDark, { at: [0, 2.7, 1.3] })
-    b.add(G.cone(2.4, 1.3, 6), 0xc4573a, { at: [0, 3.45, 0], rot: [0, Math.PI / 6, 0], jit: 0.08 })
-    b.add(G.cyl(0.09, 0.09, 2.6, 6).rotateZ(Math.PI / 2), K.P.wood, { at: [0, 2.2, 0] })
-    b.add(G.cyl(0.32, 0.32, 0.1, 8).rotateZ(Math.PI / 2), K.P.wood, { at: [0.6, 2.2, 0] })
+    b.add(G.cyl(1.2, 1.2, 1.6, 14), 0x8a8478, { at: [0, -0.7, 0], m: 'stone' })
+    // The source well has two posts and a red pyramid cap, not a hexagonal
+    // pavilion. The pulley remains visible between its two structural supports.
+    for (const x of [-1.4, 1.4]) b.add(G.chamfer(0.2, 2.8, 0.2, 0.03), K.P.woodDark, { at: [x, 1.4, 0], m: 'wood' })
+    b.add(G.chamfer(3.1, 0.18, 0.22, 0.03), K.P.woodDark, { at: [0, 2.8, 0], m: 'wood' })
+    b.add(G.cone(2.25, 1.1, 4), K.P.tile, { at: [0, 3.4, 0], rot: [0, Math.PI / 4, 0], jit: 0.06, m: 'tile' })
+    if (detailLevel() > 0) for (const sx of [-1, 1]) b.add(G.chamfer(0.12, 0.8, 0.15, 0.025), K.P.wood, { at: [sx * 1.15, 2.55, 0], rot: [0, 0, sx * 0.7], m: 'wood' })
+    b.add(G.cyl(0.09, 0.09, 2.6, 6).rotateZ(Math.PI / 2), K.P.wood, { at: [0, 2.2, 0] , m: 'wood' })
+    b.add(G.cyl(0.32, 0.32, 0.1, 8).rotateZ(Math.PI / 2), K.P.wood, { at: [0.6, 2.2, 0] , m: 'wood' })
     b.add(G.cyl(0.01, 0.01, 1.2, 3), 0x8a6a40, { at: [0.6, 1.6, 0] })
     K.bucket(b, [0.6, 0.8, 0]); K.pot(b, [1.6, 0, 0.6], 1.2, 0xb0603a); K.pot(b, [1.9, 0, -0.2], 0.9, 0x9a5a3a)
     b.pop()
     this.solid(W[0], W[1], 1.6); this.wellPos = new THREE.Vector3(W[0], wy, W[1])
+    // A few broad paving stones ground the well and the approach without filling
+    // the combat square with small props or separate draw calls.
+    for (let i = 0; i < 16; i++) {
+      const a = i / 16 * Math.PI * 2, x = W[0] + Math.cos(a) * 2, z = W[1] + Math.sin(a) * 2
+      b.add(G.chamfer(0.7, 0.075, 0.6, 0.025), [0xa49a88, 0x948978, 0xb0a491][i % 3], { at: [x, heightAt(x, z) + 0.03, z], rot: [0, -a, 0], m: 'stone' })
+    }
     // three market stalls (red / blue / yellow awnings) per the market board
     for (const [x, z, col, fr] of [[-8, 4, 0xb03a2a, ['orange', 'red', 'green']], [10, 3.5, 0x2a6ab0, ['green', 'orange', 'red']], [-4.2, 10.5, 0xc9a227, ['red', 'orange', 'banana']]]) {
       const rot = Math.atan2(-x, -z)
@@ -264,11 +295,11 @@ export class World {
         K.herbRack(b, [0, info.beamY - 0.1, d / 2 + 1.55], 0, w - 0.6); K.mortar(b, [1.3, py, d / 2 + 0.6]); K.basket(b, [-1.6, py + 0.42, d / 2 + 0.4], 0.8)
         K.pot(b, [2.6, 0, d / 2 + 1.9], 1.1); K.pot(b, [-2.7, 0, d / 2 + 1.4], 0.9, 0xb0603a, 'tulsi'); break
       case 'kaali':
-        b.add(G.box(0.12, 2.2, 0.12), K.P.woodDark, { at: [-w / 2 - 1.2, 1.1, d / 2] }); b.add(G.box(1.6, 0.18, 0.2), K.P.woodDark, { at: [-w / 2 - 0.6, 2.2, d / 2] })
+        b.add(G.box(0.12, 2.2, 0.12), K.P.woodDark, { at: [-w / 2 - 1.2, 1.1, d / 2] , m: 'wood' }); b.add(G.box(1.6, 0.18, 0.2), K.P.woodDark, { at: [-w / 2 - 0.6, 2.2, d / 2] , m: 'wood' })
         K.hammerProp(b, [-w / 2 - 0.2, 1.05, d / 2], [Math.PI, 0, 0], 1); break
       case 'murugan':
         K.pot(b, [1.6, py, d / 2 + 0.5], 1.1, 0xb0603a, 'tulsi'); K.bench(b, [-1.4, py, d / 2 + 0.6], 0, 1.2)
-        b.add(G.cyl(0.03, 0.035, 1.3, 5), K.P.wood, { at: [-0.4, py + 0.6, d / 2 + 0.15], rot: [0.3, 0, 0.2] }); break
+        b.add(G.cyl(0.03, 0.035, 1.3, 5), K.P.wood, { at: [-0.4, py + 0.6, d / 2 + 0.15], rot: [0.3, 0, 0.2] , m: 'wood' }); break
       case 'weaver':
         K.clothLine(b, [-w / 2 - 0.6, 0, d / 2 + 2.6], [w / 2 + 0.6, 0, d / 2 + 2.6], [0xd9822b, 0x2a4a8a, 0x8a2a3a, 0xd9822b, 0x2a4a8a]); break
       case 'potter':
@@ -287,7 +318,7 @@ export class World {
       case 'carpenter':
         K.table(b, [0, py, d / 2 + 0.8], 0, 1.8, 0.7)
         for (let i = 0; i < 3; i++) K.carvedBird(b, [-0.5 + i * 0.5, py + 0.79, d / 2 + 0.8], i, ['kingfisher', 'sparrow', 'mynah'][i], 1.4)
-        for (let i = 0; i < 4; i++) b.add(G.chamfer(1.8, 0.16, 0.2, 0.02), K.P.woodLight, { at: [w / 2 + 0.6, 0.1 + i * 0.17, 0.2], rot: [0, Math.PI / 2, 0] }); break
+        for (let i = 0; i < 4; i++) b.add(G.chamfer(1.8, 0.16, 0.2, 0.02), K.P.woodLight, { at: [w / 2 + 0.6, 0.1 + i * 0.17, 0.2], rot: [0, Math.PI / 2, 0] , m: 'wood' }); break
       case 'beekeeper':
         for (let i = 0; i < 3; i++) K.beehive(b, [w / 2 + 1.2, 0, -1 + i * 1.3]); break
       case 'shrine':
@@ -297,9 +328,16 @@ export class World {
   buildForge() {
     const F = PLACES.forge, b = new Builder(210), y = heightAt(F.x, F.z)
     b.push([F.x, y, F.z], [0, 0.5, 0])
-    for (const [x, z] of [[-2.5, -1.75], [2.5, -1.75], [-2.5, 1.75], [2.5, 1.75]]) b.add(G.chamfer(0.22, 3.2, 0.22, 0.03), K.P.woodDark, { at: [x, 1.6, z] })
-    b.add(G.chamfer(5.6, 0.16, 0.2, 0.03), K.P.woodDark, { at: [0, 3.15, -1.75] }); b.add(G.chamfer(5.6, 0.16, 0.2, 0.03), K.P.woodDark, { at: [0, 2.95, 1.75] })
+    for (const [x, z] of [[-2.5, -1.75], [2.5, -1.75], [-2.5, 1.75], [2.5, 1.75]]) b.add(G.chamfer(0.22, 3.2, 0.22, 0.03), K.P.woodDark, { at: [x, 1.6, z] , m: 'wood' })
+    b.add(G.chamfer(5.6, 0.16, 0.2, 0.03), K.P.woodDark, { at: [0, 3.15, -1.75] , m: 'wood' }); b.add(G.chamfer(5.6, 0.16, 0.2, 0.03), K.P.woodDark, { at: [0, 2.95, 1.75] , m: 'wood' })
     b.push([0, 3.3, 0], [0, 0, 0]); tileRoof(b, 5.9, 2.3, 2.3, 0, 0.12, 0xb04a2e); b.pop()
+    // Exposed rafters, braced posts and the smith's memorial beam give the
+    // 5×3.5 m work shelter the same silhouette as the forge reference.
+    for (let i = 0; i < 6; i++) b.add(G.chamfer(0.13, 0.16, 4.1, 0.02), K.P.wood, { at: [-2.3 + i * 0.92, 3.12, 0], m: 'wood' })
+    for (const sx of [-1, 1]) b.add(G.chamfer(0.14, 0.95, 0.14, 0.02), K.P.woodDark, { at: [sx * 2.2, 2.74, 1.75], rot: [0, 0, sx * 0.65], m: 'wood' })
+    b.add(G.chamfer(1.5, 0.2, 0.2, 0.03), K.P.woodDark, { at: [-1.3, 2.45, -1.75], m: 'wood' })
+    K.hammerProp(b, [-1.3, 2.08, -1.6], [Math.PI, 0, 0], 0.6)
+    K.garland(b, [-1.9, 2.48, -1.5], [-0.7, 2.48, -1.5], { sag: 0.32, kind: 'marigold', n: 14 })
     const fire = K.furnace(b, [-1.2, 0, -0.6])
     K.anvil(b, [0.9, 0, 0.2], 0.4); K.bucket(b, [1.9, 0, -0.9]); K.toolRack(b, [1.0, 0, -1.6], 0)
     K.hammerProp(b, [0.7, 0.85, 0.35], [0, 0, 1.5], 0.8)
@@ -339,11 +377,11 @@ export class World {
     // interior walkway on brackets near the gate
     for (const s of [-1, 1]) for (let x = 5; x < 15; x += 2.5) {
       const xx = s * x, y = heightAt(xx, G0.z - 0.6)
-      b.add(G.chamfer(0.12, 0.12, 1.2, 0.02), K.P.wood, { at: [xx, y + 2.8, G0.z - 0.7] })
-      b.add(G.chamfer(0.1, 1.1, 0.1, 0.02), K.P.wood, { at: [xx, y + 2.3, G0.z - 0.85], rot: [0.7, 0, 0] })
+      b.add(G.chamfer(0.12, 0.12, 1.2, 0.02), K.P.wood, { at: [xx, y + 2.8, G0.z - 0.7] , m: 'wood' })
+      b.add(G.chamfer(0.1, 1.1, 0.1, 0.02), K.P.wood, { at: [xx, y + 2.3, G0.z - 0.85], rot: [0.7, 0, 0] , m: 'wood' })
     }
     for (const s of [-1, 1]) {
-      b.add(G.chamfer(10.5, 0.1, 1.2, 0.02), K.P.woodLight, { at: [s * 9.8, heightAt(s * 9.8, G0.z - 0.6) + 2.92, G0.z - 0.7] })
+      b.add(G.chamfer(10.5, 0.1, 1.2, 0.02), K.P.woodLight, { at: [s * 9.8, heightAt(s * 9.8, G0.z - 0.6) + 2.92, G0.z - 0.7] , m: 'wood' })
       watchtower(b, [s * 4.6, heightAt(s * 4.6, G0.z), G0.z], 7)
       this.solid(s * 4.6, G0.z, 1.8)
       const tp = K.torch(b, [s * 3.15, heightAt(s * 3.15, G0.z + 0.6), G0.z + 0.6])
@@ -359,7 +397,9 @@ export class World {
       const pivot = new THREE.Group(); pivot.position.set(G0.x + s * 3, heightAt(s * 3, G0.z), G0.z)
       const db = new Builder(250 + s)
       for (let i = 0; i < 9; i++) db.add(G.chamfer(0.33, 4.2, 0.24, 0.03), [0x4a2c18, 0x553420, 0x40261a][i % 3], { at: [-s * (0.17 + i * 0.33), 2.1, 0] })
-      for (const yy of [0.7, 2.1, 3.5]) { db.add(G.box(2.9, 0.16, 0.06), K.P.iron, { at: [-s * 1.5, yy, 0.15], m: 'metal' }); for (let i = 0; i < 6; i++) db.add(G.oct(0.05), K.P.iron, { at: [-s * (0.3 + i * 0.5), yy, 0.2], m: 'metal' }) }
+      for (const yy of [0.7, 2.1, 3.5]) { db.add(G.box(2.9, 0.16, 0.06), K.P.iron, { at: [-s * 1.5, yy, 0.15], m: 'iron' }); for (let i = 0; i < 6; i++) db.add(G.oct(0.05), K.P.iron, { at: [-s * (0.3 + i * 0.5), yy, 0.2], m: 'iron' }) }
+      for (const yy of [1.35, 2.85]) db.add(G.chamfer(3.1, 0.17, 0.09, 0.015), K.P.woodDark, { at: [-s * 1.5, yy, -0.18], rot: [0, 0, s * 0.48], m: 'wood' })
+      db.add(G.torus(0.11, 0.028, 4, 10), K.P.iron, { at: [-s * 2.6, 2.05, 0.22], m: 'iron' })
       pivot.add(db.build()); pivot.userData.side = s; this.scene.add(pivot); this.gateDoors.push(pivot)
     }
     this.gateCollider = { x: G0.x, z: G0.z, r: 2.9 }; this.colliders.push(this.gateCollider)
@@ -367,9 +407,9 @@ export class World {
     const sb = new Builder(260), r = rng(4)
     for (let i = 0; i < 16; i++) sb.add(G.chamfer(0.3, 0.6 + r() * 1.6, 0.22, 0.02), 0x4a2c18, { at: [(r() - 0.5) * 6, heightAt(0, G0.z - 2) + 0.15, G0.z - 1 - r() * 4], rot: [Math.PI / 2 + (r() - 0.5) * 0.5, r() * 3, 0] })
     // battering ram with iron head
-    sb.add(G.cyl(0.42, 0.42, 6.5, 9).rotateX(Math.PI / 2), K.P.wood, { at: [0.5, heightAt(0.5, G0.z + 5) + 0.6, G0.z + 5.5] })
-    sb.add(G.ico(0.55, 0), K.P.iron, { at: [0.5, heightAt(0.5, G0.z + 2) + 0.6, G0.z + 2.2], m: 'metal' })
-    for (const zz of [1, 2.5, 4]) sb.add(G.cyl(0.45, 0.45, 0.12, 9).rotateX(Math.PI / 2), K.P.iron, { at: [0.5, heightAt(0.5, G0.z + 3) + 0.6, G0.z + 2.5 + zz], m: 'metal' })
+    sb.add(G.cyl(0.42, 0.42, 6.5, 9).rotateX(Math.PI / 2), K.P.wood, { at: [0.5, heightAt(0.5, G0.z + 5) + 0.6, G0.z + 5.5] , m: 'wood' })
+    sb.add(G.ico(0.55, 0), K.P.iron, { at: [0.5, heightAt(0.5, G0.z + 2) + 0.6, G0.z + 2.2], m: 'iron' })
+    for (const zz of [1, 2.5, 4]) sb.add(G.cyl(0.45, 0.45, 0.12, 9).rotateX(Math.PI / 2), K.P.iron, { at: [0.5, heightAt(0.5, G0.z + 3) + 0.6, G0.z + 2.5 + zz], m: 'iron' })
     this.gateRubble = this.addMesh(sb); this.gateRubble.visible = false
   }
   setGate(open, dur = 2, broken = false) {
@@ -398,7 +438,7 @@ export class World {
         b.push([x, y, z], [0, rot, 0])
         const info = house(b, { w: 4.4, d: 3.8, state: st === 'rebuilt' ? 'normal' : st, seed: 500 + i, wall: [0xf0e4cc, 0xe2d2b2, 0xd8c4a0][i % 3] })
         if (st === 'rebuilt' && i % 2 === 0) K.scaffold(b, [2.8, 0, 0], Math.PI / 2, 3.4, 3.2)
-        if (st === 'rebuilt') { K.stoneBlock(b, [-3.2, 0, 2.8], 0.3); K.stoneBlock(b, [-3.6, 0.5, 2.6], 0.8, 0.9) }
+        if (st === 'rebuilt') { K.stoneBlock(b, [-3.2, 0, 2.8], 0.3); K.stoneBlock(b, [-3.6, 0.5, 2.6], 0.8, 0.9); K.pot(b, [2.5, 0.45, 2.2], 0.75, 0xb0603a, 'tulsi'); K.basket(b, [-2.2, 0.45, 2.1], 0.65) }
         b.pop()
         if (st === 'burning') for (const f of info.fires) { const c = Math.cos(rot), s = Math.sin(rot); fires.push([x + f[0] * c + f[2] * s, y + f[1], z - f[0] * s + f[2] * c, 0.95]) }
         if (st === 'burning') this.solid(x, z, 2.6)
@@ -406,8 +446,8 @@ export class World {
       // central well (ruined variant is broken)
       for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; if (st === 'ruined' && i % 4 === 0) continue; b.add(G.chamfer(0.55, st === 'ruined' ? 0.5 : 0.85, 0.32, 0.05), st === 'burning' ? 0x5a5048 : 0x8a8478, { at: [T.x + Math.cos(a) * 1.15, T.y + 0.4, T.z + Math.sin(a) * 1.15], rot: [0, -a + Math.PI / 2, 0], m: 'stone' }) }
       if (st !== 'rebuilt') { // carts, broken fences, scattered pots (burning village board)
-        b.add(G.cyl(0.55, 0.55, 0.12, 10).rotateX(Math.PI / 2), 0x3a2a1a, { at: [T.x + 5, T.y + 0.55, T.z - 4], rot: [0, 0.4, 0] })
-        b.add(G.chamfer(1.8, 0.2, 1.0, 0.03), 0x3a2a1a, { at: [T.x + 5.6, T.y + 0.7, T.z - 3.4], rot: [0, 0.4, 0.2] })
+        b.add(G.cyl(0.55, 0.55, 0.12, 10).rotateX(Math.PI / 2), 0x3a2a1a, { at: [T.x + 5, T.y + 0.55, T.z - 4], rot: [0, 0.4, 0] , m: 'wood' })
+        b.add(G.chamfer(1.8, 0.2, 1.0, 0.03), 0x3a2a1a, { at: [T.x + 5.6, T.y + 0.7, T.z - 3.4], rot: [0, 0.4, 0.2] , m: 'wood' })
         K.pot(b, [T.x - 3, T.y, T.z + 3], 1.1, 0x7a4a2a); K.pot(b, [T.x + 2.5, T.y, T.z + 4], 0.9, 0x6a3a2a)
       }
       const g = this.addMesh(b); g.visible = false; this.thennur[st] = g
@@ -417,7 +457,7 @@ export class World {
     this.solid(T.x, T.z, 1.5)
     // Malli's beam (charred, 3.6 m) and the out-of-season bush
     const S = PLACES.malliSpot, mb = new Builder(310)
-    mb.add(jitter(G.chamfer(0.38, 0.38, 3.6, 0.05), 0.04, 2), 0x1a1410, { at: [S.x + 0.6, heightAt(S.x, S.z) + 0.3, S.z], rot: [0, 0.6, 0.15] })
+    mb.add(jitter(G.chamfer(0.38, 0.38, 3.6, 0.05), 0.04, 2), 0x1a1410, { at: [S.x + 0.6, heightAt(S.x, S.z) + 0.3, S.z], rot: [0, 0.6, 0.15] , m: 'wood' })
     this.addMesh(mb)
     const bush = new Builder(311)
     bush.add(jitter(G.ico(0.45, 0), 0.12, 3), 0x3a5a30, { at: [0, 0.35, 0], scale: [1.2, 0.8, 1.2] })
@@ -442,14 +482,14 @@ export class World {
     const r = 22, zf = F.z - 8, zb = F.z + 22
     W(-r, zf, -4, zf); W(4, zf, r, zf); W(-r, zf, -r, zb); W(r, zf, r, zb); W(-r, zb, r, zb)
     this.fortBanners = new Builder(401)
-    for (const [x, z] of [[-r, zf], [r, zf], [-r, zb], [r, zb], [-4.6, zf], [4.6, zf]]) {
+    for (const [x, z] of [[-r, zf], [r, zf], [-r, zb], [r, zb], [-6.5, zf], [6.5, zf]]) {
       roundTower(b, [x, y0, z], 11, false)
       K.banner(this.fortBanners, [x, y0 + 9.5, z - 2.55], Math.PI, 1.3, 4.2)
       this.solid(x, z, 2.5)
     }
     // gatehouse arch + portcullis frame, gate braziers
     b.add(G.chamfer(10, 2.2, 2.2, 0.06), 0x2a2628, { at: [0, y0 + 7.4, zf], m: 'stone' })
-    for (let i = 0; i < 6; i++) b.add(G.box(0.12, 4, 0.12), K.P.ironDark, { at: [-2.5 + i, y0 + 4.4, zf - 0.2], m: 'metal' })
+    for (let i = 0; i < 6; i++) b.add(G.box(0.12, 4, 0.12), K.P.ironDark, { at: [-2.5 + i, y0 + 4.4, zf - 0.2], m: 'iron' })
     // courtyard paving (dark stone)
     const rr = rng(3)
     for (let x = -20; x < 20; x += 2.1) for (let z = zf + 1.5; z < zb - 1; z += 2.1) { if (Math.hypot(x - 14, z - 168) < 5.5) continue; b.add(G.chamfer(2.0, 0.2, 2.0, 0.05), [0x4a4446, 0x403a3c, 0x55504f][(rr() * 3) | 0], { at: [x + 1, heightAt(x + 1, z + 1) + 0.0, z + 1], m: 'stone' }) }
@@ -464,7 +504,8 @@ export class World {
     const Tn = PLACES.throne
     b.push([Tn.x, Tn.y, Tn.z])
     for (let i = 0; i < 3; i++) b.add(G.chamfer(10 - i * 2, 0.4, 6 - i * 1.2, 0.05), 0x2a2628, { at: [0, 0.2 + i * 0.4, 0], m: 'stone' })
-    b.add(G.box(1.5, 0.02, 6.2), K.P.crimson, { at: [0, 0.42, -0.5], m: 'cloth' })
+    for (let i = 0; i < 2; i++) b.add(G.box(1.5, 0.015, 0.6), K.P.crimson, { at: [0, 0.4 * (i + 1) + 0.01, -2.7 + i * 0.6], m: 'cloth' })
+    b.add(G.box(1.5, 0.015, 2.8), K.P.crimson, { at: [0, 1.21, -0.4], m: 'cloth' })
     for (let i = 0; i < 3; i++) b.add(G.box(1.5, 0.4, 0.02), K.P.crimson, { at: [0, 0.2 + i * 0.4, -3 + i * 0.6 - 0.005], m: 'cloth' })
     K.ironThrone(b, [0, 1.2, 0.2], Math.PI)
     K.chain(b, [-4.5, 1.6, 0.4], [-1.2, 3.2, 0.6]); K.chain(b, [4.5, 1.6, 0.4], [1.2, 3.2, 0.6])
@@ -481,12 +522,19 @@ export class World {
     for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; b.add(rock(0.8, 70 + i, 0.8, 0), 0x5a4a3a, { at: [14 + Math.cos(a) * 4.6, heightAt(14 + Math.cos(a) * 4.6, 168 + Math.sin(a) * 4.6), 168 + Math.sin(a) * 4.6], m: 'stone' }) }
     K.slagHeap(b, [10, heightAt(10, 175), 175], 1.4); K.slagHeap(b, [18.5, heightAt(18.5, 161), 161], 1)
     K.scaffold(b, [17.5, heightAt(17.5, 172), 172], 0.5, 2.5, 4.5)
-    this.solid(14, 168, 4.8)
+    this.mineCollider = this.solid(14, 168, 4.8)
     this.addMesh(b)
     this.fortBannerMesh = this.addMesh(this.fortBanners)
+    // The reign explicitly seals the mine. The visible cap and its conditional
+    // walkable floor turn the pit into a usable part of the healing courtyard.
+    const seal = new Builder(403), sealY = heightAt(14, 168) + 5.5 + 0.12
+    seal.add(G.cyl(5.1, 5.1, 0.2, 14), 0x8d877b, { at: [14, sealY - 0.1, 168], m: 'stone' })
+    for (let i = 0; i < 7; i++) seal.add(G.chamfer(1.1, 0.05, 1.3, 0.015), [0x9a9486, 0xb1a797][i % 2], { at: [11.8 + i % 3 * 1.65, sealY + 0.02, 166.2 + Math.floor(i / 3) * 1.65], m: 'stone' })
+    this.mineSeal = this.addMesh(seal); this.mineSeal.visible = false
+    this.floor({ disc: true, x: 14, z: 168, r: 5.1, y: sealY, enabled: () => this.state.fortress === 'healing' })
     // house-of-healing dressing (Ch. VII / epilogue)
     const hb = new Builder(402)
-    for (let i = 0; i < 4; i++) { const x = -12 + i * 4; hb.add(G.chamfer(2, 0.4, 0.9, 0.04), 0xe8dcc0, { at: [x, heightAt(x, 156) + 0.5, 156], m: 'cloth' }); hb.add(G.box(0.1, 0.4, 0.8), K.P.wood, { at: [x - 0.9, heightAt(x, 156) + 0.2, 156] }) }
+    for (let i = 0; i < 4; i++) { const x = -12 + i * 4; hb.add(G.chamfer(2, 0.4, 0.9, 0.04), 0xe8dcc0, { at: [x, heightAt(x, 156) + 0.5, 156], m: 'cloth' }); hb.add(G.box(0.1, 0.4, 0.8), K.P.wood, { at: [x - 0.9, heightAt(x, 156) + 0.2, 156] , m: 'wood' }) }
     K.herbRack(hb, [-15, heightAt(-15, 165) + 2.2, 165], Math.PI / 2, 3); K.herbRack(hb, [15, heightAt(15, 158) + 2.2, 158], Math.PI / 2, 3)
     for (const x of [-5.5, -2.2, 2.2, 5.5]) K.banner(hb, [x, y0 + 12, F.z + 17.85], 0, 1.4, 6, 0xd9822b)
     this.healing = this.addMesh(hb); this.healing.visible = false
@@ -495,6 +543,8 @@ export class World {
     this.state.fortress = mode
     this.fortBannerMesh.visible = mode !== 'healing'
     this.healing.visible = mode === 'healing'
+    this.mineSeal.visible = mode === 'healing'
+    this.mineCollider.r = mode === 'healing' ? 0 : 4.8
   }
   setTemple(mode) {
     this.state.temple = mode

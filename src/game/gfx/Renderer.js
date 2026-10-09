@@ -38,6 +38,9 @@ export class Renderer {
     r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFShadowMap
     r.toneMapping = THREE.NoToneMapping
     r.outputColorSpace = THREE.SRGBColorSpace
+    // Count the whole frame, including shadows and postprocessing, rather than
+    // reporting only the final full-screen triangle.
+    r.info.autoReset = false
     container.appendChild(r.domElement)
 
     const composer = this.composer = new EffectComposer(r, { frameBufferType: THREE.HalfFloatType })
@@ -215,7 +218,10 @@ export class Renderer {
     this.updateStats()
     const st = this.stats
     st?.begin()
+    this.gl.info.reset()
     this.composer.render(dt)
+    const info = this.gl.info
+    this.metrics = { drawCalls: info.render.calls, triangles: info.render.triangles, geometries: info.memory.geometries, textures: info.memory.textures, frameMs: dt * 1000 }
     st?.end(); st?.update()
     // adaptive resolution: keep ~50+ fps by trading pixels
     this.frameSum += Math.min(0.25, dt); this.frameCount++
@@ -273,6 +279,7 @@ export class Renderer {
     for (const p of later) p.enabled = true
     try { this.composer.render(0) } finally { for (const p of later) p.enabled = false }
     this.updateDof()
+    this.routeOutput()
     this.frameSum = 0; this.frameCount = 0
   }
   dispose() {

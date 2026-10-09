@@ -13,13 +13,13 @@ export function report(all = false) {
 }
 export let hold = -1
 export function setHold(k) { hold = k }
-export async function run(from = 2, speed = 4) {
+export async function run(from = 2, speed = 4, choice = 0) {
   const g = window.__game
   g.clearShot([0, 50, 0], [0, 50, 5])
   const keep = { autoAdvance: settings.autoAdvance }
   addEventListener('beforeunload', () => Object.assign(settings, keep))
   // mute in memory only (never touch saved settings): silent lines, no auto-advance
-  g.audio.say = (sp, t) => ({ duration: t.length / 14, ended: new Promise(() => {}), silent: false })
+  g.audio.say = (sp, t) => ({ duration: t.length / 14, ended: Promise.resolve(), silent: true })
   settings.autoAdvance = false; g.god = true; gsap.globalTimeline.timeScale(speed)
   log.length = 0; let lines = 0
   const ow = g.wait.bind(g); g.wait = s => ow(s / speed)
@@ -34,7 +34,7 @@ export async function run(from = 2, speed = 4) {
     // sample once the shot has settled (story cranes run while lines play)
     let waited = 0
     const sample = () => { if (gsap.isTweening(g.cinePos) && (waited += 100) < 2500) return setTimeout(sample, 100); measure() }
-    setTimeout(sample, 1100)
+    setTimeout(sample, Math.max(450, 1100 / speed))
     const measure = () => {
       const rec = { ch, k, id, text: text.slice(0, 44) }
       try {
@@ -45,7 +45,8 @@ export async function run(from = 2, speed = 4) {
           rec.d = +d.toFixed(1); rec.ndc = [+p.x.toFixed(2), +p.y.toFixed(2)]
           const bodies = [g.player, ...g.npcs.values(), ...g.enemies].filter(a => a !== n && a.root?.parent)
           R.set(cam.position, h.clone().sub(cam.position).normalize()); R.near = 0.05; R.far = Math.max(0.1, d - 0.35)
-          const hit = R.intersectObjects([...g.world.occluders, ...bodies.map(a => a.root)], true)[0]
+          const visible = o => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true }
+          const hit = R.intersectObjects([...g.world.occluders.filter(visible), ...bodies.map(a => a.root)], true).find(h => visible(h.object))
           const issues = []
           if (!(Math.abs(p.x) < 0.88 && p.y > -0.85 && p.y < 0.93 && p.z < 1)) issues.push('offframe')
           if (hit) { const who = bodies.find(a => { let q = hit.object; while (q) { if (q === a.root) return true; q = q.parent } return false }); issues.push(`blocked:${who ? who.id || who.type || 'player' : hit.object.name || 'mesh'}@${hit.distance.toFixed(1)}`) }
@@ -59,10 +60,10 @@ export async function run(from = 2, speed = 4) {
     return pr
   }
   const iv = setInterval(() => {
-    if (ui.choose) ui.choose(0)
+    if (ui.choose) ui.choose(choice)
     if (ui.breathe) ui.breathe()
     if (state.cutscene) ui.endCutscene?.()
-    for (const e of g.enemies) if (e.alive && !e.def.passive) try { e.takeHit(9999, g.player.pos.clone().sub(e.pos).normalize().negate(), 0, true) } catch {}
+    for (const e of g.enemies) if (e.alive) try { e.takeHit(9999, g.player.pos.clone().sub(e.pos).normalize().negate(), 0, true) } catch {}
   }, 350)
   g.dropNpc('titleMonk'); g.cine(false); g.world.setBloom(0); g.world.setPetals(0)
   try { await g.start(from) } finally { clearInterval(iv); Object.assign(settings, keep) }

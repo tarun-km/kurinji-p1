@@ -1,17 +1,17 @@
 <script setup>
-// Chapter select: one card per chapter, with the chapter's in-game shot (or its story painting).
+// Chapter select: a real capture from each chapter of the game.
 import { ref, onMounted, nextTick } from 'vue'
 import { CHAPTER_NAMES } from '../game/story'
-import { chapterCardArt, storyArt, splitChapter, loadShots } from './shots'
+import { chapterCardArt, splitChapter, loadShots } from './shots'
 import { arrowDirection, focusables, spatialFocus } from './nav'
 import Glyph from './Glyph.vue'
 
-const props = defineProps({ best: { type: Number, default: 0 }, current: { type: Number, default: -1 } })
+const props = defineProps({ best: { type: Number, default: 0 }, current: { type: Number, default: -1 }, launching: Boolean })
 const emit = defineEmits(['begin', 'close'])
 const root = ref(null)
 const chapters = CHAPTER_NAMES.map((full, i) => ({ i, full, ...splitChapter(full) }))
 const failed = ref({})
-loadShots()
+loadShots(true)
 
 function onKey(e) {
   const dir = arrowDirection(e)
@@ -33,16 +33,16 @@ onMounted(async () => {
 <template>
   <section ref="root" class="ch" aria-labelledby="ch-heading" @keydown="onKey">
     <header class="ch-head">
-      <button class="ch-back" data-nav @click="emit('close')" @mouseenter="hover"><Glyph name="back" /><span>Back</span></button>
+      <button class="ch-back" data-nav :disabled="launching" @click="emit('close')" @mouseenter="hover"><Glyph name="back" /><span>Back</span></button>
       <h2 id="ch-heading">Chapters</h2>
       <span class="ch-head-space" aria-hidden="true"></span>
     </header>
     <ol class="ch-grid">
       <li v-for="c in chapters" :key="c.i" :style="{ '--i': c.i }">
-        <button class="ch-card" data-nav :data-index="c.i" :class="{ locked: c.i > best, current: c.i === current }" :disabled="c.i > best"
+        <button class="ch-card" data-nav :data-index="c.i" :class="{ locked: c.i > best, current: c.i === current }" :disabled="c.i > best || launching"
           :aria-label="`${c.full}${c.i > best ? ', locked' : ''}${c.i === current ? ', last played' : ''}`" @click="emit('begin', c.i)" @mouseenter="hover">
           <span class="ch-art">
-            <img :src="failed[c.i] ? storyArt(c.i) : chapterCardArt(c.i)" alt="" loading="lazy" decoding="async" @error="failed[c.i] = true" />
+            <img v-if="chapterCardArt(c.i) && failed[c.i] !== chapterCardArt(c.i)" :src="chapterCardArt(c.i)" alt="" loading="lazy" decoding="async" @error="failed[c.i] = chapterCardArt(c.i)" />
             <span v-if="c.i > best" class="ch-lock"><Glyph name="lock" /></span>
             <span v-if="c.i === current" class="ch-badge"><Glyph name="blossom" />Last played</span>
           </span>
@@ -64,7 +64,7 @@ onMounted(async () => {
 .ch-back:focus-visible { box-shadow: 0 0 0 3px rgba(164,148,255,.55); }
 
 .ch-grid { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
-.ch-grid li { width: calc((100% - 4 * var(--gap)) / 5); animation: card-in .9s cubic-bezier(.16,1,.3,1) calc(var(--i) * 45ms + 80ms) both; }
+.ch-grid li { width: calc((100% - 4 * var(--gap)) / 5); }
 @keyframes card-in { from { opacity: 0; transform: translateY(16px); } }
 
 .ch-card { position: relative; display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0; background: none; border: 0; color: inherit; text-align: left; font: inherit; cursor: pointer; }

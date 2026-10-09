@@ -1,4 +1,21 @@
-# Kurinji — The Last Bloom: current handoff to Claude
+# Kurinji — The Last Bloom: current development status
+
+Updated: 9 October 2026 (Asia/Calcutta). The user resumed Codex, requested completion of Claude's graphics branch, supplied twelve exact story references, and authorized a push to Git main. The October 8 notes below are historical.
+
+## October 9 implementation
+
+- The new character system is now used by the actual game. All 25 presets have fitted clothing, armor, hair and facial detail. Cached skinned geometry replaces the old runtime builder; cloth follows bones without rewriting shared vertex buffers. Reference accents include red/purple folded scarves, warmer armor edging, the healer's cream sash and stronger old monk robe folds. Maximum high-detail character: 10 meshes, 10,550 triangles.
+- Seven locations received geometry/material improvements: temple, meditation rock, village, forge, gate, Thennur and fortress. Temple stairs now have exactly five matching 0.4 m treads; the approach is clear of plants, the shrine doorway is open, and terrace stairs have real walkable floors. The healed fortress seals its mine. Wood, plaster, tile, brass and iron props use their proper procedural surfaces. Water shader smoothstep bounds were corrected.
+- The home screen, loading reel and chapter cards are finished. Nineteen real game screenshots plus small card variants are indexed in public/art/shots/index.json. Concept images never replace game captures. The capture script stages the real cast/world with postprocessing; hashes prevent stale screenshots. Boot/chapter screenshots decode before play resumes.
+- Voice output has been restored to the quiet mix; the nine audio regression checks pass. Existing effect/ambience budgets, music crossfades and chapter-local voice unloading remain. No voice API is called at runtime.
+- Camera floor clearance now uses actual walkable structures; occlusion ignores hidden scene descendants. Renderer metrics count the complete frame, including shadows and postprocessing. Asset loading checks session ownership before updating global UI, and loading progress mutates Vue's reactive object.
+- Exact images supplied October 9 are preserved unchanged in docs/art-reference/user-story/story-01.webp through story-12.webp. The canonical modeling guide and original library still govern dimensions and cast identities.
+
+Validation: production build, 25-preset character deformation/resource tests, 9 audio regressions, focused temple stair/pillar/clearance/doorway checks, browser loading barriers for all 9 chapters, pause/resume and teardown, and desktop/mobile landscape visual inspection. The browser tests use muted isolated profiles. Physical phones, all story choices and subjective listening have not received exhaustive validation. Do not claim universal hardware performance or pixel-identical reproduction of the paintings.
+
+Run npm run dev; node scripts/check-audio.mjs; node scripts/check-characters.mjs; node scripts/verify-game.mjs runtime. Regenerate captures after visual changes with node scripts/capture-shots.mjs (dev server required). Generated films are optional; live 3D cinematics remain the fallback when no cutscene file is supplied.
+
+## Historical October 8 handoff
 
 Updated: 8 October 2026 (Asia/Calcutta).
 The user explicitly stopped Codex and asked Claude to take over. Do not interpret this file as Codex continuing the task. Coding agents have been stopped, the silent verification tab was closed, and the development server started by Codex was stopped. Another existing server on port 5173 may still belong to the earlier session; Codex did not kill unrelated processes.

@@ -223,7 +223,7 @@ export class Enemy {
     const D = this.def = { ...ENEMY[type], ...opts }
     this.char = makeCharacter(D.preset, D.extra)
     this.root = this.char.root; this.pos = this.root.position
-    this.pos.set(x, heightAt(x, z), z); game.scene.add(this.root)
+    this.pos.set(x, game.world.groundAt(x, z), z); game.scene.add(this.root)
     this.hp = this.maxHp = D.hp; this.radius = D.radius; this.range = D.range; this.windup = D.windup
     this.state = 'idle'; this.stateT = 0; this.facing = Math.atan2(-x, -z); this.alive = true
     this.vel = new THREE.Vector3(); this.poise = D.poise || 0; this.cool = Math.random() * 1.5

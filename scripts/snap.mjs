@@ -34,6 +34,7 @@ const browser = await puppeteer.launch({
 const fail = async msg => { console.error(msg); await browser.close(); process.exit(1) }
 try {
   const page = await browser.newPage()
+  await page.evaluateOnNewDocument(() => { localStorage.setItem('kurinji-settings-v3', JSON.stringify({ master: 0 })) })
   if (MOBILE) await page.setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Mobile Safari/537.36')
   // frame-rate / triangle probe available to --js in the game
   await page.evaluateOnNewDocument(() => { window.__measure = async (ms = 3000) => { const g = window.__game; if (!g) return null; const gl = g.renderer.gl; let n = 0, tris = 0, calls = 0; const t0 = performance.now(); const orig = gl.info.autoReset; gl.info.autoReset = false; await new Promise(r => { const f = () => { gl.info.reset(); requestAnimationFrame(() => { tris = Math.max(tris, gl.info.render.triangles); calls = Math.max(calls, gl.info.render.calls); n++; performance.now() - t0 < ms ? f() : r() }) }; f() }); gl.info.autoReset = orig; return { fps: Math.round(n / ((performance.now() - t0) / 1000)), calls, triangles: tris } } })

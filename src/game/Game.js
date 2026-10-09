@@ -2,9 +2,10 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 import { watch } from 'vue'
 import { Renderer } from './gfx/Renderer'
-import { accelerateRaycasts } from './gfx/bvh'
+import { accelerateRaycasts, disposeRaycasts } from './gfx/bvh'
 import { settings, GRAPHICS_KEYS } from './settings'
-import { CHAPTER_ASSETS, runTasks, loadArtwork, fetchAsset, nextFrame } from './assets'
+import { CHAPTER_ASSETS, runTasks, fetchAsset, nextFrame } from './assets'
+import { loadShots } from '../ui/shots'
 import { Pane } from 'tweakpane'
 import { World, PLACES, heightAt } from './world/World'
 import { Physics } from './Physics'
@@ -19,6 +20,7 @@ import { CHAPTERS, CHAPTER_NAMES, SPEAKERS, PETALS, freeRoam } from './story'
 const V = (x, y, z) => new THREE.Vector3(x, y, z)
 const tmp = new THREE.Vector3()
 const ACTIVE_GAME = Symbol.for('kurinji.activeGame')
+const visibleInScene = o => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true }
 
 export class Game {
   constructor(container) { globalThis[ACTIVE_GAME]?.destroy(); this.container = container; globalThis[ACTIVE_GAME] = this }
@@ -28,6 +30,8 @@ export class Game {
     const alive = () => { if (this.cancelled) throw new Error('Game session ended') }
     try {
     this.waiters = new Set(); this.cleanups = []; this.storyTimers = new Set()
+    this.shotIndex = await loadShots(); alive()
+    this.chapterArt = await this.loadShotImages('title'); alive()
     const progress = (value, label) => { if (state.loading) { state.loading.progress = value; state.loading.label = label } }
     progress(0.05, 'Preparing the mountain'); await nextFrame(); alive()
     this.scene = new THREE.Scene()
@@ -168,7 +172,7 @@ export class Game {
       // handheld drift: slow, layered noise — reads as an operator, never as shake
       const t = this.t, h = L.hand * 0.018 * Math.min(2.5, Math.sqrt(this.cinePos.distanceTo(this.cineLook) + 0.5))
       cam.position.copy(this.cinePos).add(tmp.set(tx + Math.sin(t * 0.63) * h + Math.sin(t * 1.7) * h * 0.35, ty + Math.sin(t * 0.81 + 1) * h * 0.7, Math.cos(t * 0.52) * h))
-      const gy = heightAt(cam.position.x, cam.position.z) + 0.55; if (cam.position.y < gy) cam.position.y = gy
+      const gy = this.world.groundAt(cam.position.x, cam.position.z) + 0.55; if (cam.position.y < gy) cam.position.y = gy
       cam.lookAt(this.cineLook)
       cam.rotateZ(L.roll + Math.sin(t * 0.4) * 0.003 * L.hand)
       if (Math.abs(cam.fov - L.fov) > 0.01) { cam.fov = L.fov; cam.updateProjectionMatrix() }
@@ -192,11 +196,11 @@ export class Game {
     for (let i = 1; i <= 12; i++) {
       const u = i / 12, x = c.target.x + (want.x - c.target.x) * u, z = c.target.z + (want.z - c.target.z) * u
       const y = c.target.y + (want.y - c.target.y) * u
-      const terrain = heightAt(x, z) + 0.45 > y
+      const terrain = this.world.groundAt(x, z) + 0.45 > y
       const wall = this.world.colliders.some(p => p.r > 0 && (x - p.x) ** 2 + (z - p.z) ** 2 < (p.r + 0.25) ** 2 && y < heightAt(p.x, p.z) + 4)
       if (terrain || wall) { want.lerpVectors(c.target, want, Math.max(0.18, (i - 1) / 12)); break }
     }
-    const gy = heightAt(want.x, want.z) + 0.6; if (want.y < gy) want.y = gy
+    const gy = this.world.groundAt(want.x, want.z) + 0.6; if (want.y < gy) want.y = gy
     cam.position.lerp(want, Math.min(1, dt * 12)).add(tmp.set(tx, ty, 0))
     cam.lookAt(c.target)
     this.cinePos.copy(cam.position); this.cineLook.copy(c.target)
@@ -464,17 +468,17 @@ export class Game {
   }
   /** Move a camera position forward until nothing solid (buildings, walls) sits between it and the subject. */
   clearShot(pos, look) {
-    const occ = (this.world.occluders || []).filter(g => g.visible)
+    const occ = (this.world.occluders || []).filter(visibleInScene)
     if (!occ.length) return pos
     const eye = V(...pos), at = V(...look), dir = eye.clone().sub(at), dist = dir.length()
     if (dist < 0.3) return pos
     dir.normalize()
     const ray = this.ray ||= new THREE.Raycaster()
-    const blocked = d3 => { ray.set(at, d3); ray.far = dist + 0.3; ray.near = 0.25; return ray.intersectObjects(occ, true)[0] }
+    const blocked = d3 => { ray.set(at, d3); ray.far = dist + 0.3; ray.near = 0.25; return ray.intersectObjects(occ, true).find(h => visibleInScene(h.object)) }
     // a camera hugging a wall fills half the frame: require ~1 m of free space around the lens
     const cramped = (eyeP, d3) => {
       const side = V(-d3.z, 0, d3.x).normalize()
-      for (const v of [side, side.clone().negate(), V(d3.x, 0, d3.z).normalize()]) { ray.set(eyeP, v); ray.near = 0; ray.far = 1.1; if (ray.intersectObjects(occ, true).length) return true }
+      for (const v of [side, side.clone().negate(), V(d3.x, 0, d3.z).normalize()]) { ray.set(eyeP, v); ray.near = 0; ray.far = 1.1; if (ray.intersectObjects(occ, true).some(h => visibleInScene(h.object))) return true }
       return false
     }
     const first = blocked(dir)
@@ -484,7 +488,7 @@ export class Game {
     for (const a of [0.35, -0.35, 0.7, -0.7, 1.05, -1.05, 1.5, -1.5, 2.0, -2.0]) {
       const d3 = flat.clone().applyAxisAngle(V(0, 1, 0), a).setY(h).normalize()
       const out = at.clone().addScaledVector(d3, dist)
-      if (out.y < heightAt(out.x, out.z) + 0.5) continue
+      if (out.y < this.world.groundAt(out.x, out.z) + 0.5) continue
       if (!blocked(d3) && !cramped(out, d3)) return out.toArray()
     }
     for (const lift of [0.35, 0.7]) {
@@ -494,7 +498,7 @@ export class Game {
     if (!first) return pos
     const d = Math.max(0.9, first.distance - 0.4)
     const out = at.clone().addScaledVector(dir, d)
-    return [out.x, Math.max(out.y, heightAt(out.x, out.z) + 0.5), out.z]
+    return [out.x, Math.max(out.y, this.world.groundAt(out.x, out.z) + 0.5), out.z]
   }
   /** Shot relative to a world point: offset [dx,dy,dz] from p, looking at p+[0,ly,0] */
   shotAt(p, off, ly = 1.5, dur = 0, ease, opts) { return this.shot([p.x + off[0], p.y + off[1], p.z + off[2]], [p.x, p.y + ly, p.z], dur, ease, opts) }
@@ -523,7 +527,7 @@ export class Game {
       .concat([ots(-flip), mcu(-flip), front, high(flip), high(-flip), wide(flip), wide(-flip)]).filter(Boolean)
     let pick = null
     for (const [eye, fov] of order) {
-      const gy = heightAt(eye.x, eye.z) + 0.5; if (eye.y < gy) eye.y = gy
+      const gy = this.world.groundAt(eye.x, eye.z) + 0.5; if (eye.y < gy) eye.y = gy
       if (this.frames(speaker, eye.toArray(), look.toArray(), fov, 12)) { pick = [eye, fov]; break }
     }
     const [eye, fov] = pick || mcu(flip)
@@ -555,11 +559,11 @@ export class Game {
     const bodies = [this.player, ...this.npcs.values(), ...this.enemies].filter(a => a !== actor && a.root?.parent && a.root.visible && a.pos.distanceTo(cam.position) < d + 1).map(a => a.root)
     const ray = this.ray ||= new THREE.Raycaster()
     // eyes and chin must both be clear (a shoulder hiding half the face reads as a blocked shot)
-    const solids = [...(this.world.occluders || []).filter(o => o.visible), ...bodies]
+    const solids = [...(this.world.occluders || []).filter(visibleInScene), ...bodies]
     for (const pt of [H, H.clone().add(V(0, -0.15, 0))]) {
       const dd = cam.position.distanceTo(pt)
       ray.set(cam.position, pt.clone().sub(cam.position).normalize()); ray.near = 0.05; ray.far = dd - 0.3
-      if (ray.intersectObjects(solids, true).length) return false
+      if (ray.intersectObjects(solids, true).some(h => visibleInScene(h.object))) return false
     }
     return true
   }
@@ -687,7 +691,9 @@ export class Game {
 
   async prepareChapter(i, voiceSet) {
     const manifest = CHAPTER_ASSETS[i]
-    const loading = state.loading = { title: voiceSet === 'freeroam' ? 'Free Roam' : CHAPTER_NAMES[i], sub: 'The mountain is preparing your next chapter.', art: `${import.meta.env.BASE_URL}art/story${manifest.art}-sm.webp`, progress: 0, label: 'Preparing assets', error: '' }
+    const key = voiceSet === 'freeroam' ? 'freeroam' : manifest.key
+    state.loading = { key, title: voiceSet === 'freeroam' ? 'Free Roam' : CHAPTER_NAMES[i], sub: 'The mountain is preparing your next chapter.', art: '', progress: 0, label: 'Preparing assets', error: '' }
+    const loading = state.loading
     this.audio.setMusic(null, 0); this.audio.stopVoice()
     await this.audio.releaseUnusedMusic(manifest.music)
     await nextFrame()
@@ -695,7 +701,7 @@ export class Game {
     for (const url of this.cutsceneAssets?.values() || []) URL.revokeObjectURL(url)
     this.cutsceneAssets = new Map()
     const tasks = [
-      { label: 'Chapter artwork', run: async () => { this.chapterArt = await loadArtwork(manifest.art) } },
+      { label: 'Cinematic frames', run: async () => { this.chapterArt = await this.loadShotImages(key) } },
       ...this.audio.voiceTasks(voiceSet || manifest.key),
       ...[...this.audio.sfxIndex].map(id => this.audio.sfxTask(id)),
       ...manifest.music.map(name => ({ label: 'Music', run: () => this.audio.resolve(name) })),
@@ -709,10 +715,15 @@ export class Game {
     while (!this.disposed) {
       try {
         await runTasks(tasks, (done, count, label) => { loading.progress = done / (count + 1); loading.label = label })
+        if (this.disposed || state.loading !== loading) return
         loading.label = 'Warming light and shaders'; await nextFrame(); await this.renderer.warm()
-        loading.progress = 1; await nextFrame(); state.loading = null; ui.retryLoad = null
+        if (this.disposed || state.loading !== loading) return
+        loading.progress = 1; await nextFrame()
+        if (this.disposed || state.loading !== loading) return
+        state.loading = null; ui.retryLoad = null
         this.lastTime = performance.now(); return
       } catch (e) {
+        if (this.disposed || state.loading !== loading) return
         loading.error = `${e.message}. Retry to continue.`
         await new Promise(resolve => { ui.retryLoad = () => { loading.error = ''; ui.retryLoad = null; resolve() } })
       }
@@ -724,7 +735,7 @@ export class Game {
     try { this.cutsceneIndex = await fetchAsset('cutscenes/index.json', 'json') } catch { this.cutsceneIndex = {} }
   }
   cutsceneFile(id) {
-    const index = this.cutsceneIndex
+    const index = this.cutsceneIndex || {}
     const entry = Array.isArray(index) ? index.find(x => x === id || x.id === id) : index[id]
     if (!entry) return null
     const file = typeof entry === 'object' ? (entry.file || `${id}.${entry.type === 'webp' ? 'webp' : 'mp4'}`) : (typeof entry === 'string' && /\.(mp4|webp)$/.test(entry) ? entry : `${id}.mp4`)
@@ -755,6 +766,7 @@ export class Game {
     if (this.enemies) this.clearEnemies(); if (this.npcs) this.clearNPCs(); this.player?.char?.dispose?.()
     this.physics?.destroy?.(); this.world?.pmrem?.dispose()
     this.world?.envTarget?.dispose(); this.world?.fallenCrown?.userData.dispose?.()
+    disposeRaycasts(this.world?.occluders)
     for (const url of this.cutsceneAssets?.values() || []) URL.revokeObjectURL(url)
     const geometries = new Set(), materials = new Set(), textures = new Set()
     this.scene?.traverse(o => { gsap.killTweensOf(o); gsap.killTweensOf(o.position); gsap.killTweensOf(o.rotation); if (o.geometry) geometries.add(o.geometry); const ms = Array.isArray(o.material) ? o.material : [o.material]; for (const m of ms) if (m) materials.add(m) })
@@ -763,5 +775,15 @@ export class Game {
     for (const m of materials) if (!m.userData.sharedCharacter && !m.userData.sharedKit) m.dispose()
     for (const t of textures) t.dispose()
     this.renderer?.dispose?.()
+  }
+
+  async loadShotImages(key) {
+    this.shotIndex = await loadShots()
+    const list = this.shotIndex?.[key] || (key === 'freeroam' ? this.shotIndex?.ch7 : []) || []
+    return Promise.all(list.map(({ src }) => new Promise((resolve, reject) => {
+      const image = new Image(), timer = setTimeout(() => reject(new Error(`Cinematic frame timed out: ${src}`)), 30000)
+      image.src = src
+      image.decode().then(() => { clearTimeout(timer); resolve(image) }, error => { clearTimeout(timer); reject(error) })
+    })))
   }
 }
