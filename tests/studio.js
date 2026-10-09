@@ -53,13 +53,13 @@ function orbit(target, az, el, dist) {
 const chars = []
 function setup() {
   if (kind === 'newchar') {
-    const ids = (q.get('ids') || 'veeran,aruvan,aruvanOld').split(',')
+    const ids = (q.get('ids') || 'veeran,aruvan,aruvanOld,guru,thamarai,kaali,malli,ilan,rudhra,dunkan,soldier').split(',')
     const w = (ids.length - 1) * 1.3
     import('/tests/new-characters.js').then(({ buildNewCharacter }) => {
       ids.forEach((id, i) => { const r = buildNewCharacter(id); r.position.x = -w / 2 + i * 1.3; r.rotation.y = Number(q.get('ry') || 0); scene.add(r) })
       label.textContent = 'NEW system: ' + ids.join(', ')
     }).catch(e => { label.textContent = 'error: ' + e.message; console.error(e) })
-    camera.fov = 26; orbit(new THREE.Vector3(0, 1.0, 0), Number(q.get('az') || 0), 4, Number(q.get('dist') || 7))
+    camera.fov = 26; orbit(new THREE.Vector3(0, 1.0, 0), Number(q.get('az') || 0), 4, Number(q.get('dist') || Math.max(7, w * 2.3)))
   } else if (kind === 'char') {
     const ids = (q.get('ids') || 'aruvan').split(',')
     const views = (q.get('views') || 'front,left,back,right').split(',')
