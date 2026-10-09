@@ -87,7 +87,7 @@ try {
   page.on('pageerror', e => errors.push(e.message))
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text().slice(0, 500)) })
   await page.evaluateOnNewDocument(() => { localStorage.setItem('kurinji-settings-v3', JSON.stringify({ master: 0 })) })
-  await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+  await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.waitForFunction('window.__game && window.__game.world && window.__view', { timeout: 180000 })
   await page.evaluate(async preset => {
     const s = await import('/src/game/settings.js')

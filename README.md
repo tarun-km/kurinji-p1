@@ -19,8 +19,9 @@ npm run dev
 | Camera | click the screen, then move the mouse (Z / C also rotate) | drag on the right side |
 | Strike (3-hit chain) | Left click / J | STRIKE |
 | Heavy blow | Right click / K | HEAVY |
-| Evade (perfect timing → slow-mo "Still Mind") | Space | EVADE |
-| Kurinji Breath (when the ring is full) | F / Q | BREATH |
+| Evade (perfect timing → slow-mo "Still Mind") | F | EVADE |
+| Jump (reach ledges, rocks, platform edges) | Space | JUMP |
+| Kurinji Breath (when the ring is full) | Q | BREATH |
 | Interact / talk | E | E |
 | Dialogue / choices | Space, E, click / keys 1–3 | tap |
 | Memory journal | Tab | — |

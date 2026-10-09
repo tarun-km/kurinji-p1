@@ -116,6 +116,7 @@ export class Game {
     const controllable = !this.cinematic && !state.dialogue && !state.choices && state.screen === 'game' && !this.frozen
     if (!controllable) this.input.clear()
     this.player.update(dt, this.input, this.cam.yaw, controllable)
+    this.updateAttention()
     for (const n of this.npcs.values()) n.update(dt)
     for (const e of this.enemies) e.update(dt)
     this.physics.step(dt)
@@ -279,7 +280,8 @@ export class Game {
       p.mesh.rotation.y += dt * 1.5; p.mesh.position.y = p.y + Math.sin(this.t * 2 + p.i) * 0.2
       const d2 = p.mesh.position.distanceToSquared(this.player.pos)
       if (d2 < glowD) { glowD = d2; glow = p }
-      if (state.screen === 'game' && !this.cinematic && d2 < 1.8 * 1.8) this.collectPetal(p)
+      const pp = p.mesh.position, flat = (pp.x - this.player.pos.x) ** 2 + (pp.z - this.player.pos.z) ** 2, dy = pp.y - this.player.pos.y
+      if (state.screen === 'game' && !this.cinematic && flat < 1.6 * 1.6 && dy > -0.8 && dy < 2.6) this.collectPetal(p)
     }
     // the shared petal light follows the nearest petal; it dims to 0 (never removed) when none is close
     const L = this.petalLight
@@ -315,11 +317,28 @@ export class Game {
     this.petals = PETALS.map((d, i) => {
       const mesh = new THREE.Group()
       for (let k = 0; k < 5; k++) { const pe = new THREE.Mesh(petalGeo, petalMat); pe.scale.set(0.5, 0.15, 1); pe.position.set(Math.sin(k * 1.256) * 0.17, 0, Math.cos(k * 1.256) * 0.17); pe.rotation.y = k * 1.256; mesh.add(pe) }
-      const y = heightAt(d.x, d.z) + 1.1
+      // float above the real walkable surface (floors/steps/rocks), clear of shrubs
+      const y = this.world.groundAt(d.x, d.z) + 1.25
       mesh.position.set(d.x, y, d.z); this.scene.add(mesh)
+      this.clearAround(d.x, d.z)
       const taken = got.has(i); mesh.visible = !taken
       return { mesh, y, i, taken, d }
     })
+  }
+  /** Keep a petal reachable: hide trees, bushes and rocks that grew on top of it and drop their colliders. */
+  clearAround(x, z, r = 2.4) {
+    const M = new THREE.Matrix4(), P = new THREE.Vector3(), Q = new THREE.Quaternion(), S = new THREE.Vector3()
+    for (const m of this.world.nature?.sets || []) {
+      if (!/conifer|shola|eucalyptus|palm|cypress|broadleaf|rock|pathrock/.test(m.name)) continue
+      const tree = /conifer|shola|eucalyptus|palm|cypress/.test(m.name)
+      let changed = false
+      for (let j = 0; j < m.count; j++) {
+        m.getMatrixAt(j, M); M.decompose(P, Q, S)
+        if (S.x > 0 && Math.hypot(P.x - x, P.z - z) < r + (tree ? 1.2 : 0)) { S.setScalar(0); M.compose(P, Q, S); m.setMatrixAt(j, M); changed = true }
+      }
+      if (changed) m.instanceMatrix.needsUpdate = true
+    }
+    this.world.colliders = this.world.colliders.filter(c => c === this.world.gateCollider || Math.hypot(c.x - x, c.z - z) > r + c.r)
   }
   collectPetal(p) {
     p.taken = true; p.mesh.visible = false
@@ -353,8 +372,22 @@ export class Game {
   wait(s) { return new Promise(resolve => this.waiters.add({ left: s, resolve })) }
   npc(id, preset, x, z, face, extra) {
     if (this.npcs.has(id)) { const n = this.npcs.get(id); if (x != null) n.setPos(x, z, face); return n }
-    const n = new NPC(this, id, preset, SPEAKERS[id]?.name || id, extra); n.setPos(x ?? 0, z ?? 0, face ?? 0)
+    const n = new NPC(this, id, preset, SPEAKERS[id]?.name || id, extra)
+    ;[x, z] = this.freeSpot(x ?? 0, z ?? 0)
+    n.setPos(x, z, face ?? 0)
     this.npcs.set(id, n); return n
+  }
+  /** Nothing stands inside a wall, well, rock or prop: nudge a staged position to the nearest free spot. */
+  freeSpot(x, z, r = 0.3) {
+    // only small solids (props, wells, stalls, rocks, trunks): building footprints are generous
+    // circles that overlap porches and the forge floor, where people are meant to stand
+    const hit = (px, pz) => this.world.colliders.some(c => c.r && c.r <= 1.65 && (px - c.x) ** 2 + (pz - c.z) ** 2 < (c.r + r) ** 2)
+    if (!hit(x, z)) return [x, z]
+    for (let ring = 1; ring <= 8; ring++) for (let k = 0; k < 12; k++) {
+      const a = k / 12 * Math.PI * 2, d = ring * 0.25, px = x + Math.cos(a) * d, pz = z + Math.sin(a) * d
+      if (!hit(px, pz)) return [px, pz]
+    }
+    return [x, z]
   }
   get(id) { return this.npcs.get(id) }
   dropNpc(id) { const n = this.npcs.get(id); if (n) { n.remove(); this.npcs.delete(id) } }
@@ -387,6 +420,39 @@ export class Game {
     state.card = { kicker, title, sub }; state.chapter = title
     await this.wait(4.2); state.card = null; await this.wait(0.8)
   }
+  /**
+   * Acting for one spoken line: the speaker talks with gestures (armed characters use the blade
+   * on hard lines), the listener and bystanders turn to look, and everyone keeps breathing.
+   * opts.mood: 'angry' | 'sad' | null · opts.gesture: action name or false.
+   */
+  act(actor, text, opts = {}) {
+    const ch = actor?.char
+    if (!ch) return
+    const listener = this.listenerOf(actor)
+    ch.speaking = true
+    const hard = /!/.test(text), armed = ch.o.weapon === 'sword' || ch.o.weapon === 'greatsword'
+    if (opts.mood !== undefined) ch.mood = opts.mood
+    else if (hard && armed) ch.mood = 'angry'
+    else if (ch.mood === 'angry') ch.mood = null
+    if (listener && listener !== actor) { ch.lookAtActor = listener; if (listener.char && listener.char.sustain !== 'dead' && listener.char.sustain !== 'lie') listener.char.lookAtActor = actor }
+    // bystanders turn toward whoever speaks
+    for (const n of this.npcs.values()) if (n !== actor && n !== listener && n.char && !n.char.sustain && n.pos.distanceTo(actor.pos) < 9) n.char.lookAtActor = actor
+    if (opts.gesture === false || ch.action || (ch.sustain && ch.sustain !== 'guard')) return
+    const r = (this.actSeed = ((this.actSeed ?? 7) * 9301 + 49297) % 233280) / 233280
+    const beat = opts.gesture || (hard && armed ? (r < 0.55 ? 'point' : 'flourish') : /\?/.test(text) ? 'gesture' : r < 0.3 ? 'gesture' : r < 0.5 ? 'nod' : r < 0.58 && armed ? 'flourish' : null)
+    if (beat) ch.play(beat, beat === 'nod' ? 0.8 : 1.15)
+    if (listener?.char && !listener.char.action && !listener.char.sustain && r > 0.62) listener.char.play(r > 0.85 ? 'shake' : 'nod', 0.9)
+  }
+  /** Per frame: characters with an attention target keep tracking that person's head. */
+  updateAttention() {
+    for (const a of [this.player, ...this.npcs.values(), ...this.enemies]) {
+      const c = a?.char; if (!c) continue
+      const t = c.lookAtActor
+      c.lookTarget = t && t.root?.parent ? this.headOf(t) : null
+      if (t && !t.root?.parent) c.lookAtActor = null
+    }
+  }
+  clearAttention() { for (const a of [this.player, ...this.npcs.values(), ...this.enemies]) if (a?.char) { a.char.lookAtActor = null; a.char.lookTarget = null; a.char.speaking = false; a.char.mood = null } }
   say(id, text, opts = {}) {
     const S = SPEAKERS[id] || { name: id, color: '#ddd' }
     state.dialogue = { speaker: opts.as || S.name, text, color: S.color }
@@ -411,10 +477,11 @@ export class Game {
       if (recut) { this.coverSide = -(this.coverSide ?? 1); this.cover(actor, listenerFor(actor)) }
     }
     if (actor) this.lastSpeaker = actor
-    this.sayActor = actor; this.recuts = 0; this.badFrameT = 0
+    this.sayActor = opts.cover === false ? null : actor; this.recuts = 0; this.badFrameT = 0
+    this.act(actor, text, opts)
     return new Promise(res => {
       let done = false
-      const finish = () => { if (done) return; done = true; ui.advance = null; state.dialogue = null; this.sayActor = null; this.audio.stopVoice(); this.audio.duck(false); this.input.clear(); res() }
+      const finish = () => { if (done) return; done = true; if (actor?.char) actor.char.speaking = false; ui.advance = null; state.dialogue = null; this.sayActor = null; this.audio.stopVoice(); this.audio.duck(false); this.input.clear(); res() }
       ui.advance = finish
       if (settings.autoAdvance) (v.silent ? this.wait(1.2 + text.length * 0.055) : v.ended).then(async () => { await this.wait(v.silent ? 0 : 1); if (!done && !this.disposed) finish() })
     })
@@ -442,7 +509,7 @@ export class Game {
   cine(on) {
     this.cinematic = on; state.letterbox = on; this.track = null
     if (on) { this.cinePos.copy(this.camera.position); this.cineLook.copy(this.cam.target); document.exitPointerLock?.() }
-    else { this.cam.yaw = Math.atan2(this.player.pos.x - this.camera.position.x, this.player.pos.z - this.camera.position.z); this.renderer.focus(null) }
+    else { this.clearAttention(); this.cam.yaw = Math.atan2(this.player.pos.x - this.camera.position.x, this.player.pos.z - this.camera.position.z); this.renderer.focus(null) }
   }
   /**
    * Camera move. opts: { fov, roll, hand } — fov defaults to a lens chosen by subject distance
@@ -780,10 +847,13 @@ export class Game {
   async loadShotImages(key) {
     this.shotIndex = await loadShots()
     const list = this.shotIndex?.[key] || (key === 'freeroam' ? this.shotIndex?.ch7 : []) || []
-    return Promise.all(list.map(({ src }) => new Promise((resolve, reject) => {
-      const image = new Image(), timer = setTimeout(() => reject(new Error(`Cinematic frame timed out: ${src}`)), 30000)
+    // Loading-screen frames are decoration: a slow network, a hidden tab or a missing file must
+    // never stop the game from starting — skip that frame (the screen falls back to story art).
+    const frames = await Promise.all(list.map(({ src }) => new Promise(resolve => {
+      const image = new Image(), timer = setTimeout(() => { console.warn(`Cinematic frame skipped (slow): ${src}`); resolve(null) }, 8000)
       image.src = src
-      image.decode().then(() => { clearTimeout(timer); resolve(image) }, error => { clearTimeout(timer); reject(error) })
+      image.decode().then(() => { clearTimeout(timer); resolve(image) }, () => { clearTimeout(timer); console.warn(`Cinematic frame skipped: ${src}`); resolve(null) })
     })))
+    return frames.filter(Boolean)
   }
 }

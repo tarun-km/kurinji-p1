@@ -1,4 +1,5 @@
 import gsap from 'gsap'
+import * as THREE from 'three'
 import { PLACES, heightAt, pathX } from './world/terrain'
 import { state, ui, markComplete } from './store'
 import { storyFrame, storyCutscene } from './cinematics'
@@ -82,6 +83,12 @@ function crowd(g, n, cx, cz, r, prefix = 'v') {
 function maleChat(g) { g.bark('villager', ['Good morning, swami. The bell rang sweet today.', 'Riders on the ridge again... I do not like it.', 'The Kurinji buds are fat this year. Twelve years, soon.', 'Ilan carved me a sparrow. It sits on my window now.', 'Kaali has been hammering since before the bell.']) }
 function femaleChat(g) { g.bark('villagerF', ['Vanakkam, Aruvan. Stay for tea?', 'Mind the chickens. They think they own the square.', 'My grandmother saw the last bloom. She said the whole mountain sang.', 'The well water is cold and sweet today.', 'Thamarai is looking for you. She has that look again.']) }
 function kidChat(g) { g.bark('kid', ['Swami! Watch me spin like you!', 'Is it true you can catch a falling leaf with your eyes closed?']) }
+/** Where Kaali stands to work: the anvil's long side, facing it (forge shelter is rotated 0.5 rad). */
+function forgeSpot() {
+  const F = P.forge, a = 0.5, ax = 0.9 * Math.cos(a) + 0.2 * Math.sin(a), az = -0.9 * Math.sin(a) + 0.2 * Math.cos(a)
+  const r = a + 0.4, x = F.x + ax + Math.sin(r) * 0.78, z = F.z + az + Math.cos(r) * 0.78
+  return { x, z, face: Math.atan2(F.x + ax - x, F.z + az - z) }
+}
 function villageLife(g, { morning = true } = {}) {
   const V = (id, preset, x, z, face, extra) => g.npc(id, preset, x, z, face, extra)
   const people = []
@@ -92,7 +99,7 @@ function villageLife(g, { morning = true } = {}) {
   add(V('lifeChatA', 'villager', 5.6, -0.6, -1.9, { cloth: 0x3a6f8a }).act('chat'), 'a neighbour', maleChat)
   add(V('lifeChatB', 'villager', 4.4, 0.9, 1.2, { cloth: 0xa0522d, long: true }).act('listen'), 'a neighbour', femaleChat)
   // drawing water
-  add(V('lifeWell', 'villager', 3.0, -4.4, 0, { cloth: 0x5a7a3a, long: true }).act('draw'), 'the water-bearer', femaleChat)
+  add(V('lifeWell', 'villager', 3.6, -4.05, 0, { cloth: 0x5a7a3a, long: true }).act('draw'), 'the water-bearer', femaleChat)
   // old Murugan on his porch, praying at the shrine house
   add(V('lifeMurugan', 'murugan', -6.6, -12.4, 0.35).act('sitchat'), 'Old Murugan', maleChat)
   add(V('lifePray', 'villager', 21.4, -13.6, -2.1, { cloth: 0x8a6f3a, long: true }).act('pray'), 'a devotee', femaleChat)
@@ -344,7 +351,7 @@ async function ch1(g) {
   const stop = () => stopLife()
   const th = g.npc('thamarai', 'thamarai', -4, -5, 0)
   const il = g.npc('ilan', 'ilan', 4.5, -0.5, 0)
-  const ka = g.npc('kaali', 'kaali', P.forge.x + 0.8, P.forge.z + 0.6, 0)
+  const ka = (() => { const f = forgeSpot(); return g.npc('kaali', 'kaali', f.x, f.z, f.face).act('hammer') })()
   await g.goTo({ x: 0, z: -14 }, 6, 'Descend to Kurinji village')
   g.cine(true)
   await storyFrame(g, 4, undefined, 3.5)
@@ -367,6 +374,7 @@ async function ch1(g) {
   await g.say('aruvan', 'Guru also says the moon is a lamp he forgot to blow out.')
   await g.say('ilan', 'Kaali wants you at the forge. She says it\'s "important" in her scary voice. Can I watch? Please?')
   await g.talkTo('kaali', 'Go to Kaali\'s forge')
+  ka.char.activity = null; ka.char.onActivityHit = null
   await g.say('kaali', 'Monk. Those riders the shepherds saw — they\'re Dunkan\'s. Iron-eaters. They burned three villages in the south valley this spring.', { shot: true })
   await g.say('kaali', 'If they come here, I want the young ones to know how to hold a staff. You\'ll show them.')
   await g.say('aruvan', 'The staff is for balance, Kaali. Not for blood.')
@@ -378,7 +386,7 @@ async function ch1(g) {
   await g.goTo(P.training, 5)
   g.npc('ilan', 'ilan', P.training.x - 5, P.training.z - 3)
   g.toast(state.mobile ? 'Tap STRIKE three times for a combo, HEAVY for a crushing blow' : 'Left click / J: strike (chain 3) · Right click / K: heavy blow')
-  setTimeout(() => g.toast(state.mobile ? 'EVADE dodges · fill the Breath ring, then tap BREATH' : 'Space: evade · Fill the Breath ring, then press F for the Kurinji Breath'), 7000)
+  setTimeout(() => g.toast(state.mobile ? 'EVADE dodges, JUMP leaps · fill the Breath ring, then tap BREATH' : 'F: evade · Space: jump · Fill the Breath ring, then press Q for the Kurinji Breath'), 7000)
   state.breath = 60
   await g.battle([[0, 1, 2, 3].map(i => ({ type: 'dummy', x: P.training.x - 3 + i * 2, z: P.training.z + 3 + (i % 2) }))], { music: 'main_theme', after: 'main_theme' })
   g.toast('Training complete')
@@ -514,35 +522,69 @@ async function ch3(g) {
     [{ type: 'soldier', x: -6, z: -52 }, { type: 'soldier', x: 6, z: -52 }, { type: 'soldier', x: 0, z: -48 }, { type: 'soldier', x: 3, z: -46 }],
     [{ type: 'brute', x: 0, z: -48 }, { type: 'soldier', x: -7, z: -50 }, { type: 'captain', x: 7, z: -50 }],
   ], { nonLethal: true, anchor: [0, -58, Math.PI], after: 'iron_banners', onWave: soldierBark(g) })
-  // the betrayal
+  // the betrayal — staged in the open hall between the front pillars (x ±1.9, z -68.4) and the
+  // sanctum, so every camera looks through the central pillar gap instead of into a column
   g.cine(true)
-  const rd = g.npc('rudhra', 'rudhra', 1.8, -68.5, -Math.PI / 2)
-  guru.setPos(0, -66.5, Math.PI)
-  p.setPos(0, -56, Math.PI)
-  g.shot([5, P.temple.y + 2.5, -60], [0, P.temple.y + 1.8, -66.5], 0)
-  await g.wait(0.8)
-  await g.say('rudhra', 'A message from the king, Hound.')
-  rd.char.play('lunge', 0.5); g.audio.play('hit', { rate: 0.6 })
-  await g.wait(0.25)
-  guru.char.play('die', 1.4)
+  const Ty = P.temple.y
+  guru.setPos(0, -69.8, 0); guru.char.sustain = null; guru.lookAtPlayer = false
+  p.setPos(0, -60.8, Math.PI); p.char.sustain = null
+  const rd = g.npc('rudhra', 'rudhra', -3.8, -71.4, 1.1); rd.lookAtPlayer = false
+  guru.char.lookAtActor = p
+  // 1. from the foot of the steps: the Guru waits in the lamplight; a shadow moves behind him
+  g.shot([1.6, Ty + 1.2, -59.6], [0, Ty + 3.4, -69.8], 0, 'none', { fov: 40, hand: 0.6 })
+  rd.walkTo(-0.95, -70.4, 1.1)
+  await g.wait(2.6)
+  rd.face(p.pos); rd.char.lookAtActor = p
+  rd.char.play('drawSword', 1.0); g.audio.play('swing', { rate: 0.7 })
+  // 2. Rudhra at the Guru's shoulder, low and close
+  g.shot([2.2, Ty + 3.3, -67.1], [-0.55, Ty + 3.55, -70.1], 0, 'none', { fov: 34 })
+  await g.wait(0.9)
+  await g.say('rudhra', 'A message from the king, Hound.', { mood: 'angry', gesture: false })
+  // 3. the strike — tight side two-shot inside the hall, slowed down
+  g.shot([-2.5, Ty + 3.15, -68.8], [-0.45, Ty + 3.25, -70.0], 0, 'none', { fov: 32, hand: 1.1 })
+  rd.char.play('lunge', 0.55); g.audio.play('hit', { rate: 0.6 })
+  await g.wait(0.3)
+  guru.char.lookAtActor = rd; guru.char.play('clutch', 0.9); g.shake(0.25)
   g.slowMo(0.25, 2); g.audio.play('heartbeat')
-  await g.wait(0.4)
-  g.shotAt(p.pos, [1.5, 1.2, -2.5], 1.6, 0.6)
-  await g.say('aruvan', 'GURU!')
-  g.shotAt(rd.pos, [-2, 1.6, 3], 1.7, 0.8)
-  await g.say('rudhra', '"Nothing you love stays." He wanted me to say it exactly like that.')
-  rd.walkTo(-30, -70, 6)
-  await g.wait(0.8); g.dropNpc('rudhra')
+  await g.wait(0.75)
+  guru.char.play('die', 1.6)
+  // 4. Aruvan at the foot of the steps
+  p.char.lookAtActor = guru; p.char.play('stagger', 0.8)
+  g.shotAt(p.pos, [0.75, 1.45, -1.9], 1.6, 0, 'none', { fov: 32, hand: 1.2 })
+  await g.say('aruvan', 'GURU!', { mood: 'angry', gesture: false })
+  // 5. Rudhra above him, framed by the pillars, blade still wet
+  rd.char.lookAtActor = p
+  g.shot([-1.15, Ty + 2.3, -66.3], [-0.9, Ty + 3.6, -70.3], 0, 'none', { fov: 34, roll: 0.03 })
+  rd.char.play('flourish', 1.1)
+  await g.say('rudhra', '"Nothing you love stays." He wanted me to say it exactly like that.', { mood: 'angry', gesture: false })
+  rd.char.lookAtActor = null
+  rd.walkTo(-6.6, -71.0, 5)
+  // 6. Aruvan runs up the steps to his teacher
+  p.walkTo(0.85, -68.9, 4.6)
+  g.shot([3.2, Ty + 1.9, -62.6], [0.4, Ty + 2.4, -68.4], 0, 'none', { fov: 42, hand: 0.9 })
+  await g.wait(1.6); g.dropNpc('rudhra')
   g.music('sorrow')
-  p.setPos(0.6, -65.4, face({ x: 0.6, z: -65.4 }, guru.pos)); p.char.sustain = 'hold'
-  guru.char.action = null; guru.char.sustain = 'lie'
-  storyFrame(g, 6, guru.pos)
-  g.shotAt(guru.pos, [2.8, 1.2, 3.4], 0.65, 10)
+  await g.wait(1.2)
+  p.setPos(0.85, -69.0, face({ x: 0.85, z: -69.0 }, guru.pos)); p.char.setWeapon(null); p.char.sustain = 'hold'; p.char.lookAtActor = guru
+  guru.char.action = null; guru.char.sustain = 'lie'; guru.char.lookAtActor = p
+  // 7. the farewell: camera on the far side of the Guru from Aruvan, low, so both faces read —
+  //    the dying teacher in the foreground, his student bent over him, the sanctum lamps behind
+  await g.wait(0.3)
+  const GH = g.headOf(guru), AH = g.headOf(p)
+  const away = new THREE.Vector3(GH.x - AH.x, 0, GH.z - AH.z).normalize()
+  const side = new THREE.Vector3(-away.z, 0, away.x)
+  const mid = GH.clone().lerp(AH, 0.32)
+  mid.y -= 0.05
+  const eye = GH.clone().addScaledVector(away, 2.15).addScaledVector(side, 0.95).add(new THREE.Vector3(0, 0.78, 0))
+  g.shot(eye.toArray(), mid.toArray(), 0, 'none', { fov: 38 })
+  g.shot(eye.clone().addScaledVector(away, -0.45).toArray(), mid.toArray(), 12, 'sine.inOut', { fov: 34 })
   await storyCutscene(g, 6)
-  await g.say('guru', 'Don\'t... chase him with that face, child.', { face: false })
-  await g.say('guru', 'The Kurinji does not hurry, Aruvan. And it does not hate the winter. It only waits... and then it blooms anyway.', { face: false })
-  await g.say('guru', 'I never asked your name, that first day on the steps. I didn\'t need to. I could hear it in how you drank the water.', { face: false })
-  await g.say('guru', 'Protect what blooms.', { face: false })
+  p.char.mood = 'sad'
+  const hold = { face: false, cover: false }
+  await g.say('guru', 'Don\'t... chase him with that face, child.', hold)
+  await g.say('guru', 'The Kurinji does not hurry, Aruvan. And it does not hate the winter. It only waits... and then it blooms anyway.', hold)
+  await g.say('guru', 'I never asked your name, that first day on the steps. I didn\'t need to. I could hear it in how you drank the water.', hold)
+  await g.say('guru', 'Protect what blooms.', hold)
   await g.wait(1.5)
   await g.caption('Guru Nilakantha, the blind abbot of Kurinji, who saw everything.', 4.5)
   const c2 = await g.choose([{ text: 'Chase Rudhra into the dark.', karma: -1 }, { text: 'Stay with him until dawn.', karma: 1 }])
@@ -592,13 +634,34 @@ async function ch4(g) {
   await g.say('aruvan', 'I promise.')
   il.walkTo(0, -20, 4)
   g.audio.play('horn')
-  g.shot([0, P.gate.y + 5, 36], [0, P.gate.y + 2, 50], 1)
-  await g.wait(0.6)
-  for (let i = 0; i < 3; i++) { g.shake(0.4); g.audio.play('heavy', { rate: 0.6 }); await g.wait(0.9) }
-  g.world.setGate(true, 0.6, true); g.shake(0.8)
-  storyFrame(g, 7, undefined, 1.2)
-  await g.say('kaali', 'The ram! The gate\'s broken!')
+  // the ram: hold on the gate from inside, defenders in the foreground, every blow shudders the doors
+  const Gy = P.gate.y
+  vill.forEach(v => { v.face({ x: 0, z: 46 }); v.char.lookAtActor = null; v.char.combat = true })
+  ka.face({ x: 0, z: 46 }); th.face({ x: 0, z: 46 }); p.facing = 0; p.root.rotation.y = 0
+  g.shot([-3.6, Gy + 1.55, 36.6], [0, Gy + 2.7, 46], 0, 'none', { fov: 40, hand: 0.8 })
+  g.shot([-3.0, Gy + 1.5, 38.0], [0, Gy + 2.7, 46], 4.2, 'none', { fov: 36, hand: 0.8 })
+  await g.wait(0.7)
+  const doors = g.world.gateDoors || []
+  for (let i = 0; i < 3; i++) {
+    g.audio.play('heavy', { rate: 0.6 - i * 0.05 }); g.shake(0.35 + i * 0.12)
+    doors.forEach(d => gsap.fromTo(d.rotation, { y: d.userData.side * 0.06 * (i + 1) }, { y: 0, duration: 0.5, ease: 'elastic.out(1, 0.35)' }))
+    g.world.spawnBurst(new THREE.Vector3((Math.random() - 0.5) * 2, Gy + 1.2 + Math.random(), 45.4), 16 + i * 8, 0x8a6a48, 3)
+    vill.forEach((v, j) => { if ((i + j) % 3 === 0) v.char.play('stagger', 0.6) })
+    await g.wait(1.0 - i * 0.12)
+  }
+  // the break: doors burst inward, slow motion, the camera punches in
+  g.audio.play('heavy', { rate: 0.45 }); g.shake(1.0); g.slowMo(0.3, 1.4)
+  g.world.setGate(true, 0.5, true)
+  g.world.spawnBurst(new THREE.Vector3(0, Gy + 1.6, 45), 60, 0x9a7a52, 7)
+  const breach = [-1.4, 0.2, 1.6, -0.6].map((x, i) => { const s = g.npc('breach' + i, i === 3 ? 'captain' : 'soldier', x, 51 + i * 0.9, Math.PI); s.lookAtPlayer = false; s.char.combat = true; s.walkTo(x * 1.6, 43.5 - i * 0.4, 4.2); return s })
+  g.shot([-2.2, Gy + 1.35, 39.4], [0, Gy + 2.4, 46], 0.9, 'power2.out', { fov: 30, hand: 1.4 })
+  await g.wait(1.6)
+  // Kaali turns to the village and shouts, the broken gate behind her
+  ka.setPos(-2.2, 33, Math.PI); ka.char.lookAtActor = p
+  { const K = g.headOf(ka); g.shot([K.x + 0.75, K.y + 0.02, K.z - 2.2], [K.x - 1.1, K.y - 0.12, K.z + 5], 0, 'none', { fov: 38, hand: 1.0 }) }
+  await g.say('kaali', 'The ram! The gate\'s broken!', { cover: false, mood: 'angry', gesture: 'gesture' })
   await storyCutscene(g, 7)
+  for (let i = 0; i < 4; i++) g.dropNpc('breach' + i)
   g.dropNpc('ilan')
   vill.forEach((v, i) => v.walkTo(-14 + (i % 4) * 9, 22 + (i > 3 ? -4 : 0), 3))
   g.cine(false)
@@ -810,7 +873,7 @@ async function ch7(g) {
   g.clearNPCs()
   // forge
   g.time('day', 0)
-  const ka = g.npc('kaali', 'kaali', P.forge.x + 0.8, P.forge.z + 0.6, 0)
+  const ka = (() => { const f = forgeSpot(); return g.npc('kaali', 'kaali', f.x, f.z, f.face).act('hammer') })()
   g.shotAt(ka.pos, [4, 2, 4], 1.2); g.shotAt(ka.pos, [2.5, 1.6, 3], 1.2, 5)
   const hammer = setInterval(() => { ka.char.play('slam', 0.6); setTimeout(() => g.audio.play('hit', { rate: 1.6, volume: 0.3 }), 350) }, 900)
   await g.caption('Year Five. Kaali hammered Dunkan\'s swords into ploughs. She complained the entire time.', 4.5)
@@ -961,7 +1024,7 @@ export async function freeRoam(g) {
   villageLife(g)
   g.addTalker(g.npc('thamarai', 'thamarai', -4, -5, 0).act('chat'), 'Thamarai', thamaraiChat)
   g.addTalker(g.npc('ilan', 'ilanAdult', 4.5, -0.5, 0).act('draw'), 'Ilan', ilanChat)
-  g.addTalker(g.npc('kaali', 'kaali', P.forge.x + 0.8, P.forge.z + 0.6, 0).act('hammer'), 'Kaali', kaaliChat)
+  { const f = forgeSpot(); g.addTalker(g.npc('kaali', 'kaali', f.x, f.z, f.face).act('hammer'), 'Kaali', kaaliChat) }
   await g.fade(0, 2)
   g.objective('Free roam: the mountain is yours')
   g.toast(state.mobile ? 'Wander, talk to people and find every petal. Pause to return to the title.' : 'Wander, talk to people and find every petal. Esc to pause or return to the title.')

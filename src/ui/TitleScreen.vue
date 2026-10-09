@@ -118,7 +118,7 @@ function freeRoam() {
     <div class="ts-bar top" aria-hidden="true"></div>
     <div class="ts-bar bottom"></div>
     <footer class="ts-foot">
-      <p v-if="!mobile" class="ts-howto"><span><kbd>WASD</kbd>Move</span><span><kbd>Click</kbd>Look</span><span><kbd>J</kbd>Strike</span><span><kbd>K</kbd>Heavy</span><span><kbd>Space</kbd>Evade</span><span><kbd>F</kbd>Kurinji Breath</span><span><kbd>E</kbd>Interact</span><span><kbd>Tab</kbd>Memories</span><span><kbd>Esc</kbd>Pause</span></p>
+      <p v-if="!mobile" class="ts-howto"><span><kbd>WASD</kbd>Move</span><span><kbd>Click</kbd>Look</span><span><kbd>J</kbd>Strike</span><span><kbd>K</kbd>Heavy</span><span><kbd>Space</kbd>Jump</span><span><kbd>F</kbd>Evade</span><span><kbd>Q</kbd>Kurinji Breath</span><span><kbd>E</kbd>Interact</span><span><kbd>Tab</kbd>Memories</span><span><kbd>Esc</kbd>Pause</span></p>
       <p v-else class="ts-howto">Left thumb moves (push fully to run) · right thumb looks · tap to fight</p>
       <p class="ts-byline">Story &amp; Characters by Tarun KM</p>
     </footer>

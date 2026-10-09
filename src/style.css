@@ -71,6 +71,7 @@ button:disabled { opacity: .3; cursor: not-allowed; }
 .tb.evade { width: calc(64px * var(--tb)); height: calc(64px * var(--tb)); right: calc(14px * var(--tb)); bottom: calc(104px * var(--tb)); }
 .tb.breath { width: calc(60px * var(--tb)); height: calc(60px * var(--tb)); right: calc(92px * var(--tb)); bottom: calc(84px * var(--tb)); border-color: rgba(138,124,240,.6); }
 .tb.breath:disabled { opacity: .55; }
+.tb.jump { width: calc(58px * var(--tb)); height: calc(58px * var(--tb)); right: calc(186px * var(--tb)); bottom: calc(26px * var(--tb)); }
 .tb.breath .fill { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); transform: rotate(-90deg); }
 .tb.breath .fill circle { fill: none; stroke: var(--violet); stroke-width: 3; transition: stroke-dasharray .3s; }
 .tb.glow { box-shadow: 0 0 22px var(--violet); border-color: var(--violet); animation: pulse 1.4s infinite; }

@@ -33,6 +33,11 @@ export class NPC {
     if (prop === 'broom') this.char.setWeapon('broom')
     if (prop === 'basket' || prop === 'pot') this.char.setHeadProp(prop)
     this.lookAtPlayer = activity === 'chat' || activity === 'listen' || activity === 'wave'
+    this.char.onActivityHit = activity === 'hammer' ? () => {
+      const g = this.game, hp = this.char.weapon.getWorldPosition(new THREE.Vector3())
+      const d = g.camera ? g.camera.position.distanceTo(hp) : 99
+      if (d < 26) { g.world.spawnBurst(hp, 12, 0xffb050, 3.2); g.audio.play('anvil', { volume: Math.max(0.05, 0.55 * (1 - d / 26)) }) }
+    } : null
     return this
   }
   walkTo(x, z, speed = 2.4) { this.target = new THREE.Vector3(x, 0, z); this.walkSpeed = speed; return new Promise(r => this._arrive = r) }
@@ -69,6 +74,13 @@ export class Player {
     this.iframes = 0; this.dodgeT = 0; this.dodgeDir = new THREE.Vector3()
     this.hurtCd = 0; this.speedMul = 1; this.canFight = true; this.lastHit = 0
     this.perfectWindow = 0
+    this.vy = 0; this.air = false   // jump state
+  }
+  /** Space: jump (≈1.2 m) — reach ledges, rocks and platform edges; not while attacking. */
+  jump() {
+    if (this.air || this.char.sustain || (this.char.busy && this.char.action.name !== 'dodge') || state.hp <= 0) return
+    this.air = true; this.vy = 7.2; this.char.play?.('jumpStart', 0.12)
+    this.game.audio.play('swing', { rate: 1.6, volume: 0.25 })
   }
   setLook(preset, extra) {
     const old = this.char
@@ -78,7 +90,7 @@ export class Player {
     this.root = this.char.root; this.root.position.copy(p); this.pos = this.root.position
     this.game.scene.add(this.root)
   }
-  setPos(x, z, face) { this.pos.set(x, this.game.world.groundAt(x, z), z); if (face != null) this.facing = this.root.rotation.y = face; this.vel.set(0, 0, 0); this.scriptTarget = null }
+  setPos(x, z, face) { this.pos.set(x, this.game.world.groundAt(x, z), z); if (face != null) this.facing = this.root.rotation.y = face; this.vel.set(0, 0, 0); this.scriptTarget = null; this.vy = 0; this.air = false }
   /** Walk the player character during a cutscene (resolves on arrival). */
   walkTo(x, z, speed = 1.6) { this.scriptTarget = { x, z, speed }; return new Promise(r => { this._arrive = r }) }
 
@@ -102,9 +114,10 @@ export class Player {
       if (this.canFight) {
         if (input.take('dodge') && this.dodgeT <= 0) this.dodge(mag > 0.05 ? new THREE.Vector3(Math.sin(this.facing), 0, Math.cos(this.facing)) : new THREE.Vector3(-Math.sin(this.facing), 0, -Math.cos(this.facing)))
         if (input.take('special') && state.breath >= 100) this.special()
+        if (input.take('jump')) this.jump()
         if (input.take('attack')) this.attack(false)
         if (input.take('heavy')) this.attack(true)
-      } else { input.take('attack'); input.take('heavy'); input.take('dodge'); input.take('special') }
+      } else { if (input.take('jump')) this.jump(); input.take('attack'); input.take('heavy'); input.take('dodge'); input.take('special') }
     } else if (this.scriptTarget) {
       // scripted walk (cutscenes): stride toward the target with real locomotion
       const t = this.scriptTarget, dx = t.x - this.pos.x, dz = t.z - this.pos.z, d = Math.hypot(dx, dz)
@@ -131,7 +144,15 @@ export class Player {
       collide(this.pos, 0.45, this.game.world.colliders)
       for (const e of this.game.enemies) if (e.alive) { tmp.subVectors(this.pos, e.pos).setY(0); const d = tmp.length(), m = 0.5 + e.radius; if (d < m && d > 0.001) this.pos.addScaledVector(tmp.normalize(), m - d) }
     }
-    if (!ch.sustain) { const gy = this.game.world.groundAt(this.pos.x, this.pos.z); this.pos.y += (gy - this.pos.y) * Math.min(1, dt * (gy > this.pos.y ? 14 : 20)) }
+    if (!ch.sustain) {
+      const gy = this.game.world.groundAt(this.pos.x, this.pos.z)
+      if (this.air) {
+        this.vy -= 22 * dt; this.pos.y += this.vy * dt
+        if (this.pos.y <= gy && this.vy <= 0) { this.pos.y = gy; this.air = false; this.vy = 0; ch.landT = 0.18; this.game.audio.play('step_dirt') }
+      } else if (gy < this.pos.y - 0.9) { this.air = true; this.vy = 0 }          // walked off a ledge: fall
+      else this.pos.y += (gy - this.pos.y) * Math.min(1, dt * (gy > this.pos.y ? 14 : 20))
+    }
+    ch.air = this.air ? (this.vy > 0 ? 1 : -1) : 0
     this.root.rotation.y += angDiff(this.root.rotation.y, this.facing) * Math.min(1, dt * 14)
     ch.combat = !!state.inCombat && this.canFight
     ch.update(dt, Math.min(1, speed01))

@@ -319,11 +319,57 @@ export class Humanoid {
       if (AC === 'listen') { T.neckX = 0.06 + Math.max(0, Math.sin(t * 1.4)) * 0.1; T.lShX = -0.3; T.rShX = -0.3; T.lEl = -1.6; T.rEl = -1.6; T.lShZ = -0.25; T.rShZ = 0.25 }
       if (AC === 'carry') Object.assign(T, { lShX: -2.75, rShX: -2.75, lShZ: 0.35, rShZ: -0.35, lEl: -1.05, rEl: -1.05, neckX: -0.05 })
       if (AC === 'pray') Object.assign(T, { lShX: -0.65, rShX: -0.65, lShZ: -0.42, rShZ: 0.42, lEl: -1.85, rEl: -1.85, neckX: 0.25 + w2 * 0.03 })
-      if (AC === 'hammer') { const k = (t * 1.3) % 1, up = k < 0.6 ? k / 0.6 : 1 - (k - 0.6) / 0.4; T.rShX = -0.4 - up * 2.4; T.rEl = -0.4 - up * 0.6; T.spX = 0.2 + (1 - up) * 0.25; T.wpX = 1.1 + up * 0.3; T.lShX = -0.8; T.lEl = -0.9; T.lKn = 0.25; T.rKn = 0.15 }
+      if (AC === 'hammer') {
+        // smith's strike: wind up over the shoulder, hang, drive down onto the anvil, small rebound
+        const k = (t % 1.35) / 1.35
+        const up = k < 0.55 ? ease(k / 0.55) : k < 0.62 ? 1 : k < 0.72 ? 1 - ease((k - 0.62) / 0.1) : Math.sin((k - 0.72) / 0.28 * Math.PI) * 0.12
+        T.rShX = -0.55 - up * 2.35; T.rShZ = -0.18 - up * 0.1; T.rEl = -0.25 - up * 0.75; T.wpX = 1.45 - up * 0.35
+        T.spX = 0.32 - up * 0.3; T.spY = -0.12 + up * 0.08; T.neckX = 0.3 - up * 0.12; T.neckY = 0
+        T.lShX = -0.85; T.lShZ = 0.15; T.lEl = -0.75; T.leftPalm = 0
+        T.lHpX = -0.25; T.rHpX = 0.15; T.lKn = 0.28 + (1 - up) * 0.12; T.rKn = 0.18; T.hipsY = 0.94 - (1 - up) * 0.03
+        if (k >= 0.7 && (this._beatK ?? 0) < 0.7) this.onActivityHit?.()
+        this._beatK = k
+      }
       if (AC === 'grind') Object.assign(T, { hipsY: 0.48, spX: 0.35, lHpX: -1.5, rHpX: -1.5, lKn: 1.5, rKn: 1.5, lShX: -0.9 + Math.sin(t * 3) * 0.25, rShX: -0.9 + Math.cos(t * 3) * 0.25, lEl: -0.6, rEl: -0.6, neckX: 0.3 })
-      if (AC === 'draw') { const k = Math.sin(t * 2.4); T.lShX = -2.3 + k * 0.6; T.rShX = -1.7 - k * 0.6; T.lEl = -0.5; T.rEl = -0.5; T.spX = 0.08; T.lKn = 0.2 }
+      if (AC === 'draw') {
+        // hand over hand on the well rope, leaning back as each pull lands
+        const k = Math.sin(t * 2.4), k2 = Math.sin(t * 2.4 + Math.PI)
+        T.lShX = -1.5 + k * 0.38; T.rShX = -1.5 + k2 * 0.38; T.lEl = -0.45 - Math.max(0, -k) * 0.6; T.rEl = -0.45 - Math.max(0, -k2) * 0.6
+        T.lShZ = 0.12; T.rShZ = -0.12; T.spX = -0.08 + Math.abs(k) * 0.05; T.neckX = -0.15; T.lKn = 0.18; T.rKn = 0.12; T.hipsY = 0.95 - Math.abs(k) * 0.012
+      }
       if (AC === 'wave') { T.rShX = -2.6; T.rShZ = -0.3 + Math.sin(t * 7) * 0.3; T.rEl = -0.6; T.neckY = 0 }
       if (AC === 'sitchat') Object.assign(T, { hipsY: 0.48, spX: 0.05, lHpX: -1.5, rHpX: -1.5, lKn: 1.5, rKn: 1.5, lShX: -0.35, rShX: -0.55 + Math.max(0, Math.sin(t * 1.5)) * -0.6, rEl: -1.2, neckY: Math.sin(t * 0.6) * 0.3 })
+    }
+    // ---- acting: speech gestures + attention (set by Game.say / scenes)
+    this.talking = lerp(this.talking || 0, this.speaking ? 1 : 0, Math.min(1, dt * 5))
+    const seatedPose = S === 'meditate' || S === 'crossSit' || S === 'sit' || S === 'throne' || S === 'teach' || S === 'kneel' || S === 'hold' || S === 'defeated' || S === 'lie'
+    if (this.talking > 0.01 && !this.action && S !== 'dead' && S !== 'lie') {
+      const q = this.talking, t = this.idleT
+      const b1 = Math.max(0, Math.sin(t * 2.1)), b2 = Math.max(0, Math.sin(t * 1.37 + 1.3))
+      T.neckX += Math.sin(t * 4.3) * 0.05 * q                      // the head moves with the words
+      T.spY += Math.sin(t * 0.8) * 0.07 * q
+      T.spX += (this.mood === 'angry' ? 0.1 : this.mood === 'sad' ? 0.06 : 0.02) * q
+      if (!AC) {
+        T.lShX = lerp(T.lShX, -0.35 - b2 * 0.5, q * (seatedPose ? 0.45 : 0.85)); T.lEl = lerp(T.lEl, -1.1 - b2 * 0.35, q * (seatedPose ? 0.45 : 0.85))
+        T.lShZ = lerp(T.lShZ, 0.2, q * 0.8); T.leftPalm = lerp(T.leftPalm, 0.6 * b2, q)
+        if (!seatedPose) {
+          if (!W || W === 'flower' || W === 'bird') { T.rShX = lerp(T.rShX, -0.55 - b1 * 0.55, q); T.rEl = lerp(T.rEl, -1.25 - b1 * 0.3, q); T.rShZ = lerp(T.rShZ, -0.22, q) }
+          else if (W === 'sword' || W === 'greatsword') { T.rShX = lerp(T.rShX, -0.7 - b1 * 0.35, q); T.rEl = lerp(T.rEl, -0.55, q); T.wpX = lerp(T.wpX, 1.2 + b1 * 0.25, q) }
+        }
+      }
+    }
+    if (this.mood === 'sad' && !this.action) T.neckX += 0.18
+    // attention: turn head (and a little of the chest) toward a world point
+    if (this.lookTarget && S !== 'dead' && this.root.parent) {
+      const L = this._lookLocal ||= new THREE.Vector3(), H = this._headLocal ||= new THREE.Vector3()
+      this.root.updateWorldMatrix(true, false)
+      L.copy(this.lookTarget); this.root.worldToLocal(L)
+      this.head.getWorldPosition(H); this.root.worldToLocal(H)
+      const yaw = Math.max(-1.25, Math.min(1.25, Math.atan2(L.x - H.x, L.z - H.z)))
+      const pitch = Math.max(-0.5, Math.min(0.45, Math.atan2(L.y - H.y, Math.hypot(L.x - H.x, L.z - H.z) + 1e-3)))
+      const w = seatedPose ? 0.75 : 1
+      T.neckY = (T.neckY ?? 0) * 0.3 + yaw * 0.62 * w; T.spY += yaw * 0.32 * w
+      T.neckX += -pitch * 0.7 * w
     }
     // ---- one-shot actions (anticipation → strike → follow-through)
     let k = 1
@@ -346,10 +392,28 @@ export class Humanoid {
       if (n === 'slam') { T.rShX = sw(-0.6, -3.2, -0.2); T.lShX = sw(-0.5, -3.1, -0.2); T.spX = sw(0, -0.55, 1.05); T.wpX = sw(0, -0.2, 1.6); T.hipsY = sw(0.95, 1.02, 0.6); T.lHpX = sw(0, -0.3, -1.0); T.lKn = sw(0, 0.3, 1.2); T.rKn = sw(0, 0.2, 0.7) }
       if (n === 'lunge') { lunge(); T.rShX = sw(-0.6, -1.0, -1.6); T.rEl = sw(-0.9, -1.7, 0); T.spX = sw(0, 0.0, 0.55); T.lHpX = sw(0, -0.3, -1.1); T.rHpX = sw(0, 0.2, 0.8); T.wpX = sw(0, 1.2, 1.55) }
       if (n === 'bell') { T.rShX = sw(-0.5, -2.3, -1.2); T.lShX = sw(-0.5, -2.3, -1.2); T.spX = sw(0, -0.25, 0.25); T.wpX = 0; T.lHpX = sw(0, -0.2, -0.4); T.lKn = sw(0, 0.2, 0.4) }
+      // acting beats used by dialogue and cinematics
+      const arc = Math.sin(u * Math.PI)
+      if (n === 'point') { T.rShX = sw(-0.5, -1.7, -1.45); T.rShZ = sw(-0.1, -0.25, -0.15); T.rEl = sw(-0.6, -0.25, -0.1); T.wpX = sw(0.9, 1.6, 1.55); T.spX += 0.08 * arc; T.leftPalm = 0 }
+      if (n === 'flourish') { T.rShX = sw(-0.4, -1.9, -0.6); T.rShZ = sw(-0.1, -0.9, -0.25); T.rEl = sw(-0.6, -0.3, -0.5); T.wpX = 0.9 + Math.sin(u * Math.PI * 4) * 1.3 * arc; T.spY = sw(0, 0.35, -0.1) }
+      if (n === 'drawSword') { T.rShZ = sw(-0.1, 0.95, -0.3); T.rShX = sw(-0.2, -0.6, -1.9); T.rEl = sw(-0.4, -1.4, -0.3); T.wpX = sw(0.9, 0.4, 1.3); T.spY = sw(0, -0.3, 0.1) }
+      if (n === 'gesture') { T.lShX = sw(-0.3, -1.25, -0.85); T.lShZ = sw(0.1, 0.55, 0.35); T.lEl = sw(-0.6, -0.45, -0.6); T.leftPalm = arc; T.spX += 0.06 * arc; T.neckX += -0.06 * arc }
+      if (n === 'nod') T.neckX += Math.sin(u * Math.PI * 2) * 0.26
+      if (n === 'shake') T.neckY = (T.neckY ?? 0) + Math.sin(u * Math.PI * 4) * 0.38 * arc
+      if (n === 'clutch') { T.spX = 0.5 * arc + 0.2; T.lShX = -0.9; T.lShZ = -0.35; T.lEl = -1.95; T.rShX = -0.7; T.rEl = -1.6; T.hipsY -= 0.07 * arc; T.neckX = 0.35 * arc; T.lKn += 0.35 * arc; T.rKn += 0.2 * arc }
+      if (n === 'stagger') { T.spX = -0.35 * arc; T.spY += 0.25 * arc; T.neckX = -0.3 * arc; T.hipsY -= 0.08 * arc; T.lShZ = 0.5 * arc; T.rShZ = -0.5 * arc; T.lHpX = -0.4 * arc; T.lKn = 0.5 * arc }
       if (n === 'kneelDown') { const f = ease(u); Object.assign(T, { hipsY: lerp(0.95, 0.55, f), spX: 0.25 * f, lHpX: -1.4 * f, rHpX: 0.25 * f, lKn: 1.45 * f, rKn: 1.65 * f, rAnk: 0.9 * f, neckX: 0.4 * f }) }
       if (A.t >= A.dur) { if (n === 'die') this.sustain = 'dead'; if (n === 'kneelDown') this.sustain = 'kneel'; this.action = null }
     }
     if (this.sustain === 'dead') Object.assign(T, POSES.dead, { hipsRY: 0, hipsRZ: 0, neckY: 0 })
+    // ---- airborne: tuck on the way up, legs reaching for the ground on the way down; land with a dip
+    if (this.air && !this.sustain) {
+      const up = this.air > 0
+      Object.assign(T, { lHpX: up ? -1.05 : -0.55, rHpX: up ? -0.25 : -0.15, lKn: up ? 1.45 : 0.55, rKn: up ? 0.85 : 0.35, lAnk: 0.35, rAnk: 0.25, spX: up ? 0.18 : 0.05, neckX: up ? -0.12 : 0.05 })
+      if (!this.o.weapon) { T.lShX = up ? -0.9 : -0.4; T.rShX = up ? -0.9 : -0.4; T.lShZ = 0.45; T.rShZ = -0.45; T.lEl = -0.6; T.rEl = -0.6 }
+      else { T.lShX = up ? -0.9 : -0.4; T.lShZ = 0.5; T.lEl = -0.6 }
+    }
+    if (this.landT > 0) { this.landT -= dt; const q = Math.sin(this.landT / 0.18 * Math.PI); T.hipsY -= 0.16 * q; T.lKn += 0.6 * q; T.rKn += 0.6 * q; T.spX += 0.15 * q }
 
     const f = A ? Math.min(1, dt * 20) : Math.min(1, dt * (S ? 4 : 11)) * k
     blend(this.hips.position, 'y', T.hipsY, f)

@@ -44,18 +44,18 @@ try {
   let out
   if (mode === 'studio') {
     out = argv[2]
-    await page.goto(`http://localhost:${PORT}/tests/studio.html?${argv[1]}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    await page.goto(`http://127.0.0.1:${PORT}/tests/studio.html?${argv[1]}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
     await page.waitForFunction('window.__ready === true', { timeout: 90000 }).catch(() => fail('studio did not become ready:\n' + errors.join('\n')))
   } else if (mode === 'view') {
     const [p, l, time] = [argv[1], argv[2], argv[3]]; out = argv[4]
-    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: 'domcontentloaded', timeout: 60000 })
     await page.waitForFunction('window.__game && window.__game.world && window.__view', { timeout: 180000 }).catch(() => fail('game did not load:\n' + errors.join('\n')))
     await page.evaluate(`(async () => { const g = __game; g.world.setBloom(0); g.world.setPetals(0); g.dropNpc?.('titleMonk'); __view([${p}], [${l}], '${time || 'day'}'); await new Promise(r => setTimeout(r, 2500)) })()`)
   } else if (mode === 'page') {
     out = argv[2]
     // Git Bash turns a leading "/" into a Windows path: accept "home", "" or a path without the slash
     const rel = (argv[1] || '').replace(/^[A-Za-z]:.*?Git\//, '').replace(/^\/+/, '').replace(/^home$/, '')
-    await page.goto(`http://localhost:${PORT}/${rel}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    await page.goto(`http://127.0.0.1:${PORT}/${rel}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
     await page.waitForFunction('window.__game && window.__game.world', { timeout: 180000 }).catch(() => {})
     await new Promise(r => setTimeout(r, 2500))
   } else await fail('mode must be studio, view or page')

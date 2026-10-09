@@ -298,6 +298,7 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
     <button class="tb strike" @pointerdown.prevent="press('attack')" aria-label="Strike"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 18 6m-3-1 4 4M4 20l2-5 3 3z" /></svg><span>Strike</span></button>
     <button class="tb heavy" @pointerdown.prevent="press('heavy')" aria-label="Heavy strike"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 17 7m-4-3 7 7M3 21l3-1-2-2z" /><path d="M14 3l7 7" /></svg><span>Heavy</span></button>
     <button class="tb evade" @pointerdown.prevent="press('dodge')" aria-label="Evade"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16c4-8 10-10 16-8M16 4l4 4-4 4" /></svg><span>Evade</span></button>
+    <button class="tb jump" @pointerdown.prevent="press('jump')" aria-label="Jump"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V6M6 11l6-6 6 6M5 21h14" /></svg><span>Jump</span></button>
     <button class="tb breath" :class="{ glow: state.breath >= 100 }" :disabled="state.breath < 100" @pointerdown.prevent="press('special')" aria-label="Kurinji Breath">
       <svg class="fill" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="26" :style="{ strokeDasharray: `${(state.breath / 100) * 163} 163` }" /></svg>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4c2 3 2 5 0 8-2-3-2-5 0-8zM12 12c3-2 5-2 8 0-3 2-5 2-8 0zM12 12c-3-2-5-2-8 0 3 2 5 2 8 0zM12 12c2 3 2 5 0 8-2-3-2-5 0-8z" /></svg><span>Breath</span>
@@ -405,9 +406,9 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
             <label class="setting-row"><span>Button size</span><div class="slider-control"><input type="range" min="0.8" max="1.3" step="0.05" v-model.number="settings.touchButtonScale" /><output>{{ Math.round(settings.touchButtonScale * 100) }}%</output></div></label>
             <label class="setting-row"><span>Vibration<small>A light buzz on strikes and hits.</small></span><input type="checkbox" v-model="settings.haptics" /></label>
             <label class="setting-row"><span>Fullscreen</span><button class="ghost small" @click="toggleFullscreen">{{ isFullscreen ? 'Exit' : 'Enter' }}</button></label>
-            <p class="settings-note">Left thumb: move (push fully to run) · right thumb: look · Strike, Heavy, Evade and Breath on the right · Talk appears near people · the petal shows your memories.</p>
+            <p class="settings-note">Left thumb: move (push fully to run) · right thumb: look · Strike, Heavy, Evade, Jump and Breath on the right · Talk appears near people · the petal shows your memories.</p>
           </template>
-          <p v-else class="settings-note">WASD to move · J to strike · K for a heavy strike · Space to evade · F for Kurinji Breath · E to speak · Tab for memories.</p>
+          <p v-else class="settings-note">WASD to move · J to strike · K for a heavy strike · F to evade · Space to jump · Q for Kurinji Breath · E to speak · Tab for memories.</p>
         </template>
       </div>
       <footer class="settings-footer"><button class="ghost small" @click="resetSettings">Reset settings</button><button v-if="state.screen === 'game' && state.paused" class="ghost small" @click="restartToTitle">Return to title</button><button class="primary-button" @click="resume">{{ state.paused ? 'Resume journey' : 'Done' }}</button></footer>
