@@ -1,6 +1,6 @@
 import gsap from 'gsap'
 import * as THREE from 'three'
-import { PLACES, heightAt, pathX } from './world/terrain'
+import { PLACES, heightAt, pathX, REGIONS } from './world/terrain'
 import { state, ui, markComplete } from './store'
 import { storyFrame, storyCutscene } from './cinematics'
 
@@ -20,6 +20,8 @@ import { storyFrame, storyCutscene } from './cinematics'
 
 export const SPEAKERS = {
   aruvan: { name: 'Aruvan', color: '#f0a54a', voice: { pitch: 0.8, rate: 0.88 } },
+  kovilElder: { name: 'Elder of Kovil', color: '#c8b89a', voice: { pitch: 0.7, rate: 0.9 } },
+  shepherd: { name: 'The Shepherd', color: '#a8c08a', voice: { pitch: 0.9, rate: 1.0 } },
   veeran: { name: 'Veeran', color: '#d65a4a', voice: { pitch: 0.75, rate: 0.95 } },
   guru: { name: 'Guru Nilakantha', color: '#e8dcc0', voice: { pitch: 0.6, rate: 0.8 } },
   thamarai: { name: 'Thamarai', color: '#6fd0a4', voice: { pitch: 1.15, rate: 1.0, female: true } },
@@ -859,7 +861,7 @@ async function ch7(g) {
   p.setLook('aruvanKing'); g.movePlayer(0, -50, Math.PI)
   g.cine(true)
   g.shot([40, P.fortress.y + 20, 150], [16, P.fortress.y, 170])
-  await g.chapterCard('Chapter VII', 'The Peaceful Reign', 'The years that followed')
+  await g.chapterCard('Chapter IX', 'The Peaceful Reign', 'The years that followed')
   await g.fade(0, 2)
   await g.shot([30, P.fortress.y + 12, 160], [16, P.fortress.y, 170], 6)
   await g.caption('Year One. The mines were sealed. The iron stayed in the mountain, where it belonged.', 4.5)
@@ -1022,6 +1024,7 @@ export async function freeRoam(g) {
   p.setLook('aruvan'); p.canFight = true
   g.movePlayer(0, -16, 0)
   villageLife(g)
+  g.enableHorse(3.4, -12.5, 0.4)
   g.addTalker(g.npc('thamarai', 'thamarai', -4, -5, 0).act('chat'), 'Thamarai', thamaraiChat)
   g.addTalker(g.npc('ilan', 'ilanAdult', 4.5, -0.5, 0).act('draw'), 'Ilan', ilanChat)
   { const f = forgeSpot(); g.addTalker(g.npc('kaali', 'kaali', f.x, f.z, f.face).act('hammer'), 'Kaali', kaaliChat) }
@@ -1053,6 +1056,141 @@ export async function freeRoam(g) {
   }
 }
 
-export const CHAPTERS = [prologue, ch1, ch2, ch3, ch4, ch5, ch6, ch7, epilogue]
-export const CHAPTER_NAMES = ['Prologue — Ash', 'I — The Quiet Mountain', 'II — The Iron Envoy', 'III — The Guru\'s Last Lesson', 'IV — The Gate of Kurinji', 'V — Ashes of Thennur', 'VI — The Iron Throne', 'VII — The Peaceful Reign', 'Epilogue — When the Kurinji Blooms']
+/* ============================================================================
+   CHAPTER VII — THE KING'S ROAD (exploration)
+   Three days after the throne. Aruvan rides out to tell the far villages the
+   war is over: Kovil, the river ghats, the shepherds, the old watchtower.
+============================================================================ */
+const RG = Object.fromEntries(REGIONS.map(r => [r.key, r]))
+function seedPod(g, x, z, color = 0xa494ff) {
+  const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28, 1), new THREE.MeshBasicMaterial({ color, toneMapped: false }))
+  m.position.set(x, g.world.groundAt(x, z) + 1.1, z); g.scene.add(m)
+  const spin = (dt, t) => { m.rotation.y += dt * 1.4; m.position.y = g.world.groundAt(x, z) + 1.1 + Math.sin(t * 2) * 0.15 }
+  g.world.anim.push(spin)
+  return { mesh: m, done() { g.world.anim = g.world.anim.filter(f => f !== spin); g.world.spawnBurst(m.position, 40, color, 3); m.removeFromParent(); m.geometry.dispose() } }
+}
+async function explore1(g) {
+  const p = g.player
+  prepareWorld(g, 7); g.world.setThennur('ruined'); g.world.setForge('working')
+  g.time('dawn', 0); g.music('main_theme')
+  p.setLook('aruvan', { ironStaff: true })
+  g.movePlayer(-1, -7, Math.PI)
+  const th = g.npc('thamarai', 'thamarai', 1.6, -9.2, -0.6), il = g.npc('ilan', 'ilan', -1.4, -9.6, 0.4)
+  g.enableHorse(3.4, -5.2, -2.0)
+  await g.fade(1, 0)
+  g.cine(true)
+  g.shot([10, P.village.y + 6, 8], [0, P.village.y + 1.5, -6], 0, 'none', { fov: 46 })
+  g.shot([7, P.village.y + 3, 2], [0, P.village.y + 1.4, -7], 9, 'sine.inOut', { fov: 40 })
+  await g.chapterCard('Chapter VII', "The King's Road", 'Three days after the throne')
+  await g.fade(0, 2)
+  await g.say('thamarai', 'The whole valley is talking about you. The Hound who would not be king.')
+  await g.say('aruvan', 'Let them talk. The villages beyond the ridges still think the war goes on.')
+  await g.say('ilan', 'Then go and tell them! And take him. Dunkan\'s stables are empty now. This one followed me home.')
+  g.shotAt(g.horse.root.position, [2.6, 1.7, 2.2], 1.7, 0, 'none', { fov: 36 })
+  await g.say('thamarai', 'A Marwari. Proud ears, prouder temper. Like someone I know.', { cover: false })
+  await g.say('aruvan', 'Does he have a name?')
+  await g.say('ilan', 'Not yet. You have to earn it first. That\'s what you always say.')
+  g.cine(false)
+  g.toast(state.mobile ? 'Tap RIDE to mount · push the stick fully to gallop · the arrow and the map (tap the minimap) show the way' : 'H: mount / dismount · Shift: gallop · follow the arrow · M: map')
+  // 1. Kovil
+  const elder = g.npc('kovilElder', 'murugan', RG.kovil.x + 2.5, RG.kovil.z + 1.5, 0)
+  for (let i = 0; i < 4; i++) g.npc('kovilV' + i, 'villager', RG.kovil.x - 3 + i * 2, RG.kovil.z + 4 + (i % 2), Math.PI, { long: i % 2 === 0 }).act(['chat', 'listen', 'sweep', 'draw'][i], i === 2 ? 'broom' : null)
+  await g.talkTo('kovilElder', 'Ride west to Kovil Hamlet and find the elder')
+  await g.say('kovilElder', 'A monk on Dunkan\'s horse? Either the world has ended, or it has finally begun.', { shot: true })
+  await g.say('aruvan', 'It has begun. The Iron King is gone. No more grain for sons.')
+  await g.say('kovilElder', 'Then Kovil plants its fields again. Take the hamlet\'s blessing, king who is not a king.')
+  g.grant(2, 'q:kovil', "Kovil's blessing")
+  g.cine(false)
+  // 2. River ghats — one lamp for each burned village
+  await g.interact({ x: RG.ghats.x, z: RG.ghats.z + 6.5 }, 'Ride to the River Ghats and float a lamp for those who fell', '[E] Float the lamps')
+  g.cine(true)
+  const gp = { x: RG.ghats.x, z: RG.ghats.z + 7 }
+  g.shot([gp.x + 5, g.world.groundAt(gp.x, gp.z) + 2.2, gp.z - 4], [gp.x, g.world.groundAt(gp.x, gp.z) - 0.6, gp.z + 4], 0, 'none', { fov: 40 })
+  for (let i = 0; i < 7; i++) setTimeout(() => g.world.spawnBurst(new THREE.Vector3(gp.x - 4 + i * 1.3, g.world.groundAt(gp.x, gp.z) - 0.9, gp.z + 3 + (i % 2)), 12, 0xffb050, 0.8), i * 450)
+  await g.caption('He floated one lamp for every village that burned. The river carried all seven away.', 5)
+  await g.say('aruvan', 'Thennur. Paalur. Vettai... I remember every name. I will remember them until the bloom.')
+  g.grant(2, 'q:ghats')
+  g.cine(false)
+  // 3. the shepherds
+  const sh = g.npc('shepherd', 'murugan', RG.meadow.x + 1.5, RG.meadow.z + 2, 0.8, { cloth: 0x5a7a3a })
+  await g.talkTo('shepherd', "Ride east across the valley to the Shepherd's Meadow")
+  await g.say('shepherd', 'Swami! The soldiers took half my flock in the spring.', { shot: true })
+  await g.say('aruvan', 'I am sorry. I will see they are paid back.')
+  await g.say('shepherd', 'No need. Look! They came home on their own this morning. Goats know when a war is over.')
+  await g.say('aruvan', 'Then the land is healing faster than we are.')
+  g.grant(2, 'q:meadow')
+  g.cine(false)
+  // 4. the old watchtower: the fortress forges are cold
+  await g.goTo({ x: RG.ridge.x + 2, z: RG.ridge.z + 3 }, 5, 'Climb to Watchtower Ridge')
+  g.cine(true)
+  const ry = g.world.groundAt(RG.ridge.x, RG.ridge.z)
+  g.shot([RG.ridge.x + 4, ry + 4, RG.ridge.z + 4], [-4, 22, 175], 0, 'none', { fov: 42 })
+  g.shot([RG.ridge.x + 1, ry + 6, RG.ridge.z + 7], [-4, 24, 178], 10, 'sine.inOut', { fov: 36 })
+  await g.caption('From the old tower he could see the fortress. For the first time in thirty years, no smoke rose from its forges.', 5.5)
+  g.shotAt(p.pos, [1.6, 1.6, 2.4], 1.6, 0, 'none', { fov: 34 })
+  await g.say('aruvan', 'Ilan was right. You do need a name.')
+  await g.say('aruvan', 'Megham. Cloud. Because you carried me above the smoke.')
+  g.toast('Your horse is named Megham.')
+  g.grant(3, 'q:ridge', 'the road is walked')
+  await g.fade(1, 2.5)
+  g.cine(false); g.clearNPCs()
+}
+
+/* ============================================================================
+   CHAPTER VIII — SEEDS OF THE BLOOM (exploration)
+   The Guru's notebook: three seeds sleep where the mountain prays.
+============================================================================ */
+async function explore2(g) {
+  const p = g.player
+  prepareWorld(g, 7); g.world.setThennur('ruined')
+  g.time('day', 0); g.music('mountain')
+  p.setLook('aruvan', { ironStaff: true })
+  g.movePlayer(1.6, -57.5, Math.PI)
+  const th = g.npc('thamarai', 'thamarai', -0.8, -59.2, 0.6)
+  g.enableHorse(5.5, -54, -1.6)
+  await g.fade(1, 0)
+  g.cine(true)
+  g.shot([8, P.temple.y + 5, -48], [0, P.temple.y + 3, -66], 0, 'none', { fov: 44 })
+  await g.chapterCard('Chapter VIII', 'Seeds of the Bloom', 'Before the monsoon')
+  await g.fade(0, 2)
+  await g.say('thamarai', 'I found this in the Guru\'s room. Listen. "Three seeds sleep where the mountain prays."')
+  await g.say('thamarai', '"Under the great banyan. Inside the ring of stones. Above the clouds, where the flags speak."')
+  await g.say('aruvan', 'The Shola grove. The old stone circle. The prayer-flag pass.')
+  await g.say('thamarai', 'Bring them to Thennur, to Malli\'s bush. It should not bloom alone.')
+  g.cine(false)
+  const sites = [
+    { g: RG.grove, dx: 8, dz: -5, label: 'Ride to the Shola Grove and find the seed under the banyan', line: '"The banyan does not ask the rain where it has been."' },
+    { g: RG.stones, dx: 0, dz: 1.6, label: 'Find the seed inside the Circle of Stones', line: '"Stone remembers. That is why it never hurries."' },
+    { g: RG.pass, dx: 2, dz: 4, label: 'Climb to the Prayer-Flag Pass, above the clouds', line: '"Let the wind carry what you can no longer hold."' },
+  ]
+  let n = 0
+  for (const st of sites) {
+    const x = st.g.x + st.dx, z = st.g.z + st.dz, pod = seedPod(g, x, z)
+    await g.interact({ x, z }, st.label, '[E] Gather the seed')
+    pod.done(); n++
+    g.audio.play('pickup')
+    await g.caption(`The Guru's hand, in the margin: ${st.line}`, 4.5)
+    g.toast(`Kurinji seeds: ${n} / 3`)
+    g.grant(2, 'q:seed' + n)
+  }
+  // plant them beside Malli's bush
+  const ilan = g.npc('ilan', 'ilan', P.malliSpot.x + 1.8, P.malliSpot.z - 1.5, -0.8)
+  const ka = g.npc('kaali', 'kaali', P.malliSpot.x - 2.2, P.malliSpot.z - 1.2, 0.8)
+  g.world.malliBush.visible = true
+  await g.interact({ x: P.malliSpot.x, z: P.malliSpot.z }, "Ride south to Thennur and plant the seeds beside Malli's bush", '[E] Plant the seeds')
+  g.cine(true); g.music('lullaby')
+  p.char.sustain = 'kneel'; p.char.setWeapon(null)
+  g.shotAt(P.malliSpot, [2.6, 1.1, 2.4], 0.7, 0, 'none', { fov: 36 })
+  g.world.spawnBurst(new THREE.Vector3(P.malliSpot.x, P.malliSpot.y + 0.4, P.malliSpot.z), 60, 0xa494ff, 2)
+  await g.say('ilan', 'Will they really bloom? All of them?')
+  await g.say('aruvan', 'In twelve years. With the rest of the mountain.')
+  await g.say('kaali', 'Then we had better still be here to see it, monk.')
+  await g.caption('Three seeds from three holy places, planted where a child once gave away her only flower.', 5)
+  g.grant(3, 'q:planted', 'the seeds are planted')
+  await g.fade(1, 3, '#fff')
+  p.char.sustain = null; g.cine(false); g.clearNPCs()
+}
+
+export const CHAPTERS = [prologue, ch1, ch2, ch3, ch4, ch5, ch6, explore1, explore2, ch7, epilogue]
+export const CHAPTER_NAMES = ['Prologue — Ash', 'I — The Quiet Mountain', 'II — The Iron Envoy', 'III — The Guru\'s Last Lesson', 'IV — The Gate of Kurinji', 'V — Ashes of Thennur', 'VI — The Iron Throne', 'VII — The King\'s Road', 'VIII — Seeds of the Bloom', 'IX — The Peaceful Reign', 'Epilogue — When the Kurinji Blooms']
 export { villageLife }

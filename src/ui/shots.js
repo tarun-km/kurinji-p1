@@ -11,7 +11,7 @@ import { CHAPTER_ASSETS } from '../game/assets'
 import { CHAPTER_NAMES } from '../game/story'
 
 const BASE = import.meta.env.BASE_URL
-export const CHAPTER_KEYS = ['prologue', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7', 'epilogue']
+export const CHAPTER_KEYS = ['prologue', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'explore1', 'explore2', 'ch7', 'epilogue']
 const VALID_KEYS = new Set([...CHAPTER_KEYS, 'title', 'freeroam'])
 const FILE = /^[\w-]+(\/[\w-]+)*\.(webp|avif|jpe?g|png)$/i
 

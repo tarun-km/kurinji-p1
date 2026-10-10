@@ -9,6 +9,9 @@ import { loadShots } from '../ui/shots'
 import { Pane } from 'tweakpane'
 import { World, PLACES, heightAt } from './world/World'
 import { REGIONS } from './world/terrain'
+import { makeMap, mapPlaces } from './mapgen'
+import { Horse, SADDLE_Y } from './world/horse'
+import { progress, earn } from './progress'
 import { Physics } from './Physics'
 import { Audio } from './Audio'
 import { Input } from './Input'
@@ -71,11 +74,15 @@ export class Game {
     this.marker = this.makeMarker()
     this.buildPetals()
     this.buildLamps()
+    this.map = makeMap(); this.places = mapPlaces(); this.waypoint = null
+    this.horse = new Horse(this.scene, { coat: progress.coat, blanket: progress.blanket }); this.horse.root.visible = false; this.horseOn = false
+    state.canRide = false; state.riding = false; state.powerCd = 0
+    state.pointer = { show: false, x: 50, y: 50, angle: 0, edge: false, dist: 0, label: '' }
     this.buildDebug()
     this.cleanups.push(watch(() => GRAPHICS_KEYS.map(k => settings[k]), () => {
       this.renderer.apply(); this.world.nature.applyDensity(); this.applyWorldQuality()
     }))
-    this.cleanups.push(watch(() => state.paused || state.showJournal, paused => this.setPaused(paused || document.hidden)))
+    this.cleanups.push(watch(() => state.paused || state.showJournal || state.showMap, paused => this.setPaused(paused || document.hidden)))
     const visibility = () => { if (document.hidden && state.screen === 'game') state.paused = true; this.setPaused(state.paused || state.showJournal || document.hidden) }
     document.addEventListener('visibilitychange', visibility)
     this.cleanups.push(() => document.removeEventListener('visibilitychange', visibility))
@@ -130,6 +137,9 @@ export class Game {
     this.physics.step(dt)
     this.world.update(dt, this.t, this.player.pos, this.camera.position)
     this.updateMarkers(dt)
+    this.updatePointer()
+    this.updateHorse(dt, controllable)
+    if (state.powerCd > 0) state.powerCd = Math.max(0, state.powerCd - dt)
     this.updateCamera(raw, controllable)
     this.updateInteract(controllable)
     this.tickTasks(dt)
@@ -197,7 +207,7 @@ export class Game {
       c.yaw += d * dt * 0.8
     }
     c.target.lerp(tmp.copy(this.player.pos).setY(this.player.pos.y + 1.6), Math.min(1, dt * 10))
-    const dist = c.dist * (state.inCombat ? 1.15 : 1)
+    const dist = c.dist * (state.inCombat ? 1.15 : 1) * (this.player.riding ? 1.45 : 1)
     const want = this.cameraWant ||= V()
     want.set(c.target.x - Math.sin(c.yaw) * Math.cos(c.pitch) * dist, c.target.y + Math.sin(c.pitch) * dist, c.target.z - Math.cos(c.yaw) * Math.cos(c.pitch) * dist)
     // Pull the camera toward its target before it crosses terrain or a building.
@@ -314,6 +324,104 @@ export class Game {
   }
   tickTasks(dt) { if (this.task) this.task(dt) }
 
+  // ======================= the horse =======================
+  /** Make the horse available (free roam, exploration chapters) and stand it at x, z. */
+  enableHorse(x, z, face = 0) {
+    this.horseOn = true; state.canRide = true
+    const h = this.horse.root; h.visible = true; h.position.set(x, this.world.groundAt(x, z), z); h.rotation.y = face
+  }
+  disableHorse() { if (this.player?.riding) this.dismount(); this.horseOn = false; state.canRide = false; if (this.horse) this.horse.root.visible = false }
+  mountToggle() {
+    if (!this.horseOn) return
+    const p = this.player, h = this.horse.root
+    if (p.riding) return this.dismount()
+    const d = Math.hypot(h.position.x - p.pos.x, h.position.z - p.pos.z)
+    if (d > 3.2) {
+      // whistle: the horse trots in from behind
+      const bx = p.pos.x - Math.sin(p.facing) * 6, bz = p.pos.z - Math.cos(p.facing) * 6
+      h.position.set(bx, this.world.groundAt(bx, bz), bz); h.rotation.y = p.facing
+      this.toast('You whistle. Your horse comes running. (H to mount)')
+      this.audio.play('step_dirt')
+      return
+    }
+    p.riding = true; p.char.riding = true; p.char.rideLift = SADDLE_Y + 0.16 - 0.97; state.riding = true
+    p.setPos(h.position.x, h.position.z, h.rotation.y)
+    p.char.setWeapon(null)
+    this.audio.play('swing', { rate: 0.6, volume: 0.4 })
+  }
+  dismount() {
+    const p = this.player
+    p.riding = false; state.riding = false
+    if (p.char) { p.char.riding = false; p.char.rideLift = 0; if (/^aruvan/.test(p.lookPreset || '')) p.char.setWeapon('staff') }
+    const sx = p.pos.x + Math.cos(p.facing) * 1.2, sz = p.pos.z - Math.sin(p.facing) * 1.2
+    this.horse.root.position.copy(p.pos); this.horse.root.rotation.y = p.root.rotation.y
+    p.setPos(sx, sz, p.facing)
+  }
+  updateHorse(dt, controllable) {
+    if (!this.horse) return
+    if (controllable && this.input.take('mount')) this.mountToggle()
+    if (!this.horseOn) return
+    const p = this.player, h = this.horse
+    if (p.riding) {
+      h.root.position.copy(p.pos); h.root.rotation.y = p.root.rotation.y
+      const sp = Math.hypot(p.vel.x, p.vel.z), bob = h.update(dt, sp, p.air)
+      p.char.rideLift = SADDLE_Y + 0.16 - 0.97 + bob; p.char.rideBob = Math.min(1, sp / 10)
+    } else {
+      h.update(dt, 0)
+      h.root.position.y += (this.world.groundAt(h.root.position.x, h.root.position.z) - h.root.position.y) * Math.min(1, dt * 10)
+    }
+  }
+  /** Re-dress Aruvan and re-tack the horse after a change in the Aruvan menu. */
+  applyLook() {
+    const p = this.player
+    if (p.lookPreset) { const riding = p.riding; p.setLook(p.lookPreset, p.lookExtra); if (riding) { p.char.riding = true; p.char.setWeapon(null) } }
+    if (this.horse && (this.horse.coat !== progress.coat || this.horse.blanket !== progress.blanket)) this.horse.build(progress.coat, progress.blanket)
+  }
+  grant(n, id, why) { if (earn(n, id)) this.toast(`+${n} Blessing${n > 1 ? 's' : ''}${why ? ' · ' + why : ''}`) }
+
+  // ======================= navigation: objective pointer + map =======================
+  /** Where the player should head: the story objective, else a map waypoint, else (free roam) the nearest undiscovered landmark. */
+  navTarget() {
+    if (this.markTarget) { const p = typeof this.markTarget === 'function' ? this.markTarget() : this.markTarget; return { x: p.x, y: p.y, z: p.z, label: state.objective } }
+    if (this.waypoint) return { ...this.waypoint, y: this.world.groundAt(this.waypoint.x, this.waypoint.z) + 2 }
+    if (this.freeRoaming) {
+      let best = null, bd = 1e12
+      for (const g of REGIONS) if (!this.found?.has(g.key)) { const d = (g.x - this.player.pos.x) ** 2 + (g.z - this.player.pos.z) ** 2; if (d < bd) { bd = d; best = g } }
+      if (best) return { x: best.x, y: best.y + 3, z: best.z, label: best.name }
+    }
+    return null
+  }
+  setWaypoint(x, z, label = 'Waypoint') {
+    this.waypoint = x == null ? null : { x, z, label }
+    if (x != null) this.toast(`Waypoint set: ${label}`)
+  }
+  updatePointer() {
+    const P = state.pointer; if (!P) return
+    const t = state.screen === 'game' && !this.cinematic && !state.loading ? this.navTarget() : null
+    if (!t) { if (P.show) P.show = false; return }
+    if (this.waypoint && Math.hypot(this.waypoint.x - this.player.pos.x, this.waypoint.z - this.player.pos.z) < 4) { this.waypoint = null; this.toast('Waypoint reached') }
+    const v = (this._ptr ||= new THREE.Vector3()).set(t.x, t.y, t.z).project(this.camera)
+    const behind = v.z > 1
+    let x = v.x, y = v.y
+    if (behind) { x = -x; y = -y }
+    const edge = behind || Math.abs(x) > 0.86 || Math.abs(y) > 0.8
+    if (edge) { const k = Math.max(Math.abs(x) / 0.86, Math.abs(y) / 0.8, 1e-3); x /= k; y /= k; if (behind && Math.abs(y) < 0.8) y = -0.8 }
+    P.show = true; P.edge = edge
+    P.x = (x * 0.5 + 0.5) * 100; P.y = (1 - (y * 0.5 + 0.5)) * 100
+    P.angle = Math.atan2(-y, x) * 180 / Math.PI
+    P.dist = Math.round(Math.hypot(t.x - this.player.pos.x, t.z - this.player.pos.z)); P.label = t.label || ''
+  }
+  /** Everything the map & minimap draw (positions in world metres). */
+  mapInfo() {
+    const p = this.player.pos, t = this.navTarget()
+    return {
+      player: { x: p.x, z: p.z, facing: this.player.facing, cam: this.cam.yaw },
+      target: t, places: this.places.map(q => ({ ...q, found: q.kind !== 'landmark' || this.found?.has(q.key) })),
+      lamps: (this.lamps || []).map(l => ({ x: l.p[0], z: l.p[2], lit: l.lit })),
+      petals: (this.petals || []).filter(q => !q.taken && this.freeRoaming).map(q => ({ x: q.d.x, z: q.d.z })),
+    }
+  }
+
   // ======================= the wider land: landmarks to discover, lamps to light =======================
   buildLamps() {
     const KEY = 'kurinji-explore-v1'
@@ -348,7 +456,7 @@ export class Game {
     this.world.light(l.p, 0xffa040, 4, 'lamp')
     this.world.spawnBurst(new THREE.Vector3(...l.p), 24, 0xffc060, 2.5)
     this.audio.play('pickup')
-    this.saveExplore()
+    this.saveExplore(); this.grant(1, 'lamp:' + l.i)
     const e = state.explore
     this.toast(e.lamps === e.lampsTotal ? 'Every lamp on the mountain is burning. The whole land glows tonight.' : `Lamp lit (${e.lamps}/${e.lampsTotal})`)
   }
@@ -359,7 +467,7 @@ export class Game {
     this.exploreT = 0
     const p = this.player.pos
     for (const g of REGIONS) if (!this.found.has(g.key) && Math.hypot(p.x - g.x, p.z - g.z) < g.r + 4) {
-      this.found.add(g.key); this.saveExplore()
+      this.found.add(g.key); this.saveExplore(); this.grant(2, 'found:' + g.key)
       this.audio.play('bell', { volume: 0.25 })
       this.toast(`Discovered: ${g.name} (${this.found.size}/${REGIONS.length})`)
     }
@@ -402,6 +510,7 @@ export class Game {
     this.world.colliders = this.world.colliders.filter(c => c === this.world.gateCollider || Math.hypot(c.x - x, c.z - z) > r + c.r)
   }
   collectPetal(p) {
+    this.grant(1, 'petal:' + p.i)
     p.taken = true; p.mesh.visible = false
     state.petals++; state.memories.push(p.d.memory)
     this.audio.play('pickup'); this.world.spawnBurst(p.mesh.position, 30, 0xa494ff, 4)
@@ -409,7 +518,7 @@ export class Game {
     this.toast(`Kurinji petal ${state.petals}/${state.totalPetals} — “${p.d.memory.title}” (Tab: journal) · +5 vitality`)
     this.persist()
   }
-  persist() { if (this.freeRoaming) { const s = load(); if (s) save({ ...s, petals: this.petals.filter(p => p.taken).map(p => p.i), maxHp: state.maxHp }); return } save({ chapter: state.chapterIndex, karma: state.karma, petals: this.petals.filter(p => p.taken).map(p => p.i), maxHp: state.maxHp, rudhraSpared: !!state.rudhraSpared, senthil: !!state.senthil, best: Math.max(state.chapterIndex, load()?.best || 0) }) }
+  persist() { if (this.freeRoaming) { const s = load(); if (s) save({ ...s, v: 2, petals: this.petals.filter(p => p.taken).map(p => p.i), maxHp: state.maxHp }); return } save({ v: 2, chapter: state.chapterIndex, karma: state.karma, petals: this.petals.filter(p => p.taken).map(p => p.i), maxHp: state.maxHp, rudhraSpared: !!state.rudhraSpared, senthil: !!state.senthil, best: Math.max(state.chapterIndex, load()?.best || 0) }) }
 
   // ======================= debug (Tweakpane) =======================
   buildDebug() {
@@ -771,6 +880,7 @@ export class Game {
     })
   }
   onEnemyDown(e) {
+    if (e.def.boss) this.grant(5, null, 'a great foe falls'); else if (e.type === 'brute' || e.type === 'captain') this.grant(1)
     state.breath = Math.min(100, state.breath + 6)
     this.world.spawnBurst(tmp.copy(e.pos).setY(e.pos.y + 1), 25, 0xffaa66, 5)
     setTimeout(() => this.waveCheck?.(), 50)
@@ -793,7 +903,7 @@ export class Game {
     state.karma = s?.karma || 0; state.maxHp = s?.maxHp || 100; state.hp = state.maxHp
     try {
       this.clearEnemies(); this.markTarget = null; this.interactable = null; this.task = null
-      await this.prepareChapter(7, 'freeroam')
+      await this.prepareChapter(9, 'freeroam')
       if (this.disposed) return
       state.chapterIndex = 7; state.chapter = 'Free Roam'
       await freeRoam(this)
@@ -810,10 +920,12 @@ export class Game {
     state.hp = state.maxHp
     try { for (let i = fromChapter; i < CHAPTERS.length && !this.disposed; i++) {
       this.clearEnemies(); this.markTarget = null; this.interactable = null; this.task = null
+      this.disableHorse()
       await this.prepareChapter(i)
       if (this.disposed) break
       state.chapterIndex = i; this.persist()
       await CHAPTERS[i](this)
+      if (!this.disposed) this.grant(3, 'chapter' + i, 'chapter complete')
     } } finally { this.running = false }
   }
 

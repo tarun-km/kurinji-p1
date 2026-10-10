@@ -3,6 +3,7 @@ import { makeCharacter } from './Characters'
 import { heightAt, BOUNDS } from './world/terrain'
 import { state } from './store'
 import { settings } from './settings'
+import { lookExtras, staffOf, powerOf, earn } from './progress'
 
 const tmp = new THREE.Vector3()
 const angDiff = (a, b) => { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return d }
@@ -79,10 +80,16 @@ export class Player {
   /** Space: jump (≈1.2 m) — reach ledges, rocks and platform edges; not while attacking. */
   jump() {
     if (this.air || this.char.sustain || (this.char.busy && this.char.action.name !== 'dodge') || state.hp <= 0) return
-    this.air = true; this.vy = 7.2; this.char.play?.('jumpStart', 0.12)
+    this.air = true; this.vy = this.riding ? 8.4 : 7.2; this.char.play?.('jumpStart', 0.12)
     this.game.audio.play('swing', { rate: 1.6, volume: 0.25 })
   }
   setLook(preset, extra) {
+    this.lookPreset = preset; this.lookExtra = extra
+    if (/^aruvan(King)?$/.test(preset)) {
+      const x = lookExtras(); for (const k of Object.keys(x)) if (x[k] === undefined) delete x[k]
+      extra = { ...x, ...(extra || {}) }
+      if (extra.ironStaff === false) delete extra.staffTier
+    }
     const old = this.char
     if (old) { this.game.scene.remove(old.root); old.dispose?.() }
     this.char = makeCharacter(preset, extra)
@@ -106,18 +113,22 @@ export class Player {
       const dir = fwd.multiplyScalar(m.y).add(right.multiplyScalar(m.x))
       const mag = Math.min(1, dir.length())
       const fighting = ch.busy && ch.action.name !== 'dodge'
-      const max = (input.sprint && !state.inCombat ? 7.5 : 5) * this.speedMul * (fighting ? 0.25 : 1)
-      if (mag > 0.05) { dir.normalize(); if (!fighting) this.facing = Math.atan2(dir.x, dir.z) }
-      this.vel.lerp(dir.multiplyScalar(max * mag), Math.min(1, dt * 10))
+      const max = this.riding ? (input.sprint ? 14 : 8.5) : (input.sprint && !state.inCombat ? 7.5 : 5) * this.speedMul * (fighting ? 0.25 : 1)
+      if (mag > 0.05) { dir.normalize(); if (!fighting) { const want = Math.atan2(dir.x, dir.z); this.facing = this.riding ? this.facing + angDiff(this.facing, want) * Math.min(1, dt * 3.2) : want } }
+      // a horse carries momentum and only runs where it faces
+      if (this.riding) dir.set(Math.sin(this.facing), 0, Math.cos(this.facing)).multiplyScalar(mag > 0.05 ? 1 : 0)
+      this.vel.lerp(dir.multiplyScalar(max * mag), Math.min(1, dt * (this.riding ? 2.4 : 10)))
       speed01 = this.vel.length() / 7
 
-      if (this.canFight) {
+      if (this.riding) { if (input.take('jump')) this.jump(); input.take('attack'); input.take('heavy'); input.take('dodge'); input.take('special'); input.take('skill') }
+      else if (this.canFight) {
+        if (input.take('skill')) this.usePower()
         if (input.take('dodge') && this.dodgeT <= 0) this.dodge(mag > 0.05 ? new THREE.Vector3(Math.sin(this.facing), 0, Math.cos(this.facing)) : new THREE.Vector3(-Math.sin(this.facing), 0, -Math.cos(this.facing)))
         if (input.take('special') && state.breath >= 100) this.special()
         if (input.take('jump')) this.jump()
         if (input.take('attack')) this.attack(false)
         if (input.take('heavy')) this.attack(true)
-      } else { if (input.take('jump')) this.jump(); input.take('attack'); input.take('heavy'); input.take('dodge'); input.take('special') }
+      } else { if (input.take('jump')) this.jump(); input.take('attack'); input.take('heavy'); input.take('dodge'); input.take('special'); input.take('skill') }
     } else if (this.scriptTarget) {
       // scripted walk (cutscenes): stride toward the target with real locomotion
       const t = this.scriptTarget, dx = t.x - this.pos.x, dz = t.z - this.pos.z, d = Math.hypot(dx, dz)
@@ -148,7 +159,7 @@ export class Player {
       const gy = this.game.world.groundAt(this.pos.x, this.pos.z)
       if (this.air) {
         this.vy -= 22 * dt; this.pos.y += this.vy * dt
-        if (this.pos.y <= gy && this.vy <= 0) { this.pos.y = gy; this.air = false; this.vy = 0; ch.landT = 0.18; this.game.audio.play('step_dirt') }
+        if (this.pos.y <= gy && this.vy <= 0) { this.pos.y = gy; this.air = false; this.vy = 0; if (!this.riding) ch.landT = 0.18; this.game.audio.play('step_dirt') }
       } else if (gy < this.pos.y - 0.9) { this.air = true; this.vy = 0 }          // walked off a ledge: fall
       else this.pos.y += (gy - this.pos.y) * Math.min(1, dt * (gy > this.pos.y ? 14 : 20))
     }
@@ -178,7 +189,9 @@ export class Player {
       tmp.subVectors(e.pos, this.pos); const d = tmp.length()
       if (d > A.range + e.radius) continue
       if (Math.abs(angDiff(fwd, Math.atan2(tmp.x, tmp.z))) > A.arc) continue
-      e.takeHit(A.dmg * (1 + Math.min(state.combo, 20) * 0.02), tmp.normalize(), A.kb || 2, name === 'heavy')
+      const st = staffOf()
+      e.takeHit(A.dmg * st.dmg * (1 + Math.min(state.combo, 20) * 0.02), tmp.normalize(), (A.kb || 2) * (st.key === 'sun' ? 1.4 : 1), name === 'heavy' || (st.key === 'sun' && name === 'attack3'))
+      if (st.key === 'kurinji' || st.key === 'sun') state.breath = Math.min(100, state.breath + 1.5)
       hits++
     }
     const p = tmp.set(this.pos.x + Math.sin(fwd) * 1.8, this.pos.y + 1, this.pos.z + Math.cos(fwd) * 1.8)
@@ -215,6 +228,34 @@ export class Player {
     this.char.action.hitAt = 0.55
     this.iframes = 1.1
     this.game.slowMo(0.4, 1.1)
+  }
+  /** Equipped power (G / SKILL button): Mountain Stomp, Petal Dash or Healing Breath. */
+  usePower() {
+    const P = powerOf(), g = this.game
+    if (!P || (state.powerCd || 0) > 0 || this.char.busy || state.hp <= 0) { if (!P) g.toast('No power equipped — choose one in Pause → Aruvan'); return }
+    state.powerCd = P.cd; state.powerMax = P.cd
+    const fwd = new THREE.Vector3(Math.sin(this.facing), 0, Math.cos(this.facing))
+    if (P.key === 'stomp') {
+      this.char.play('heavy', 0.7, () => {
+        g.audio.play('heavy', { rate: 0.55 }); g.shake(0.6); g.shockRing(this.pos, 6, 0xd8b070)
+        g.world.spawnBurst(tmp.copy(this.pos).setY(this.pos.y + 0.3), 70, 0xb89060, 7)
+        for (const e of g.enemies) if (e.alive && e.pos.distanceTo(this.pos) < 6.2) e.takeHit(30 * staffOf().dmg, tmp.subVectors(e.pos, this.pos).normalize(), 12, true)
+      })
+      this.char.action.hitAt = 0.5
+    } else if (P.key === 'dash') {
+      this.dodgeDir.copy(fwd); this.dodgeT = 0.32; this.iframes = 0.5
+      this.char.play('attack2', 0.45); g.audio.play('dodge', { rate: 1.3 })
+      const from = this.pos.clone()
+      setTimeout(() => {
+        for (const e of g.enemies) if (e.alive) { const t = tmp.subVectors(e.pos, from); const along = t.dot(fwd); if (along > 0 && along < 7 && t.addScaledVector(fwd, -along).length() < 1.6) e.takeHit(26 * staffOf().dmg, fwd.clone(), 6, true) }
+        g.world.spawnBurst(this.pos.clone().setY(this.pos.y + 1), 50, 0xa090ff, 4)
+      }, 260)
+    } else if (P.key === 'heal') {
+      this.char.play('special', 0.9); this.iframes = 0.9
+      g.audio.play('special', { volume: 0.5 })
+      state.hp = Math.min(state.maxHp, state.hp + 40)
+      g.world.spawnBurst(tmp.copy(this.pos).setY(this.pos.y + 1), 60, 0x9affc0, 2.5)
+    }
   }
   takeHit(dmg, from) {
     if (this.iframes > 0 || this.hurtCd > 0 || state.hp <= 0) return false

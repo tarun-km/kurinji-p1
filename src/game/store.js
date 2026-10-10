@@ -25,6 +25,9 @@ export const state = reactive({
   deathMsg: '',
   breathingPrompt: false,
   showJournal: false,
+  showMap: false,
+  pointer: null,           // { show, x%, y%, angle, edge, dist, label } — objective arrow
+  explore: null,
   voice: true,
   mobile: false,
   inCombat: false,
@@ -43,7 +46,9 @@ export function save(data) { try { localStorage.setItem(SAVE, JSON.stringify(dat
 export function load() {
   try {
     const data = JSON.parse(localStorage.getItem(SAVE))
-    if (!data || !Number.isInteger(data.chapter) || data.chapter < 0 || data.chapter > 8) return null
-    return { ...data, best: Math.max(data.chapter, Math.min(8, Number.isInteger(data.best) ? data.best : data.chapter)) }
+    if (!data || !Number.isInteger(data.chapter) || data.chapter < 0 || data.chapter > 10) return null
+    // saves from before the two exploration chapters (VII, VIII) were inserted: reign/epilogue moved +2
+    if (data.v !== 2) { if (data.chapter >= 7) data.chapter += 2; if (Number.isInteger(data.best) && data.best >= 7) data.best += 2; data.v = 2 }
+    return { ...data, best: Math.max(data.chapter, Math.min(10, Number.isInteger(data.best) ? data.best : data.chapter)) }
   } catch { return null }
 }

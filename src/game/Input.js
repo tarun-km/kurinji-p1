@@ -17,7 +17,7 @@ export class Input {
       if (blocked() || /^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(e.target.tagName)) return
       if (e.repeat) return
       this.keys.add(e.code)
-      const map = { KeyJ: 'attack', KeyK: 'heavy', Space: 'jump', KeyF: 'dodge', KeyE: 'interact', KeyQ: 'special', Enter: 'interact', KeyR: 'retry' }
+      const map = { KeyJ: 'attack', KeyK: 'heavy', Space: 'jump', KeyF: 'dodge', KeyE: 'interact', KeyQ: 'special', Enter: 'interact', KeyR: 'retry', KeyM: 'map', KeyH: 'mount', KeyG: 'skill' }
       if (map[e.code]) this.pressed.add(map[e.code])
       if (e.code === 'Space') e.preventDefault()
     })

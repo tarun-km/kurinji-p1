@@ -53,7 +53,7 @@ const C = h => new THREE.Color(h)
 /** Rim-light colour shared by every character (World sets it per time of day). */
 export const RIM = { value: new THREE.Color(0.18, 0.15, 0.12) }
 
-function buildWeapon(kind, ironStaff) {
+function buildWeapon(kind, ironStaff, tier) {
   const root = new THREE.Group()
   meshPart(root, 'weaponGeometry', B => {
     const wood = 0x6e4a2a, steel = 0xb8bcc4, gold = 0xc9a24a
@@ -66,6 +66,14 @@ function buildWeapon(kind, ironStaff) {
         B.add(G.cyl(0.036, 0.036, 0.16, 8), capCol, { m, at: [0, 0, z - d * 0.06], rot: [Math.PI / 2, 0, 0] })
         for (const k of [-0.05, 0.05]) B.add(G.cyl(0.04, 0.04, 0.016, 8), ironStaff ? 0x8a8e94 : 0xe0b76a, { m, at: [0, 0, z - d * 0.06 + k], rot: [Math.PI / 2, 0, 0] })
         B.add(G.cone(0.036, 0.04, 8), capCol, { m, at: [0, 0, z + d * 0.04], rot: [d * Math.PI / 2, 0, 0] })
+      }
+      // upgraded staffs: glowing Kurinji inlay / gold bands with a dawn-fire tip
+      if (tier === 'kurinji' || tier === 'sun') {
+        const glow = tier === 'kurinji' ? 0xb8a0ff : 0xffc860, band = tier === 'kurinji' ? 0x5a4aa8 : 0xc9a24a
+        for (let i = 0; i < 7; i++) B.add(G.cyl(0.03, 0.03, 0.03, 8), band, { m: tier === 'sun' ? 'gold' : 'std', at: [0, 0, -0.45 + i * 0.22], rot: [Math.PI / 2, 0, 0] })
+        for (let i = 0; i < 6; i++) B.add(G.cyl(0.0295, 0.0295, 0.012, 8), glow, { m: 'glow', at: [0, 0, -0.34 + i * 0.22], rot: [Math.PI / 2, 0, 0] })
+        if (tier === 'kurinji') for (let k = 0; k < 5; k++) { const a = k / 5 * Math.PI * 2; B.add(G.oct(0.03), glow, { m: 'glow', at: [Math.cos(a) * 0.035, Math.sin(a) * 0.035, 1.36], scale: [0.6, 0.6, 1.6] }) }
+        else { B.add(G.ico(0.05, 1), glow, { m: 'glow', at: [0, 0, 1.36] }); for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; B.add(G.cone(0.012, 0.06, 4), 0xffd880, { m: 'glow', at: [Math.cos(a) * 0.07, Math.sin(a) * 0.07, 1.36], rot: [0, 0, a - Math.PI / 2] }) } }
       }
     } else if (kind === 'sword' || kind === 'greatsword') {
       const big = kind === 'greatsword', length = big ? 1.5 : 0.9, width = big ? 0.12 : 0.066
@@ -110,6 +118,7 @@ const POSES = {
   meditate: { hipsY: 0.3, spY: 0, spX: -0.02, lHpX: -1.45, rHpX: -1.45, lHpZ: 0.8, rHpZ: -0.8, lKn: 2.55, rKn: 2.55, lAnk: 0.4, rAnk: 0.4, lShX: -0.45, rShX: -0.45, lShZ: 0.3, rShZ: -0.3, lEl: -1.05, rEl: -1.05, neckX: 0.1, wpX: 0 },
   kneel: { hipsY: 0.55, spX: 0.22, lHpX: -1.4, rHpX: 0.25, lKn: 1.45, rKn: 1.65, lAnk: 0, rAnk: 0.9, lShX: 0.15, rShX: 0.15, neckX: 0.4, spY: 0 },
   defeated: { hipsY: 0.52, spX: 0.45, lHpX: -1.35, rHpX: 0.2, lKn: 1.5, rKn: 1.7, rAnk: 0.9, lShX: 0.6, rShX: -0.4, rEl: -0.6, lEl: -0.2, neckX: 0.5, spY: 0.1, wpX: 1.3 },
+  ride: { hipsY: 0.97, spX: 0.1, spY: 0, lHpX: -0.75, rHpX: -0.75, lHpZ: 0.5, rHpZ: -0.5, lKn: 1.15, rKn: 1.15, lAnk: 0.25, rAnk: 0.25, lShX: -0.75, rShX: -0.75, lShZ: 0.12, rShZ: -0.12, lEl: -1.05, rEl: -1.05, neckX: -0.05, wpX: -0.2 },
   sit: { hipsY: 0.48, spX: 0.05, spY: 0, lHpX: -1.5, rHpX: -1.5, lKn: 1.5, rKn: 1.5, lShX: -0.3, rShX: -0.3 },
   crossSit: { hipsY: 0.24, spX: 0.05, spY: 0, lHpX: -1.4, rHpX: -1.4, lHpZ: 0.7, rHpZ: -0.7, lKn: 2.4, rKn: 2.4, lShX: -0.5, rShX: -0.5, lEl: -0.9, rEl: -0.9 },
   bow: { spX: 0.6, neckX: 0.3, lShX: -0.9, rShX: -0.9, lShZ: -0.5, rShZ: 0.5, lEl: -1.6, rEl: -1.6, spY: 0 },
@@ -132,7 +141,7 @@ export class Humanoid {
     if (o.teacher && !o.shawl) o.shawl = 0xc9a227
     if (o.armor != null && o.plume === 0xd4a017 && o.cape) o.shortCape = true
     o.detail = Math.max(0, Math.min(3, o.detail ?? detailLevel()))
-    const { scale, weapon, ironStaff, ...appearance } = o
+    const { scale, weapon, ironStaff, staffTier, ...appearance } = o
     const key = JSON.stringify(Object.keys(appearance).sort().map(name => [name, appearance[name]]))
     this._template = retainTemplate(templates, key, () => buildEnhancedCharacter(o))
     this.root = cloneSkinned(this._template.root)
@@ -203,8 +212,8 @@ export class Humanoid {
     this.o.weapon = kind
     this.blade = null
     if (!kind) return
-    const key = kind + (this.o.ironStaff ? ':iron' : ':brass')
-    this._weaponTemplate = retainTemplate(weaponTemplates, key, () => buildWeapon(kind, this.o.ironStaff))
+    const key = kind + (this.o.ironStaff ? ':iron' : ':brass') + (kind === 'staff' && this.o.staffTier ? ':' + this.o.staffTier : '')
+    this._weaponTemplate = retainTemplate(weaponTemplates, key, () => buildWeapon(kind, this.o.ironStaff, kind === 'staff' ? this.o.staffTier : null))
     const group = this._weaponTemplate.root.clone(true)
     this._ownMaterials(group)
     this.weapon.add(group)
@@ -406,6 +415,7 @@ export class Humanoid {
       if (A.t >= A.dur) { if (n === 'die') this.sustain = 'dead'; if (n === 'kneelDown') this.sustain = 'kneel'; this.action = null }
     }
     if (this.sustain === 'dead') Object.assign(T, POSES.dead, { hipsRY: 0, hipsRZ: 0, neckY: 0 })
+    if (this.riding && !this.action) { const ty = T.neckY ?? 0; Object.assign(T, POSES.ride, { hipsRY: 0, hipsRZ: Math.sin(this.idleT * 7) * 0.02 * (this.rideBob || 0), neckY: ty }); T.spX += (this.rideBob || 0) * 0.08 }
     // ---- airborne: tuck on the way up, legs reaching for the ground on the way down; land with a dip
     if (this.air && !this.sustain) {
       const up = this.air > 0
@@ -420,7 +430,7 @@ export class Humanoid {
     blend(this.hips.rotation, 'y', (T.hipsRY ?? 0) + (T.rot ?? 0), T.rot ? 1 : f)
     blend(this.hips.rotation, 'z', T.hipsRZ ?? 0, f)
     blend(this.body.rotation, 'x', T.bodyX, f)
-    blend(this.body.position, 'y', T.bodyX ? 0.16 : 0, f)
+    blend(this.body.position, 'y', (T.bodyX ? 0.16 : 0) + (this.riding ? this.rideLift || 0 : 0), this.riding ? 1 : f)
     blend(this.spine.rotation, 'x', T.spX, f); blend(this.spine.rotation, 'y', T.spY, f)
     blend(this.neck.rotation, 'x', T.neckX, f); blend(this.neck.rotation, 'y', T.neckY ?? 0, f * 0.6)
     blend(this.armL.sh.rotation, 'x', T.lShX, f); blend(this.armR.sh.rotation, 'x', T.rShX, f)

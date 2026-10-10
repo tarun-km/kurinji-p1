@@ -9,6 +9,9 @@ import TitleScreen from './ui/TitleScreen.vue'
 import LoadingScreen from './ui/LoadingScreen.vue'
 import Logo from './ui/Logo.vue'
 import { loadShots, CHAPTER_KEYS } from './ui/shots'
+import MapView from './ui/MapView.vue'
+import Minimap from './ui/Minimap.vue'
+import AruvanPanel from './ui/AruvanPanel.vue'
 
 const host = ref(null), joyZone = ref(null)
 let game = null, mounted = true
@@ -30,7 +33,7 @@ async function installApp() {
 const showSettings = ref(false), showCredits = ref(false), launching = ref(false)
 const settingsTab = ref('graphics'), settingsPanel = ref(null), cutsceneVideo = ref(null), creditsPanel = ref(null)
 const portrait = ref(innerHeight > innerWidth), rotateDismissed = ref(false)
-const tabs = ['graphics', 'audio', 'story', 'camera']
+const tabs = ['aruvan', 'graphics', 'audio', 'story', 'camera']
 const audioControls = [['master', 'Master'], ['music', 'Music'], ['voice', 'Voices'], ['sfx', 'Sound effects'], ['ambience', 'Ambience']]
 const credits = [
   ['Story & Characters', 'Tarun KM'], ['Music', 'Gemini'], ['Coding', 'Claude'],
@@ -203,6 +206,7 @@ function onKey(e) {
   if (e.code === 'Escape') {
     e.preventDefault(); e.stopImmediatePropagation()
     if (state.showJournal) { state.showJournal = false; return }
+    if (state.showMap) { state.showMap = false; return }
     if (showCredits.value) { showCredits.value = false; return }
     if (state.paused || showSettings.value) { resume(); return }
     if (showChapters.value && state.screen === 'title') { showChapters.value = false; return }
@@ -219,7 +223,8 @@ function onKey(e) {
     }
     e.stopImmediatePropagation(); return
   }
-  if (state.loading || state.cutscene || state.showJournal || /^(INPUT|SELECT|BUTTON)$/.test(e.target.tagName)) return
+  if (e.code === 'KeyM' && state.screen === 'game' && !state.loading && !state.cutscene && !state.dialogue && !state.choices && !state.letterbox) { e.preventDefault(); state.showMap = !state.showMap; return }
+  if (state.loading || state.cutscene || state.showJournal || state.showMap || /^(INPUT|SELECT|BUTTON)$/.test(e.target.tagName)) return
   if (state.choices) { const n = parseInt(e.key); if (n >= 1 && n <= state.choices.length) { e.preventDefault(); e.stopImmediatePropagation(); choose(n - 1) } return }
   if (state.dialogue && ['Space', 'Enter', 'KeyE'].includes(e.code)) { e.preventDefault(); e.stopImmediatePropagation(); advance(); return }
   if (state.breathingPrompt && e.code === 'Space') { e.preventDefault(); e.stopImmediatePropagation(); breathe() }
@@ -281,6 +286,11 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
     </div>
     <div class="chapter-tag">{{ state.chapter }}</div>
     <transition name="slide"><div v-if="state.objective" class="objective" :key="state.objective"><span>◆</span> {{ state.objective }}</div></transition>
+    <div v-if="state.pointer?.show" class="nav-pointer" :class="{ edge: state.pointer.edge }" :style="{ left: state.pointer.x + '%', top: state.pointer.y + '%' }">
+      <svg v-if="state.pointer.edge" viewBox="0 0 24 24" :style="{ transform: `rotate(${state.pointer.angle}deg)` }" aria-hidden="true"><path d="M3 12 L20 4 L15 12 L20 20 Z" /></svg>
+      <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22 L5 8 A8 8 0 1 1 19 8 Z" /><circle cx="12" cy="8" r="3" /></svg>
+      <span>{{ state.pointer.dist }} m</span>
+    </div>
     <transition name="pop"><div v-if="state.combo > 1" class="combo" :key="state.combo">{{ state.combo }}<small>chain</small></div></transition>
     <div v-if="state.boss" class="boss">
       <div class="boss-name">{{ state.boss.name }}</div>
@@ -298,6 +308,8 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
     <button class="tb strike" @pointerdown.prevent="press('attack')" aria-label="Strike"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 18 6m-3-1 4 4M4 20l2-5 3 3z" /></svg><span>Strike</span></button>
     <button class="tb heavy" @pointerdown.prevent="press('heavy')" aria-label="Heavy strike"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 17 7m-4-3 7 7M3 21l3-1-2-2z" /><path d="M14 3l7 7" /></svg><span>Heavy</span></button>
     <button class="tb evade" @pointerdown.prevent="press('dodge')" aria-label="Evade"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16c4-8 10-10 16-8M16 4l4 4-4 4" /></svg><span>Evade</span></button>
+    <button class="tb skill" :class="{ cooling: state.powerCd > 0 }" @pointerdown.prevent="press('skill')" aria-label="Use power"><svg class="fill" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="26" :style="{ strokeDasharray: `${(1 - (state.powerCd || 0) / (state.powerMax || 1)) * 163} 163` }" /></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg><span>Skill</span></button>
+    <button v-if="state.canRide" class="tb ride" :class="{ on: state.riding }" @pointerdown.prevent="press('mount')" aria-label="Mount or dismount the horse"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20l2-7 4-2 2-5 3 1 1 3 3 2-2 2-3-1-2 3 1 4M9 20l1-4" /></svg><span>{{ state.riding ? 'Dismount' : 'Ride' }}</span></button>
     <button class="tb jump" @pointerdown.prevent="press('jump')" aria-label="Jump"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V6M6 11l6-6 6 6M5 21h14" /></svg><span>Jump</span></button>
     <button class="tb breath" :class="{ glow: state.breath >= 100 }" :disabled="state.breath < 100" @pointerdown.prevent="press('special')" aria-label="Kurinji Breath">
       <svg class="fill" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="26" :style="{ strokeDasharray: `${(state.breath / 100) * 163} 163` }" /></svg>
@@ -306,6 +318,9 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
     <transition name="fadeout"><button v-if="state.prompt" class="tb talk" @pointerdown.prevent="press('interact')" aria-label="Interact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v10H9l-5 4z" /></svg><span>Talk</span></button></transition>
   </div>
   <button v-if="state.mobile && state.screen === 'game' && !state.loading && !state.letterbox && !state.paused" class="journal-button" @click="state.showJournal = !state.showJournal" aria-label="Memories journal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2 3 2 6 0 9-2-3-2-6 0-9zM12 12c3-1 6 0 8 3-3 1-6 0-8-3zM12 12c-3-1-6 0-8 3 3 1 6 0 8-3zM12 12v9" /></svg><span>{{ state.memories.length }}</span></button>
+
+  <Minimap v-if="state.screen === 'game' && !state.loading && !state.letterbox && !state.paused && !state.cutscene && !state.showMap" @open="state.showMap = true" />
+  <MapView v-if="state.showMap && state.screen === 'game'" @close="state.showMap = false" />
 
   <!-- ============ CINEMATIC LAYERS ============ -->
   <transition name="card">
@@ -372,7 +387,8 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
       <header class="settings-header"><div><h2 id="settings-heading">{{ state.paused ? 'A moment of stillness' : 'Settings' }}</h2><p>{{ state.paused ? state.chapter || 'Your journey is paused.' : 'Make the mountain feel like home.' }}</p></div><button class="close-button" @click="resume" aria-label="Close settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button></header>
       <nav class="settings-tabs" aria-label="Settings categories"><button v-for="tab in tabs" :key="tab" :class="{ selected: settingsTab === tab }" :aria-pressed="settingsTab === tab" @click="settingsTab = tab">{{ tab }}</button></nav>
       <div class="settings-body">
-        <template v-if="settingsTab === 'graphics'">
+        <template v-if="settingsTab === 'aruvan'"><AruvanPanel /></template>
+        <template v-else-if="settingsTab === 'graphics'">
           <label class="setting-row"><span>Graphics quality<small>A starting point for your computer.</small></span><select :value="settings.preset" @change="applyPreset($event.target.value)"><option v-for="name in ['low', 'medium', 'high', 'ultra']" :key="name" :value="name">{{ name }}</option><option v-if="settings.preset === 'custom'" value="custom">Custom</option></select></label>
           <label class="setting-row"><span>Render scale<small>Lower for a smoother journey.</small></span><div class="slider-control"><input type="range" min="0.5" max="1.25" step="0.05" v-model.number="settings.renderScale" /><output>{{ Math.round(settings.renderScale * 100) }}%</output></div></label>
           <label class="setting-row"><span>Shadows</span><select v-model="settings.shadows"><option value="off">Off</option><option value="low">Low</option><option value="high">High</option><option value="ultra">Ultra</option></select></label>

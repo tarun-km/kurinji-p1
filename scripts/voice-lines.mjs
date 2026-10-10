@@ -11,7 +11,7 @@ const SRC = new URL('../src/game/story.js', import.meta.url)
 const OUT = new URL('../public/voice/lines.json', import.meta.url)
 const ast = parse(fs.readFileSync(SRC, 'utf8'), { sourceType: 'module' })
 
-const CHAPTERS = ['prologue', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7', 'epilogue']
+const CHAPTERS = ['prologue', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'explore1', 'explore2', 'ch7', 'epilogue']
 const lines = new Map()
 
 function strings(node, out = []) {
