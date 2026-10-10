@@ -14,6 +14,8 @@ import { settings } from '../settings'
 import { RIM } from '../Characters'
 import { TIMES, rimColor, createSunDisc } from './lighting'
 import { accelerateRaycasts } from '../gfx/bvh'
+import { Flags } from './flags'
+import { buildRegions } from './regions'
 
 export { PLACES, heightAt, pathX, BOUNDS }
 
@@ -34,9 +36,12 @@ export class World {
     this.terrain = buildTerrain(scene)
     this.fx = new FX(scene, this)
     this.markOpen()
+    this.flags = new Flags(scene)
     this.buildTemple(); this.buildRock(); this.buildLanternPath()
     this.buildVillage(); this.buildForge(); this.buildTraining()
-    this.buildGate(); this.buildRoadside(); this.buildThennur(); this.buildFortress()
+    this.buildGate(); this.buildRoadside(); this.buildThennur(); this.buildFortress(); this.buildFortressOuter()
+    buildRegions(this)
+    this.flagMesh = this.flags.build()
     this.water = new Water(scene, this)
     this.nature = new Nature(scene, this)
     this.fauna = new Fauna(scene, this)
@@ -539,6 +544,67 @@ export class World {
     for (const x of [-5.5, -2.2, 2.2, 5.5]) K.banner(hb, [x, y0 + 12, F.z + 17.85], 0, 1.4, 6, 0xd9822b)
     this.healing = this.addMesh(hb); this.healing.visible = false
   }
+  /* ---------------- Dunkan's outer ward: curtain walls, great gatehouse, towers, the keep ---------------- */
+  buildFortressOuter() {
+    const F = PLACES.fortress, y0 = F.y - 0.6, b = new Builder(420), FL = this.flags, rr = rng(421)
+    const wall = (x1, z1, x2, z2, h = 9) => {
+      b.push([0, y0, 0]); fortWall(b, x1, z1, x2, z2, h); b.pop()
+      const n = Math.ceil(Math.hypot(x2 - x1, z2 - z1) / 1.5)
+      for (let i = 0; i <= n; i++) this.solid(x1 + (x2 - x1) * i / n, z1 + (z2 - z1) * i / n, 1.0)
+      this.occludeWall?.(x1, z1, x2, z2)
+    }
+    const tower = (x, z, h, flagCol = 0x7a0a0a) => {
+      roundTower(b, [x, y0, z], h, false); this.solid(x, z, 2.6)
+      FL.add([x, y0 + h + 5.4, z], 0.4, 1.6, 0.95, flagCol, 0, { emblem: 0xc9a24a })
+      FL.add([x, y0 + h - 0.6, z + 2.6], 0, 1.3, 4.6, 0x7a0a0a, 1, { emblem: 0xc9a24a, trim: 0x2a0606 })
+    }
+    // curtain: west, back and the front with a 15 m grand entrance (the road arrives at x ≈ -7)
+    const zf = 136, zb = 210, xw = -44, xe = 24
+    wall(xw, zf, -13.5, zf); wall(6.5, zf, xe, zf); wall(xw, zf, xw, zb); wall(xw, zb, xe, zb); wall(xe, 180, xe, zb)
+    for (const [x, z] of [[xw, zf], [xe, zf], [xw, zb], [xe, zb], [xw, 173], [-10, zb], [xe, 195]]) tower(x, z, 15)
+    // gatehouse: twin tall towers, a vaulted bridge with battlements, iron portcullis raised, braziers
+    tower(-13.5, zf, 18); tower(6.5, zf, 18)
+    b.add(G.chamfer(18, 3.2, 3.2, 0.08), 0x2a2628, { at: [-3.5, y0 + 12.6, zf], m: 'stone' })
+    for (let x = -12; x <= 5; x += 1.4) b.add(G.chamfer(0.8, 1.0, 3.3, 0.05), 0x2a2628, { at: [x, y0 + 14.7, zf], m: 'stone' })
+    for (let i = 0; i < 12; i++) b.add(G.box(0.14, 2.6, 0.14), 0x1a1616, { at: [-11 + i * 1.35, y0 + 9.6, zf - 0.3], m: 'iron' })
+    b.add(G.box(16, 0.18, 0.18), 0x1a1616, { at: [-3.5, y0 + 8.3, zf - 0.3], m: 'iron' })
+    const bz = []
+    for (const x of [-16, 9]) { const p = K.brazier(b, [x, heightAt(x, zf - 3.5), zf - 3.5]); bz.push([...p, 1.0]); this.light(p, 0xff6a2a, 8, 'brazier'); this.solid(x, zf - 3.5, 0.6) }
+    FL.add([-3.5, y0 + 11.0, zf - 1.7], 0, 2.4, 7.0, 0x7a0a0a, 1, { emblem: 0xc9a24a, trim: 0x2a0606 })
+    // THE KEEP: a black stone block house rising behind the throne, corner turrets and a central spire
+    const kx0 = -15, kx1 = 15, kz0 = 186, kz1 = 204, kh = 22
+    b.push([0, y0, 0])
+    fortWall(b, kx0, kz0, kx1, kz0, kh); fortWall(b, kx0, kz1, kx1, kz1, kh); fortWall(b, kx0, kz0, kx0, kz1, kh); fortWall(b, kx1, kz0, kx1, kz1, kh)
+    b.pop()
+    b.add(G.chamfer(30, 1.2, 18, 0.1), 0x241f21, { at: [0, y0 + kh + 0.2, 195], m: 'stone' })
+    for (const [x, z] of [[kx0, kz0], [kx1, kz0], [kx0, kz1], [kx1, kz1]]) { roundTower(b, [x, y0, z], kh + 6, false); FL.add([x, y0 + kh + 11.4, z], 0.4, 1.8, 1.0, 0x7a0a0a, 0, { emblem: 0xc9a24a }) }
+    roundTower(b, [0, y0, 195], kh + 14, false)
+    FL.add([0, y0 + kh + 19.4, 195], 0.2, 2.6, 1.4, 0x7a0a0a, 0, { emblem: 0xc9a24a })
+    // great door + tall windows on the keep's face (toward the throne)
+    b.add(G.chamfer(4.6, 7.2, 0.6, 0.05), 0x140e0c, { at: [0, y0 + 3.6, kz0 - 0.6], m: 'wood' })
+    b.add(G.torus(2.3, 0.35, 4, 12, Math.PI), 0x3a3436, { at: [0, y0 + 7.2, kz0 - 0.9], m: 'stone' })
+    for (const x of [-10, -5, 5, 10]) { b.add(G.box(1.1, 3.6, 0.3), 0x0a0606, { at: [x, y0 + 13, kz0 - 0.95] }); b.add(G.box(1.1, 0.18, 0.18), 0xff7a2a, { at: [x, y0 + 11.3, kz0 - 1.0], m: 'glow' }) }
+    for (const x of [-12.5, -7.5, 7.5, 12.5]) FL.add([x, y0 + kh - 0.6, kz0 - 0.95], 0, 2.0, 9.0, 0x7a0a0a, 1, { emblem: 0xc9a24a, trim: 0x2a0606 })
+    for (let i = 0; i < 7; i++) this.solid(kx0 + i * 5, kz0 + 9, 5.2)
+    // west ward: two long barracks, a smithy shed with its fire, stacked supplies, weapon racks, braziers
+    for (const z of [148, 166]) {
+      b.push([-34, heightAt(-34, z) - 0.1, z], [0, Math.PI / 2, 0])
+      for (let x = -7; x <= 7; x += 2) b.add(G.chamfer(0.3, 3.0, 0.3, 0.04), 0x2a1c14, { at: [x, 1.5, 2.2], m: 'wood' })
+      b.add(G.chamfer(15, 2.8, 4.0, 0.06), 0x3a3638, { at: [0, 1.4, -0.2], m: 'stone' })
+      b.push([0, 3.5, 0], [0, 0, 0]); tileRoof(b, 15.6, 2.7, 2.7, 0, 0.45, 0x5a0e0e); b.pop()
+      b.pop()
+      this.solid(-34, z, 4.2); this.solid(-34, z - 5, 4.2); this.solid(-34, z + 5, 4.2)
+    }
+    for (let i = 0; i < 10; i++) K.crate(b, [-24 + (i % 4) * 1.1, heightAt(-24, 190) + Math.floor(i / 4) * 0.8, 190 + (i % 2) * 0.2], rr() * 0.3, 0.9)
+    for (let i = 0; i < 6; i++) K.barrel(b, [-28 + i * 0.9, heightAt(-28, 194), 194])
+    this.solid(-23, 190, 2.4); this.solid(-26, 194, 2.8)
+    K.weaponRack(b, [-30, heightAt(-30, 140), 140.5], 0); K.weaponRack(b, [-26, heightAt(-26, 140), 140.5], 0)
+    for (const [x, z] of [[-30, 157], [-30, 180], [-18, 200], [14, 150]]) { const p = K.brazier(b, [x, heightAt(x, z), z]); bz.push([...p, 0.9]); this.light(p, 0xff6a2a, 8, 'brazier'); this.solid(x, z, 0.6) }
+    // banners down the approach road and over the inner gate
+    for (const z of [112, 120, 128]) for (const s of [-1, 1]) { const x = pathX(z) + s * 4.2; FL.pole(b, [x, heightAt(x, z), z], s * 0.3, 7, 1.6, 2.2, 0x7a0a0a, { emblem: 0xc9a24a }); this.solid(x, z, 0.3) }
+    this.fx.setFires('outerBraziers', bz, true)
+    this.fortOuter = this.addMesh(b)
+  }
   setFortress(mode) {
     this.state.fortress = mode
     this.fortBannerMesh.visible = mode !== 'healing'
@@ -564,6 +630,8 @@ export class World {
 
   update(dt, t, focus, cam) {
     WIND.uTime.value = t
+    // gusting wind: grass, canopies and every flag breathe together (storms blow hard)
+    WIND.uWind.value = (this.timeName === 'storm' ? 2.1 : 1) * (0.78 + 0.28 * Math.sin(t * 0.21) + 0.16 * Math.sin(t * 0.83 + 1.3) + 0.08 * Math.sin(t * 2.3))
     for (const f of this.anim) f(dt, t)
     // shadows cover what the camera sees: centred ~22 m ahead of the lens (the follow camera's player,
     // 4–12 m ahead, stays well inside the 90 m frustum), snapped to texels to avoid shimmer

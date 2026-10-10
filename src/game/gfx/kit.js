@@ -87,12 +87,16 @@ export function mat(key) {
   let material
   if (key === 'glow') material = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false })
   else {
-    const b = BASE[key] || BASE.std
+    // 'treeSway' / 'leafSway': the instanced-forest variants — canopies breathe in the wind (only
+    // instanced meshes move; merged buildings that share the base keys stay perfectly still)
+    const sway = key.endsWith('Sway'), base = sway ? key.slice(0, -4) : key
+    const b = BASE[base] || BASE.std
     material = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: b.roughness, metalness: b.metalness, side: b.side ?? THREE.FrontSide })
-    const opts = b.wind ? { wind: b.wind } : {}
-    material.onBeforeCompile = surfaceHook(key, opts)
-    material.customProgramCacheKey = () => surfaceKey(key, b.wind ? ':w' : '')
-    material.userData.surface = BASE[key] ? key : 'std'
+    const wind = sway ? (base === 'leaf' ? 0.0042 : 0.0016) : b.wind
+    const opts = wind ? { wind, instOnly: sway } : {}
+    material.onBeforeCompile = surfaceHook(base, opts)
+    material.customProgramCacheKey = () => surfaceKey(base, wind ? (sway ? ':sway' : ':w') : '')
+    material.userData.surface = BASE[base] ? base : 'std'
   }
   material.userData.sharedKit = true
   material.name = 'kit:' + key

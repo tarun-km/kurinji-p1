@@ -41,6 +41,47 @@ const ZONES = [
   { p: PLACES.gate, r: 9, d: 0 }, { p: PLACES.thennur, r: 17, d: 0 }, { p: PLACES.fortress, r: 25, d: 3 }, { p: PLACES.throne, r: 9, d: 4 },
 ]
 for (const z of ZONES) z.h = baseH(z.p.z) + z.d
+// Dunkan's outer ward (west and south of the inner keep): one broad pad, applied first so the
+// inner fortress / throne pads keep their exact levels
+ZONES.unshift({ p: new THREE.Vector3(-9, 0, 172), r: 34, h: baseH(158) + 3 })
+
+/* ---------- the wider land (free roam): ten landmarks around the valley, linked by trails ---------- */
+export const REGIONS = [
+  { key: 'grove', name: 'Shola Grove Shrine', x: -112, z: 4, r: 13 },
+  { key: 'hermit', name: "Hermit's Ledge", x: -140, z: -82, r: 9 },
+  { key: 'lotus', name: 'Lotus Pond', x: -128, z: 80, r: 15 },
+  { key: 'kovil', name: 'Kovil Hamlet', x: -112, z: 180, r: 24 },
+  { key: 'ghats', name: 'River Ghats', x: -50, z: 240, r: 13 },
+  { key: 'meadow', name: "Shepherd's Meadow", x: 108, z: 20, r: 17 },
+  { key: 'ridge', name: 'Watchtower Ridge', x: 134, z: 108, r: 11 },
+  { key: 'terraces', name: 'Tea Terraces', x: 98, z: 205, r: 22 },
+  { key: 'stones', name: 'Circle of Stones', x: 98, z: -122, r: 12 },
+  { key: 'pass', name: 'Prayer-Flag Pass', x: -46, z: -152, r: 12 },
+]
+const RG = Object.fromEntries(REGIONS.map(r => [r.key, r]))
+// waypoint chains (x, z); the land between is carved into packed-earth trails
+export const TRAILS = [
+  [[-18, 2], [-50, -4], [-82, 6], [RG.grove.x, RG.grove.z], [-128, -36], [RG.hermit.x, RG.hermit.z]],
+  [[RG.grove.x, RG.grove.z], [-122, 40], [RG.lotus.x, RG.lotus.z], [-116, 128], [RG.kovil.x, RG.kovil.z]],
+  [[-14, 100], [-48, 92], [-90, 84], [RG.lotus.x, RG.lotus.z]],
+  [[RG.kovil.x, RG.kovil.z], [-86, 214], [RG.ghats.x, RG.ghats.z], [-28, 214], [-26, 196]],
+  [[20, 12], [52, 20], [80, 16], [RG.meadow.x, RG.meadow.z], [124, 60], [RG.ridge.x, RG.ridge.z], [116, 156], [RG.terraces.x, RG.terraces.z]],
+  [[-4, -84], [-14, -112], [-34, -134], [RG.pass.x, RG.pass.z]],
+  [[24, -96], [52, -112], [76, -118], [RG.stones.x, RG.stones.z]],
+  [[RG.meadow.x, RG.meadow.z], [104, -40], [RG.stones.x + 6, RG.stones.z + 24]],
+]
+export function trailDist(x, z) {
+  let best = 1e9
+  for (const T of TRAILS) for (let i = 0; i < T.length - 1; i++) {
+    const [ax, az] = T[i], [bx, bz] = T[i + 1], abx = bx - ax, abz = bz - az, L2 = abx * abx + abz * abz
+    const t = Math.max(0, Math.min(1, ((x - ax) * abx + (z - az) * abz) / L2))
+    // trails meander a little (deterministic wobble along the segment)
+    const wob = Math.sin((ax + az + t * Math.sqrt(L2)) * 0.11) * 2.2
+    const d = Math.hypot(x - ax - abx * t + wob * abz / Math.sqrt(L2), z - az - abz * t - wob * abx / Math.sqrt(L2))
+    if (d < best) best = d
+  }
+  return best
+}
 
 // ---------- the stream: falls from the east cliff (z≈58), runs south, drops into the gorge by the fortress ----------
 export const STREAM = [[31.5, 57], [27, 61], [22, 68], [18.5, 80], [17, 95], [18.5, 112], [20, 126], [23.5, 138], [27.5, 146]].map(([x, z]) => new THREE.Vector2(x, z))
@@ -63,7 +104,11 @@ function rawHeight(x, z) {
   // forested shoulders rising beside the valley, then rolling down into misty outer valleys
   const wall = 26 * smooth(20, 62, ax) + (fbm(x * 0.03 + 3, z * 0.03) - 0.5) * 14 * smooth(24, 50, ax)
   const out = Math.max(0, ax - 75)
-  h += wall - Math.min(70, out * 0.45) + (fbm(x * 0.012 + 7, z * 0.012) - 0.5) * 50 * smooth(70, 160, ax)
+  // beyond the shoulders the land rolls on (walkable): a soft descent and broad hills
+  h += wall - Math.min(16, out * 0.22) + (fbm(x * 0.012 + 7, z * 0.012) - 0.5) * 30 * smooth(70, 160, ax) + (fbm(x * 0.035 + 2, z * 0.035) - 0.5) * 6 * smooth(70, 120, ax)
+  // far outside the playable land: true mountains/valleys again (seen through the mist)
+  const far = Math.max(0, Math.max(Math.abs(x) - 185, z - 280, -190 - z))
+  h += far > 0 ? (fbm(x * 0.01, z * 0.01) - 0.4) * Math.min(80, far * 0.7) : 0
   h += (fbm(x * 0.05, z * 0.05) - 0.5) * 7 * smooth(4, 14, ax)
   h += (fbm(x * 0.2, z * 0.2) - 0.5) * 0.6
   // the far north climbs to the high ridge behind the temple
@@ -93,6 +138,14 @@ function rawHeight(x, z) {
 
 export function heightAt(x, z) {
   let h = rawHeight(x, z)
+  // landmark pads: flatten to the region's own natural level
+  for (const g of REGIONS) {
+    const d = Math.hypot(x - g.x, z - g.z)
+    if (d > g.r + 12) continue
+    h = h + (g.h - h) * (1 - smooth(g.r, g.r + 12, d))
+  }
+  // trails: soften bumps so paths read as worn earth
+  if (Math.abs(x) > 18 || z < -80 || z > 186) { const td = trailDist(x, z); if (td < 3) h -= 0.25 * (1 - smooth(1, 3, td)) }
   for (const zn of ZONES) {
     const d = Math.hypot(x - zn.p.x, z - zn.p.z)
     if (d > zn.r + 10) continue
@@ -104,9 +157,12 @@ export function heightAt(x, z) {
   if (pd < 5) h -= 5.5 * (1 - smooth(2.6, 4.8, pd))
   return h
 }
+for (const g of REGIONS) g.h = rawHeight(g.x, g.z)
 for (const k in PLACES) PLACES[k].y = heightAt(PLACES[k].x, PLACES[k].z)
+for (const g of REGIONS) g.y = heightAt(g.x, g.z)
 
-export const BOUNDS = { minX: -48, maxX: 48, minZ: -98, maxZ: 182 }
+// 350 × 440 m of walkable land (≈5.7× the original valley)
+export const BOUNDS = { minX: -175, maxX: 175, minZ: -178, maxZ: 262 }
 export const streamInfo = streamDist
 
 /* ---------------- terrain meshes ---------------- */
@@ -184,8 +240,9 @@ function innerColor(c, x, y, z, ny, r) {
   const ax = Math.abs(x - pathX(z))
   c.copy(COL.grassL).lerp(COL.grassD, Math.min(1, fbm(x * 0.09, z * 0.09) * 1.25 - 0.1))
   if (fbm(x * 0.3 + 3, z * 0.3) > 0.68) c.lerp(COL.tuft, 0.5)
-  const onPath = 1 - smooth(1.4, 2.6, ax)
+  const onPath = Math.max(1 - smooth(1.4, 2.6, ax), 1 - smooth(1.2, 2.4, trailDist(x, z)))
   c.lerp(COL.dirt, onPath * 0.9)
+  for (const g of REGIONS) { const d = Math.hypot(x - g.x, z - g.z); if (d < g.r) c.lerp(COL.plaza, 0.35 * (1 - smooth(g.r * 0.4, g.r, d))) }
   for (const zn of ZONES) {
     const d = Math.hypot(x - zn.p.x, z - zn.p.z)
     if (d < zn.r * 0.85) c.lerp(zn.p === PLACES.village ? COL.plaza : COL.dirt, 0.55 * (1 - smooth(zn.r * 0.5, zn.r * 0.85, d)))
@@ -212,13 +269,13 @@ function outerColor(c, x, y, z, ny, r) {
   return [smooth(0.42, 0.6, fbm(x * 0.03 + 4, z * 0.03)) * (1 - smooth(0.8, 0.6, ny)) * (y < 90 ? 1 : 0), 0]
 }
 
-export const INNER = { x0: -140, z0: -180, w: 280, d: 440 }
+export const INNER = { x0: -230, z0: -240, w: 460, d: 560 }
 export function buildTerrain(scene) {
   const material = terrainMaterial()
-  const inner = new THREE.Mesh(buildGrid(INNER.x0, INNER.z0, INNER.w, INNER.d, 210, 330, innerColor), material)
+  const inner = new THREE.Mesh(buildGrid(INNER.x0, INNER.z0, INNER.w, INNER.d, 368, 448, innerColor), material)
   inner.receiveShadow = true; inner.name = 'terrain'
   const inside = (x, z) => x > INNER.x0 + 1 && x < INNER.x0 + INNER.w - 1 && z > INNER.z0 + 1 && z < INNER.z0 + INNER.d - 1
-  const outer = new THREE.Mesh(buildGrid(-760, -720, 1520, 1520, 152, 152, outerColor, inside), material)
+  const outer = new THREE.Mesh(buildGrid(-900, -860, 1800, 1800, 180, 180, outerColor, inside), material)
   outer.receiveShadow = true; outer.name = 'terrain-outer'
   scene.add(inner, outer)
   return { inner, outer, material }

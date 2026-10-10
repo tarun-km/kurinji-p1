@@ -305,7 +305,7 @@ function recipeOf(key) { return RECIPES[key] ? key : 'std' }
 /** Program cache key for a recipe at the current detail level. */
 export function surfaceKey(key, extra = '') { return `surf:${recipeOf(key)}:${levelFor()}${extra}` }
 
-function inject(shader, key, { wind = 0 } = {}) {
+function inject(shader, key, { wind = 0, instOnly = false } = {}) {
   const k = recipeOf(key), r = RECIPES[k], lvl = levelFor()
   patchFog(shader)
   Object.assign(shader.uniforms, SURF)
@@ -355,7 +355,8 @@ ${grain ? `{
     shader.vertexShader = shader.vertexShader
       .replace('#include <common>', `#include <common>\nuniform float uTime; uniform float uWind;`)
       // after our own begin_vertex block so the pattern stays pinned to the blade
-      .replace('#include <morphtarget_vertex>', `{
+      .replace('#include <morphtarget_vertex>', `${instOnly ? '#ifdef USE_INSTANCING' : ''}
+      {
         vec4 wWp = modelMatrix * vec4( transformed, 1.0 );
         #ifdef USE_INSTANCING
           wWp = modelMatrix * instanceMatrix * vec4( transformed, 1.0 );
@@ -365,6 +366,7 @@ ${grain ? `{
         transformed.x += wS * wH * wH * ${wind.toFixed(4)} * uWind;
         transformed.z += cos( uTime * 1.3 + wWp.x * 0.27 ) * wH * wH * ${(wind * 0.6).toFixed(4)} * uWind;
       }
+      ${instOnly ? '#endif' : ''}
       #include <morphtarget_vertex>`)
   }
   let frag = shader.fragmentShader

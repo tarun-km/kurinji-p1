@@ -65,12 +65,21 @@ export class Fauna {
       scene.add(g)
       this.animals.push({ kind: 'goat', g, body, legs, home: new THREE.Vector2(x, z), pos: new THREE.Vector2(x, z), target: null, t: Math.random() * 5, speed: 0.7, wait: Math.random() * 3 })
     }
+    // herds out in the wider land (regions.js): goat flocks on the meadow, hens in the hamlet
+    for (const h of world.herds || []) for (let i = 0; i < h.n; i++) {
+      const x = h.x + Math.cos(i * 2.4) * (1 + i * 0.6), z = h.z + Math.sin(i * 2.4) * (1 + i * 0.6)
+      const g = new THREE.Group(), body = new THREE.Mesh(h.kind === 'goat' ? gb : cb, M); body.castShadow = true; g.add(body); scene.add(g)
+      if (h.kind === 'goat') {
+        const legs = [[-0.13, 0.5, 0.3], [0.13, 0.5, 0.3], [-0.13, 0.5, -0.3], [0.13, 0.5, -0.3]].map(([lx, ly, lz]) => { const l = new THREE.Mesh(gl, M); l.position.set(lx, ly, lz); g.add(l); return l })
+        this.animals.push({ kind: 'goat', g, body, legs, home: new THREE.Vector2(x, z), pos: new THREE.Vector2(x, z), target: null, t: Math.random() * 5, speed: 0.7, wait: Math.random() * 3 })
+      } else { g.add(new THREE.Mesh(cl, M)); this.animals.push({ kind: 'chicken', g, body, home: new THREE.Vector2(x, z), pos: new THREE.Vector2(x, z), target: null, t: Math.random() * 5, speed: 0.9, wait: Math.random() * 2 }) }
+    }
     // birds: dark faceted Vs gliding in loops over the valley
     const bg = new THREE.BufferGeometry()
     bg.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0.25, -0.7, 0.05, -0.1, 0, 0, -0.15, 0, 0, 0.25, 0, 0, -0.15, 0.7, 0.05, -0.1], 3))
     bg.computeVertexNormals()
-    this.birds = new THREE.InstancedMesh(bg, new THREE.MeshBasicMaterial({ color: 0x2a2228, side: THREE.DoubleSide }), 24)
-    this.birdData = Array.from({ length: 24 }, (_, i) => ({ c: new THREE.Vector3((Math.random() - 0.5) * 120, 70 + Math.random() * 40, -40 + Math.random() * 160), r: 20 + Math.random() * 40, ph: Math.random() * 6, sp: 0.15 + Math.random() * 0.1 }))
+    this.birds = new THREE.InstancedMesh(bg, new THREE.MeshBasicMaterial({ color: 0x2a2228, side: THREE.DoubleSide }), 48)
+    this.birdData = Array.from({ length: 48 }, (_, i) => ({ c: new THREE.Vector3((Math.random() - 0.5) * 300, 70 + Math.random() * 45, -140 + Math.random() * 380), r: 20 + Math.random() * 40, ph: Math.random() * 6, sp: 0.15 + Math.random() * 0.1 }))
     this.birds.frustumCulled = false; scene.add(this.birds)
     this.visible = true
   }
@@ -79,6 +88,7 @@ export class Fauna {
   scare(p) { for (const a of this.animals) if (a.kind === 'chicken' && a.pos.distanceTo(new THREE.Vector2(p.x, p.z)) < 3) { const d = a.pos.clone().sub(new THREE.Vector2(p.x, p.z)).normalize().multiplyScalar(4); a.target = a.pos.clone().add(d); a.speed = 3; a.wait = 0 } }
   update(dt, t, player) {
     if (this.visible) for (const a of this.animals) {
+      if (player && Math.abs(a.pos.x - player.x) + Math.abs(a.pos.y - player.z) > 140) { a.g.visible = false; continue } else a.g.visible = true
       a.t += dt
       if (player && a.kind === 'chicken' && a.pos.distanceToSquared(new THREE.Vector2(player.x, player.z)) < 4 && a.speed < 2) this.scare(player)
       if (!a.target) {

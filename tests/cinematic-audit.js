@@ -63,6 +63,9 @@ export async function run(from = 2, speed = 4, choice = 0) {
     if (ui.choose) ui.choose(choice)
     if (ui.breathe) ui.breathe()
     if (state.cutscene) ui.endCutscene?.()
+    // prompts a scene sets directly (not through g.interact): walk over and press E
+    const it = g.interactable
+    if (it && !it._auto) { it._auto = true; const pp = typeof it.pos === 'function' ? it.pos() : it.pos; near(pp.x, pp.z, Math.min(1.4, (it.r || 2) * 0.5)); setTimeout(() => { if (g.interactable === it) { g.interactable = null; it.done() } }, 250) }
     for (const e of g.enemies) if (e.alive) try { e.takeHit(9999, g.player.pos.clone().sub(e.pos).normalize().negate(), 0, true) } catch {}
   }, 350)
   g.dropNpc('titleMonk'); g.cine(false); g.world.setBloom(0); g.world.setPetals(0)

@@ -79,7 +79,7 @@ The second command renders only missing lines.
 ## Modes
 
 - **Story**: prologue (with the interlude), seven chapters, epilogue. Continue and chapter select use the saved progress.
-- **Free Roam**: unlocks after the ending. The peaceful-reign world with villagers to talk to, petals to find and a slow day cycle. Pause → Return to title to leave.
+- **Free Roam**: unlocks after the ending. The land is ≈5.7× the story valley (350 × 440 m): ten landmarks linked by trails — Shola Grove Shrine, Hermit's Ledge, Lotus Pond, Kovil Hamlet, River Ghats, Shepherd's Meadow, Watchtower Ridge, Tea Terraces, Circle of Stones and the Prayer-Flag Pass — plus Dunkan's enlarged fortress (outer ward, gatehouse, keep). Discover every landmark and light every lamp (E); progress is saved. ~40 people live in Thennur, Kovil and the outposts. Pause → Return to title to leave.
 
 ## Mobile
 

@@ -1025,9 +1025,26 @@ export async function freeRoam(g) {
   g.addTalker(g.npc('thamarai', 'thamarai', -4, -5, 0).act('chat'), 'Thamarai', thamaraiChat)
   g.addTalker(g.npc('ilan', 'ilanAdult', 4.5, -0.5, 0).act('draw'), 'Ilan', ilanChat)
   { const f = forgeSpot(); g.addTalker(g.npc('kaali', 'kaali', f.x, f.z, f.face).act('hammer'), 'Kaali', kaaliChat) }
+  // rebuilt Thennur is alive again: builders, a market, children, elders by the new well
+  const T = P.thennur, TL = ['Thennur rises from its ash, swami. Brick by brick.', 'Senthil laid the first stone himself.', 'My mother sold spices here before the fire. Now I do.', 'Ilan teaches our children their letters under the neem tree.']
+  const townsfolk = [['tn_b1', 'senthilBuilder', 4, -3, 'hammer', null], ['tn_b2', 'villager', 5.5, -1.5, 'carry', 'basket'], ['tn_m1', 'villager', -5, 3, 'chat', null], ['tn_m2', 'villager', -3.8, 4.4, 'listen', null], ['tn_e1', 'murugan', 2, 5, 'sitchat', null], ['tn_w1', 'villager', -1, -5, 'draw', null], ['tn_s1', 'villager', 7, 4, 'sweep', 'broom'], ['tn_k1', 'ilan', -6, -4, null, null], ['tn_k2', 'malli', -7, -2.6, null, null], ['tn_p1', 'villager', 0.5, 7.5, 'pray', null]]
+  for (const [id, preset, dx, dz, act, prop] of townsfolk) {
+    const n = g.npc(id, preset, T.x + dx, T.z + dz, Math.atan2(-dx, -dz), preset === 'villager' ? { long: dx < 0 } : preset === 'ilan' || preset === 'malli' ? { cloth: dx < -6.5 ? 0x9a4ac9 : 0xc94a4a } : undefined)
+    if (act) n.act(act, prop)
+    g.addTalker(n, preset === 'ilan' || preset === 'malli' ? 'a child of Thennur' : 'a builder of Thennur', () => g.toast('“' + TL[(Math.random() * TL.length) | 0] + '”'))
+  }
+  // the people of the wider land (regions.js)
+  for (const d of g.world.regionNpcs || []) {
+    const { label, sustain, ...extra } = d.extra || {}
+    const n = g.npc(d.id, d.preset, d.x, d.z, d.face, extra)
+    if (d.act) n.act(d.act, d.prop)
+    if (sustain) { n.char.sustain = sustain; n.lookAtPlayer = false }
+    if (d.prop && !d.act) n.char.setWeapon(d.prop)
+    g.addTalker(n, label || 'a traveller', () => g.toast(`${(label || 'A traveller').replace(/^./, c => c.toUpperCase())}: “${d.lines[(Math.random() * d.lines.length) | 0]}”`))
+  }
   await g.fade(0, 2)
-  g.objective('Free roam: the mountain is yours')
-  g.toast(state.mobile ? 'Wander, talk to people and find every petal. Pause to return to the title.' : 'Wander, talk to people and find every petal. Esc to pause or return to the title.')
+  g.objective(g.exploreLine())
+  g.toast(state.mobile ? 'The land is five times wider now. Follow the trails, find the 10 landmarks and light every lamp.' : 'The land is five times wider now. Follow the trails out of the valley, find the 10 landmarks and light every lamp (E).')
   // the day turns slowly; the mountain never ends
   const cycle = ['day', 'dusk', 'night', 'dawn']
   for (let i = 1; !g.disposed; i++) {

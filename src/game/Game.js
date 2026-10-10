@@ -8,6 +8,7 @@ import { CHAPTER_ASSETS, runTasks, fetchAsset, nextFrame } from './assets'
 import { loadShots } from '../ui/shots'
 import { Pane } from 'tweakpane'
 import { World, PLACES, heightAt } from './world/World'
+import { REGIONS } from './world/terrain'
 import { Physics } from './Physics'
 import { Audio } from './Audio'
 import { Input } from './Input'
@@ -69,6 +70,7 @@ export class Game {
 
     this.marker = this.makeMarker()
     this.buildPetals()
+    this.buildLamps()
     this.buildDebug()
     this.cleanups.push(watch(() => GRAPHICS_KEYS.map(k => settings[k]), () => {
       this.renderer.apply(); this.world.nature.applyDensity(); this.applyWorldQuality()
@@ -117,7 +119,13 @@ export class Game {
     if (!controllable) this.input.clear()
     this.player.update(dt, this.input, this.cam.yaw, controllable)
     this.updateAttention()
-    for (const n of this.npcs.values()) n.update(dt)
+    this.updateExplore(dt)
+    // people far from the camera are hidden and skip animation (the wider land has many villagers)
+    for (const n of this.npcs.values()) {
+      const far = !this.cinematic && n.pos.distanceToSquared(this.camera.position) > 110 * 110
+      n.root.visible = !far
+      if (!far) n.update(dt)
+    }
     for (const e of this.enemies) e.update(dt)
     this.physics.step(dt)
     this.world.update(dt, this.t, this.player.pos, this.camera.position)
@@ -295,14 +303,67 @@ export class Game {
     if (!near) {
       // talk to villagers going about their day
       const t = ok && !state.inCombat ? this.nearestTalker() : null
-      state.prompt = t ? `[E] Talk to ${t.label}` : ''
+      const L = !t && ok && !state.inCombat ? this.nearestLamp() : null
+      state.prompt = t ? `[E] Talk to ${t.label}` : L ? '[E] Light the lamp' : ''
       if (t && this.input.take('interact')) t.talk()
+      else if (L && this.input.take('interact')) this.lightLamp(L)
       return
     }
     state.prompt = near ? it.label : ''
     if (near && this.input.take('interact')) { const f = it.done; this.interactable = null; state.prompt = ''; f() }
   }
   tickTasks(dt) { if (this.task) this.task(dt) }
+
+  // ======================= the wider land: landmarks to discover, lamps to light =======================
+  buildLamps() {
+    const KEY = 'kurinji-explore-v1'
+    let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') } catch {}
+    this.exploreKey = KEY
+    this.found = new Set(saved.found || [])
+    const lit = new Set(saved.lit || [])
+    const flameGeo = new THREE.ConeGeometry(0.06, 0.2, 6).translate(0, 0.1, 0), flameMat = new THREE.MeshBasicMaterial({ color: 0xffb040, toneMapped: false })
+    this.lamps = (this.world.regionLamps || []).map((d, i) => {
+      const m = new THREE.Mesh(flameGeo, flameMat); m.position.set(...d.p); m.visible = lit.has(i); this.scene.add(m)
+      if (lit.has(i)) this.world.light(d.p, 0xffa040, 4, 'lamp')
+      return { ...d, i, mesh: m, lit: lit.has(i) }
+    })
+    state.explore = { found: this.found.size, total: REGIONS.length, lamps: lit.size, lampsTotal: this.lamps.length }
+  }
+  saveExplore() {
+    try { localStorage.setItem(this.exploreKey, JSON.stringify({ found: [...this.found], lit: this.lamps.filter(l => l.lit).map(l => l.i) })) } catch {}
+    state.explore = { found: this.found.size, total: REGIONS.length, lamps: this.lamps.filter(l => l.lit).length, lampsTotal: this.lamps.length }
+    if (this.freeRoaming) this.objective(this.exploreLine())
+  }
+  exploreLine() {
+    const e = state.explore || {}
+    return `Explore the land: landmarks ${e.found}/${e.total} · lamps lit ${e.lamps}/${e.lampsTotal}`
+  }
+  nearestLamp() {
+    let best = null, bd = 2.2 * 2.2
+    for (const l of this.lamps || []) if (!l.lit) { const d = (l.p[0] - this.player.pos.x) ** 2 + (l.p[2] - this.player.pos.z) ** 2; if (d < bd && Math.abs(l.p[1] - this.player.pos.y) < 3) { bd = d; best = l } }
+    return best
+  }
+  lightLamp(l) {
+    l.lit = true; l.mesh.visible = true
+    this.world.light(l.p, 0xffa040, 4, 'lamp')
+    this.world.spawnBurst(new THREE.Vector3(...l.p), 24, 0xffc060, 2.5)
+    this.audio.play('pickup')
+    this.saveExplore()
+    const e = state.explore
+    this.toast(e.lamps === e.lampsTotal ? 'Every lamp on the mountain is burning. The whole land glows tonight.' : `Lamp lit (${e.lamps}/${e.lampsTotal})`)
+  }
+  updateExplore(dt) {
+    if (!this.lamps || state.screen !== 'game' || this.cinematic) return
+    for (const l of this.lamps) if (l.lit) l.mesh.scale.setScalar(0.85 + Math.sin(this.t * 9 + l.i) * 0.15)
+    if ((this.exploreT = (this.exploreT || 0) + dt) < 0.5) return
+    this.exploreT = 0
+    const p = this.player.pos
+    for (const g of REGIONS) if (!this.found.has(g.key) && Math.hypot(p.x - g.x, p.z - g.z) < g.r + 4) {
+      this.found.add(g.key); this.saveExplore()
+      this.audio.play('bell', { volume: 0.25 })
+      this.toast(`Discovered: ${g.name} (${this.found.size}/${REGIONS.length})`)
+    }
+  }
 
   // ======================= petals (collectible memories) =======================
   buildPetals() {

@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { Builder, G, jitter, rock, rng, mat, hex } from '../gfx/kit'
-import { heightAt, pathX, fbm, smooth, PLACES, STREAM, streamInfo, INNER } from './terrain'
+import { heightAt, pathX, fbm, smooth, PLACES, STREAM, streamInfo, INNER, REGIONS, trailDist } from './terrain'
 import { settings } from '../settings'
 
 /* ===========================================================================
@@ -176,15 +176,18 @@ export class Nature {
       const ax = Math.abs(x - pathX(z)); if (ax < pad + 1.6) return false
       if (blocked(x, z, pad)) return false
       if (z > 50 && z < 150 && x > 8 && streamInfo(x, z)[0] < 3 + pad) return false
+      // the wider land: keep trails walkable and landmark yards open
+      if ((Math.abs(x) > 16 || z < -80 || z > 184) && trailDist(x, z) < pad + 2.2) return false
+      for (const g of REGIONS) if ((x - g.x) ** 2 + (z - g.z) ** 2 < (g.r * 0.85 + pad) ** 2) return false
       const h = heightAt(x, z); if (h > maxH) return false
       return h
     }
     const ring = (x, z, R) => Math.hypot(x - PLACES.rock.x, z - PLACES.rock.z) < R
     // ---- trees
-    const tree = (name, geo, material, n, fn, shadow = true) => this.add(name, geo, material, place(n, n * 12, fn), { shadow, cell: shadow ? 48 : 160 })
+    const tree = (name, geo, material, n, fn, shadow = true) => this.add(name, geo, material, place(n, n * 12, fn), { shadow, cell: shadow ? 64 : 160, maxDist: shadow ? 240 : 0 })
     const forestDensity = (x, z) => fbm(x * 0.03 + 50, z * 0.03) // clumps
-    tree('conifer', conifer(), 'tree', 820, r => {
-      const x = (r() - 0.5) * 260, z = -170 + r() * 420, h = ok(x, z, 6)
+    tree('conifer', conifer(), 'treeSway', 2100, r => {
+      const x = (r() - 0.5) * 400, z = -195 + r() * 480, h = ok(x, z, 6, 88)
       if (h === false || ring(x, z, 18) || Math.abs(x) < 12 || forestDensity(x, z) < 0.42) return null
       return { x, y: h - 0.2, z, s: 0.7 + r() * 0.6, ry: r() * 6 }
     })
@@ -193,19 +196,19 @@ export class Nature {
       if (h === false || ring(x, z, 18)) return null
       return { x, y: h - 0.1, z, s: 0.8 + r() * 0.5, ry: r() * 6 }
     })
-    tree('eucalyptus', eucalyptus(), 'tree', 160, r => {
-      const x = (r() - 0.5) * 200, z = -120 + r() * 320, h = ok(x, z, 5)
+    tree('eucalyptus', eucalyptus(), 'treeSway', 420, r => {
+      const x = (r() - 0.5) * 380, z = -170 + r() * 440, h = ok(x, z, 5)
       if (h === false || ring(x, z, 18) || Math.abs(x) < 10) return null
       return { x, y: h - 0.1, z, s: 0.8 + r() * 0.5, ry: r() * 6 }
     })
-    tree('shola', shola(), 'tree', 260, r => {
-      const x = (r() - 0.5) * 220, z = -140 + r() * 380, h = ok(x, z, 5)
+    tree('shola', shola(), 'treeSway', 640, r => {
+      const x = (r() - 0.5) * 380, z = -180 + r() * 450, h = ok(x, z, 5)
       if (h === false || ring(x, z, 18) || forestDensity(x, z) < 0.35) return null
       return { x, y: h - 0.15, z, s: 0.75 + r() * 0.55, ry: r() * 6 }
     })
-    tree('palm', palm(), 'leaf', 120, r => {
-      // palms gather in the warm lower valley: around the village, gate, Thennur and the stream
-      const hubs = [[0, 0, 34], [0, 46, 22], [-8, 98, 30], [18, 90, 30], [8, 150, 40]]
+    tree('palm', palm(), 'leafSway', 260, r => {
+      // palms gather in the warm lower land: village, gate, Thennur, the stream, the hamlet, ghats, pond, terraces
+      const hubs = [[0, 0, 34], [0, 46, 22], [-8, 98, 30], [18, 90, 30], [8, 150, 40], [-112, 180, 34], [-50, 240, 26], [-128, 80, 26], [98, 205, 34], [108, 20, 26]]
       const [hx, hz, R] = hubs[(r() * hubs.length) | 0], a = r() * 6.28, d = 10 + r() * R
       const x = hx + Math.cos(a) * d, z = hz + Math.sin(a) * d, h = ok(x, z, 3.5, 45)
       if (h === false) return null
@@ -214,45 +217,45 @@ export class Nature {
     tree('forest', forestBlob(), 'tree', 2600, r => {
       // outer hills beyond the valley walls
       const a = r() * 6.28, R = 160 + r() * 520, x = Math.cos(a) * R, z = Math.sin(a) * R + 40
-      if (Math.abs(x) < 120 && z > -170 && z < 250) return null
+      if (Math.abs(x) < 232 && z > -242 && z < 322) return null
       const h = heightAt(x, z); if (h > 80 || h < -20 || fbm(x * 0.02, z * 0.02) < 0.38) return null
       return { x, y: h, z, s: 2.2 + r() * 2.5, ry: r() * 6 }
     }, false)
     // ---- undergrowth, rocks, grass
-    this.add('broadleaf', broadleaf(), 'leaf', place(900, 9000, r => {
-      const x = (r() - 0.5) * 120, z = -110 + r() * 300, h = ok(x, z, 0.6, 55)
+    this.add('broadleaf', broadleaf(), 'leafSway', place(2400, 30000, r => {
+      const x = (r() - 0.5) * 350, z = -176 + r() * 436, h = ok(x, z, 0.6, 70)
       if (h === false || fbm(x * 0.15, z * 0.15) < 0.45) return null
       return { x, y: h, z, s: 0.7 + r() * 0.8, ry: r() * 6 }
     }), { shadow: true, maxDist: 120 })
     const rocks = []
     for (let k = 0; k < 3; k++) rocks.push(boulder(30 + k))
-    for (let k = 0; k < 3; k++) this.add('rock' + k, rocks[k], 'stone', place(160, 4000, r => {
-      const x = (r() - 0.5) * 150, z = -120 + r() * 320, h = ok(x, z, 1.2, 70)
+    for (let k = 0; k < 3; k++) this.add('rock' + k, rocks[k], 'stone', place(380, 12000, r => {
+      const x = (r() - 0.5) * 350, z = -176 + r() * 436, h = ok(x, z, 1.2, 96)
       if (h === false) return null
       const big = r() < 0.18
       return { x, y: h - 0.25, z, s: big ? 1.3 + r() * 1.3 : 0.35 + r() * 0.6, ry: r() * 6, rx: (r() - 0.5) * 0.3, collide: big }
-    }), { shadow: true, density: false })
+    }), { shadow: true, density: false, maxDist: 170 })
     // path-side boulders, as on every board (granite lining the winding path)
     this.add('pathrock', rocks[1], 'stone', place(220, 3000, r => {
       const z = -66 + r() * 230, side = r() < 0.5 ? -1 : 1, x = pathX(z) + side * (2.4 + r() * 2.2), h = ok(x, z, 0.4, 70)
       if (h === false) return null
       return { x, y: h - 0.2, z, s: 0.3 + r() * 0.65, ry: r() * 6, rx: (r() - 0.5) * 0.4 }
     }), { shadow: true, density: false })
-    this.add('grass', grassTuft(), 'grass', place(16000, 60000, r => {
-      const x = (r() - 0.5) * 170, z = -130 + r() * 330, h = ok(x, z, -1.2, 62)
+    this.add('grass', grassTuft(), 'grass', place(40000, 170000, r => {
+      const x = (r() - 0.5) * 350, z = -178 + r() * 440, h = ok(x, z, -1.2, 78)
       if (h === false) return null
       return { x, y: h - 0.02, z, s: 0.7 + r() * 0.9, ry: r() * 6 }
     }), { shadow: false, maxDist: 70 })
-    this.add('flowers', wildflowers(), 'grass', place(2400, 30000, r => {
-      const hubs = [[0, 0, 40], [0, -70, 30], [14, 10, 20], [0, 46, 25]]
+    this.add('flowers', wildflowers(), 'grass', place(4600, 60000, r => {
+      const hubs = [[0, 0, 40], [0, -70, 30], [14, 10, 20], [0, 46, 25], ...REGIONS.map(g => [g.x, g.z, g.r + 22])]
       const [hx, hz, R] = hubs[(r() * hubs.length) | 0], a = r() * 6.28, d = Math.sqrt(r()) * R
       const x = hx + Math.cos(a) * d, z = hz + Math.sin(a) * d, h = ok(x, z, -0.8, 60)
       if (h === false || fbm(x * 0.2, z * 0.2) < 0.5) return null
       return { x, y: h, z, s: 0.8 + r() * 0.6, ry: r() * 6 }
     }), { shadow: false, maxDist: 80 })
     // ---- Kurinji shrubs (waiting buds) + blossoms that open with the bloom wave
-    const shrubs = place(4800, 70000, r => {
-      const x = (r() - 0.5) * 180, z = -150 + r() * 270, h = ok(x, z, 0.4, 66)
+    const shrubs = place(8200, 150000, r => {
+      const x = (r() - 0.5) * 350, z = -178 + r() * 440, h = ok(x, z, 0.4, 80)
       if (h === false || fbm(x * 0.05 + 10, z * 0.05) < 0.45) return null
       return { x, y: h - 0.05, z, s: 0.8 + r() * 0.6, ry: r() * 6, dist: Math.hypot(x - PLACES.rock.x, z - PLACES.rock.z) }
     })
