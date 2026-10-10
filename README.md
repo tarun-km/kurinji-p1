@@ -81,6 +81,17 @@ The second command renders only missing lines.
 - **Story**: prologue (with the interlude), seven chapters, epilogue. Continue and chapter select use the saved progress.
 - **Free Roam**: unlocks after the ending. The land is ≈5.7× the story valley (350 × 440 m): ten landmarks linked by trails — Shola Grove Shrine, Hermit's Ledge, Lotus Pond, Kovil Hamlet, River Ghats, Shepherd's Meadow, Watchtower Ridge, Tea Terraces, Circle of Stones and the Prayer-Flag Pass — plus Dunkan's enlarged fortress (outer ward, gatehouse, keep). Discover every landmark and light every lamp (E); progress is saved. ~40 people live in Thennur, Kovil and the outposts. Pause → Return to title to leave.
 
+## Exploring
+
+- **Map** (M, or tap the minimap): a painted map of the whole land; tap a place to set a waypoint. The on-screen arrow always points to the current objective, your waypoint, or the nearest undiscovered landmark.
+- **Megham the horse**: H (RIDE on touch) to mount/dismount, or to whistle him from afar. Shift / full stick to gallop; Space jumps.
+- **Blessings** come from chapters, landmarks, lamps, petals, quests and great foes. Spend them in Pause → Aruvan: four staffs (damage ×1.0 → ×1.85; the Kurinji and Rising-Sun staffs glow), six robes, three powers on G / SKILL (Mountain Stomp, Petal Dash, Healing Breath), horse coats and saddle cloths.
+- **Story**: Chapters VII *The King's Road* and VIII *Seeds of the Bloom* are exploration chapters between the throne and the Peaceful Reign.
+
+## Android app (offline)
+
+`npm run android` builds `release/Kurinji.apk` (Android Studio must be installed; its JDK and SDK are found automatically). Every file is inside the APK, so the game plays with no internet. It runs fullscreen and immersive, landscape-locked, keeps the screen awake, and the back button opens the pause menu. Put the launcher artwork at `public/icons/app-icon.png` before building; `scripts/android-icons.mjs` makes every icon size and the splash from it.
+
 ## Mobile
 
 Floating joystick (push fully to run), drag anywhere else to look, Strike / Heavy / Evade / Breath buttons, a contextual Talk button and a Memories button. Touch look speed, button size and vibration are under Settings → Camera. The title shows a landscape + fullscreen notice and an **Install the game** button (Android install prompt, or Add to Home Screen steps on iPhone). A service worker keeps music, voices and art on the device after the first play.

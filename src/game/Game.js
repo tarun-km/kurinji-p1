@@ -406,6 +406,9 @@ export class Game {
     if (behind) { x = -x; y = -y }
     const edge = behind || Math.abs(x) > 0.86 || Math.abs(y) > 0.8
     if (edge) { const k = Math.max(Math.abs(x) / 0.86, Math.abs(y) / 0.8, 1e-3); x /= k; y /= k; if (behind && Math.abs(y) < 0.8) y = -0.8 }
+    // keep the edge arrow off the vitals (top-left) and the minimap (top-right)
+    if (edge && x < -0.5 && y > 0.4) y = 0.4
+    if (edge && x > 0.5 && y > -0.05) y = Math.min(y, -0.05)
     P.show = true; P.edge = edge
     P.x = (x * 0.5 + 0.5) * 100; P.y = (1 - (y * 0.5 + 0.5)) * 100
     P.angle = Math.atan2(-y, x) * 180 / Math.PI

@@ -6,9 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "android": "node scripts/build-apk.mjs"
   },
   "dependencies": {
+    "@capacitor/android": "^7.6.9",
+    "@capacitor/app": "^7.1.2",
+    "@capacitor/core": "^7.6.9",
     "ammojs-typed": "^1.1.0",
     "gsap": "^3.15.0",
     "howler": "^2.2.4",
@@ -22,6 +26,7 @@
     "vue": "^3.5.43"
   },
   "devDependencies": {
+    "@capacitor/cli": "^7.6.9",
     "@vitejs/plugin-vue": "^5.2.4",
     "puppeteer-core": "^25.13.0",
     "sharp": "^0.35.5",

@@ -20,7 +20,8 @@ const saveData = ref(load())
 const showChapters = ref(false)
 const completed = ref(isComplete())
 // mobile: landscape + fullscreen notice and the install-as-app button
-const standalone = matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches || navigator.standalone === true
+// the Android app is always landscape + fullscreen: no install banner, no rotate prompt
+const standalone = !!window.Capacitor?.isNativePlatform?.() || matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches || navigator.standalone === true
 const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 const canInstall = ref(!!window.__installPrompt)
 const iosHint = ref(false)
@@ -439,7 +440,7 @@ const tech = ['three.js', 'Bullet3 · ammo.js', 'GSAP', 'Vue.js', 'Vite', 'Howle
 
   <transition name="loader"><LoadingScreen v-if="state.loading" /></transition>
 
-  <div v-if="state.mobile && portrait && !rotateDismissed" class="rotate-overlay" role="dialog" aria-modal="true" aria-label="Rotate your device">
+  <div v-if="state.mobile && portrait && !rotateDismissed && !standalone" class="rotate-overlay" role="dialog" aria-modal="true" aria-label="Rotate your device">
     <svg class="rotate-device" viewBox="0 0 100 100" aria-hidden="true"><rect x="29" y="13" width="42" height="74" rx="5" /><path d="M47 78h6M13 32a40 40 0 0 1 18-18M13 32l-1-12m1 12 12-1M87 68a40 40 0 0 1-18 18M87 68l1 12m-1-12-12 1" /></svg>
     <h2>The mountain is wider than this.</h2><p>Turn your device to landscape to begin your journey.</p><button class="primary-button" @click="requestLandscape(true)">Enter fullscreen</button><button class="ghost small" @click="rotateDismissed = true">Continue in portrait</button>
   </div>

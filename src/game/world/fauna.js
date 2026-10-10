@@ -74,13 +74,45 @@ export class Fauna {
         this.animals.push({ kind: 'goat', g, body, legs, home: new THREE.Vector2(x, z), pos: new THREE.Vector2(x, z), target: null, t: Math.random() * 5, speed: 0.7, wait: Math.random() * 3 })
       } else { g.add(new THREE.Mesh(cl, M)); this.animals.push({ kind: 'chicken', g, body, home: new THREE.Vector2(x, z), pos: new THREE.Vector2(x, z), target: null, t: Math.random() * 5, speed: 0.9, wait: Math.random() * 2 }) }
     }
-    // birds: dark faceted Vs gliding in loops over the valley
+    // birds: a faceted body, beak and fanned tail; wings flap in the vertex shader (aWing = 0 at the
+    // shoulder → 1 at the tip). Flocks wheel together, small birds dart low over the settlements,
+    // eagles soar on thermals high above the valley.
+    const pos = [], wing = []
+    const tri = (a, b, c, w) => { pos.push(...a, ...b, ...c); wing.push(...w) }
+    tri([0, 0.04, 0.32], [0.07, 0, 0], [-0.07, 0, 0], [0, 0, 0]); tri([0.07, 0, 0], [0, -0.05, -0.05], [-0.07, 0, 0], [0, 0, 0])
+    tri([0, 0.04, 0.32], [0, 0.0, 0.42], [0.025, 0.02, 0.3], [0, 0, 0])
+    tri([0.05, 0, -0.2], [-0.05, 0, -0.2], [0, 0.01, -0.42], [0, 0, 0]); tri([0.14, 0, -0.44], [-0.14, 0, -0.44], [0, 0.01, -0.3], [0, 0, 0])
+    for (const sx of [-1, 1]) {
+      tri([sx * 0.06, 0.01, 0.12], [sx * 0.42, 0.04, 0.02], [sx * 0.06, 0.01, -0.12], [0, 0.55, 0])
+      tri([sx * 0.42, 0.04, 0.02], [sx * 0.82, 0.02, -0.12], [sx * 0.42, 0.03, -0.14], [0.55, 1, 0.55])
+      tri([sx * 0.06, 0.01, -0.12], [sx * 0.42, 0.04, 0.02], [sx * 0.42, 0.03, -0.14], [0, 0.55, 0.55])
+    }
     const bg = new THREE.BufferGeometry()
-    bg.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0.25, -0.7, 0.05, -0.1, 0, 0, -0.15, 0, 0, 0.25, 0, 0, -0.15, 0.7, 0.05, -0.1], 3))
+    bg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); bg.setAttribute('aWing', new THREE.Float32BufferAttribute(wing, 1))
     bg.computeVertexNormals()
-    this.birds = new THREE.InstancedMesh(bg, new THREE.MeshBasicMaterial({ color: 0x2a2228, side: THREE.DoubleSide }), 48)
-    this.birdData = Array.from({ length: 48 }, (_, i) => ({ c: new THREE.Vector3((Math.random() - 0.5) * 300, 70 + Math.random() * 45, -140 + Math.random() * 380), r: 20 + Math.random() * 40, ph: Math.random() * 6, sp: 0.15 + Math.random() * 0.1 }))
-    this.birds.frustumCulled = false; scene.add(this.birds)
+    const N = 72
+    const phase = new Float32Array(N), speed = new Float32Array(N)
+    const bm = new THREE.MeshLambertMaterial({ color: 0x3a3236, side: THREE.DoubleSide, flatShading: true })
+    bm.onBeforeCompile = sh => {
+      sh.uniforms.uTime = this.birdTime = { value: 0 }
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aWing; attribute float aPhase; attribute float aFlap; uniform float uTime;')
+        .replace('#include <begin_vertex>', `#include <begin_vertex>
+          float fl = sin(uTime * aFlap + aPhase);
+          transformed.y += fl * aWing * 0.3;
+          transformed.x *= 1.0 - abs(fl) * aWing * 0.12;`)
+    }
+    bm.customProgramCacheKey = () => 'birds'
+    this.birds = new THREE.InstancedMesh(bg, bm, N)
+    const kinds = []
+    // 5 flocks of 9, 15 low darting birds, 12 eagles
+    for (let f = 0; f < 5; f++) { const c = new THREE.Vector3((Math.random() - 0.5) * 300, 55 + Math.random() * 35, -150 + Math.random() * 390); for (let i = 0; i < 9; i++) kinds.push({ kind: 'flock', c, r: 30 + f * 8, sp: 0.12 + f * 0.015, ph: f * 1.7, off: new THREE.Vector3((i % 3 - 1) * 1.6, (i % 2) * 0.6, Math.floor(i / 3) * 1.4 - 1.4), scale: 0.9 }) }
+    const hubs = [[0, 0], [-8, 98], [-112, 180], [108, 20], [-50, 240], [0, -72]]
+    for (let i = 0; i < 15; i++) { const h = hubs[i % hubs.length]; kinds.push({ kind: 'low', c: new THREE.Vector3(h[0], 0, h[1]), r: 6 + Math.random() * 14, sp: 0.35 + Math.random() * 0.25, ph: Math.random() * 6, off: new THREE.Vector3(), scale: 0.55 }) }
+    for (let i = 0; i < 12; i++) kinds.push({ kind: 'eagle', c: new THREE.Vector3((Math.random() - 0.5) * 340, 95 + Math.random() * 40, -160 + Math.random() * 410), r: 25 + Math.random() * 40, sp: 0.05 + Math.random() * 0.04, ph: Math.random() * 6, off: new THREE.Vector3(), scale: 2.4 })
+    kinds.forEach((k, i) => { phase[i] = Math.random() * 6.28; speed[i] = k.kind === 'eagle' ? 2.2 : k.kind === 'low' ? 18 : 11 })
+    bg.setAttribute('aPhase', new THREE.InstancedBufferAttribute(phase, 1)); bg.setAttribute('aFlap', new THREE.InstancedBufferAttribute(speed, 1))
+    this.birdData = kinds
+    this.birds.frustumCulled = false; this.birds.castShadow = false; scene.add(this.birds)
     this.visible = true
   }
   setVisible(v) { this.visible = v; for (const a of this.animals) a.g.visible = v }
@@ -111,12 +143,15 @@ export class Fauna {
       }
     }
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), p = new THREE.Vector3(), s = new THREE.Vector3()
+    if (this.birdTime) this.birdTime.value = t
     this.birdData.forEach((b, i) => {
-      const a = t * b.sp + b.ph
-      p.set(b.c.x + Math.cos(a) * b.r, b.c.y + Math.sin(a * 2) * 3, b.c.z + Math.sin(a) * b.r)
-      const flap = Math.sin(t * 9 + i) * 0.5
-      e.set(0, -a, Math.sin(a) * 0.3); q.setFromEuler(e)
-      s.set(1.6, 1.6 + flap, 1.6)
+      const a = t * b.sp + b.ph, glide = b.kind === 'eagle'
+      const y0 = b.kind === 'low' ? heightAt(b.c.x, b.c.z) + 7 + Math.sin(a * 3) * 2 : b.c.y
+      p.set(b.c.x + Math.cos(a) * b.r, y0 + Math.sin(a * 2) * (glide ? 4 : 3), b.c.z + Math.sin(a) * b.r)
+      // formation offset rotates with the flock's heading
+      const hd = -a; p.x += b.off.x * Math.cos(hd) - b.off.z * Math.sin(hd); p.z += b.off.x * Math.sin(hd) + b.off.z * Math.cos(hd); p.y += b.off.y
+      e.set(0, -a, (glide ? 0.35 : 0.22) + Math.sin(a * 3) * 0.08); q.setFromEuler(e)
+      s.setScalar(b.scale)
       this.birds.setMatrixAt(i, m.compose(p, q, s))
     })
     this.birds.instanceMatrix.needsUpdate = true
